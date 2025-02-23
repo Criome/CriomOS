@@ -391,8 +391,17 @@ mkIf saizAtList.min {
     };
 
     jujutsu = {
-      enable = true;
+      enable = izNiksDev;
       settings = {
+        ui = {
+          diff-instructions = false;
+          diff.tool = [
+            "difft"
+            "--color=always"
+            "$left"
+            "$right"
+          ];
+        };
         user = {
           name = neim;
           email = spinyrz.emailAddress;
