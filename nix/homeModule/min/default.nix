@@ -190,6 +190,8 @@ let
     # Shell
     shfmt
     # Other
+    meld # GTK diff editor
+    gg-jj # Jujutsu GUI
     just
     difftastic
     tokei # Lines of code
