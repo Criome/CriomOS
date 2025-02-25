@@ -20,6 +20,8 @@ in
     };
   };
 
+  programs.emacs.package = package;
+
   services = {
     emacs = {
       enable = true;
