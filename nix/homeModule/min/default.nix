@@ -421,6 +421,28 @@ mkIf saizAtList.min {
       };
     };
 
+    lapce = {
+      enable = izNiksDev;
+      plugins = [ ];
+      settings = {
+        core = {
+          modal = true;
+          color-theme = if dark then "Lapce Dark" else "Lapce Light";
+        };
+        editor = {
+          font-family = "FiraCode Nerd Font";
+          font-size = 16;
+          bracket-pair-colorization = true;
+          highlight-matching-brackets = true;
+        };
+        ui = {
+          open-editors-visible = false;
+          font-size = 14;
+        };
+        lapce-nix.lsp-path = "${pkgs.nixd}/bin/nixd";
+      };
+    };
+
     zed-editor = {
       enable = true;
       package = pkgs.zed-editor;
