@@ -20,6 +20,8 @@
   :config
   (global-flycheck-eglot-mode 1))
 
+(use-package highlight-indentation)
+
 (use-package nix-ts-mode
   :config
   (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode)))
