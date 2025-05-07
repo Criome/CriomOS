@@ -41,7 +41,10 @@
 
 (use-package tera-mode)
 
-(use-package rust-mode)
+(use-package rust-mode
+  :custom
+  (rust-mode-treesitter-derive t)
+  (rust-format-on-save t))
 
 (use-package magit-delta
   :hook (magit-mode . magit-delta-mode))
@@ -52,7 +55,7 @@
   :hook
   (eshell-mode . with-editor-export-editor))
 
-(use-package elisp-lint)
+(use-package elisp-autofmt)
 
 (use-package ssh-deploy)
 
@@ -103,7 +106,7 @@
 
 (use-package company
   :hook
-  ((lisp-mode nix-ts-mode emacs-lisp-mode clojure-ts-mode)
+  ((lisp-mode nix-ts-mode emacs-lisp-mode clojure-ts-mode rust-ts-mode)
    . company-mode))
 
 (use-package dockerfile-mode :mode "Dockerfile")
