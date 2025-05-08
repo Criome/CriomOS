@@ -346,3 +346,21 @@
  ((find-file projectile-after-switch-project) . zoxide-add))
 
 (use-package ztree)
+
+(use-package
+ format-all
+ :commands format-all-mode
+ :hook (prog-mode . format-all-mode)
+ :custom
+ (define-format-all-formatter
+  elisp-autofmt
+  (:executable)
+  (:install "M-x package-install elisp-autofmt")
+  (:languages "Emacs Lisp")
+  (:features region)
+  (:format
+   (format-all--buffer-native
+    'elisp-autofmt-mode
+    (if region
+        (lambda () (elisp-autofmt-region (car region) (cdr region)))
+      (lambda () (elisp-autofmt-region (point-min) (point-max))))))))
