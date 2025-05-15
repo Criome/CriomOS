@@ -546,7 +546,6 @@ mkIf saizAtList.min {
         format = "toml";
         valiu = {
           build.target-dir = "${homeDir}/.cargo/sharedTarget";
-          registries.crates-io.index = "file:///hob/github.com/rust-lang/crates.io-index/.git";
           unstable.weak-dep-features = true;
         };
       };
