@@ -8,6 +8,7 @@
   config,
   profile,
   uyrld,
+  hob,
   ...
 }:
 let
@@ -170,6 +171,10 @@ let
     ++ (optionals (astra.mycin.ark == "x86-64") [ i7z ]);
 
   programmingTools = with pkgs; [
+    # C
+    stdenv.cc
+    # Rust
+    pkdjz.nightlyRustDevEnv
     # Nix
     nil
     nixfmt-rfc-style
@@ -185,8 +190,6 @@ let
     zprint
     # Flashing
     avrdude
-    # Rust
-    cargo
     # Shell
     shfmt
     # Other

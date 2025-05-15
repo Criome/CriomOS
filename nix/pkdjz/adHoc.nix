@@ -191,6 +191,23 @@ in
       };
   };
 
+  nightlyRustDevEnv = {
+    self = hob.rust-overlay;
+    modz = [ "pkgs" ];
+    lamdy =
+      { src, pkgs }:
+      let
+        rust-bin = src.lib.mkRustBin { } pkgs;
+      in
+      rust-bin.fromRustupToolchain {
+        channel = "nightly";
+        components = [
+          "rust-analyzer"
+          "rust-src"
+        ];
+      };
+  };
+
   postcss-scss = {
     modz = [ "pkdjz" ];
     lamdy =

@@ -3,7 +3,12 @@
 
   inputs = {
     hob.url = "github:criome/hob/testing";
+    nixpkgs.url = "github:criome/nixpkgs/testing";
 
+    rust-overlay.url = "github:oxalica/rust-overlay";
+    rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Todo - binary cache
     attic.url = "github:zhaofengli/attic";
 
     maisiliym.url = "github:LiGoldragon/maisiliym";
@@ -12,7 +17,7 @@
   };
 
   outputs =
-    inputs@{ self, ... }:
+    inputs@{ self, nixpkgs, ... }:
     let
       localSources =
         let
@@ -35,6 +40,8 @@
         mapAttrs importInput modulePaths;
 
       localHobSources = {
+        inherit nixpkgs;
+        inherit (inputs) rust-overlay;
         inherit (localSources) mkWebpage;
         pkdjz = {
           HobUyrldz = localSources.pkdjz;
@@ -43,7 +50,7 @@
 
       hob = inputs.hob.value // localHobSources;
 
-      inherit (hob) flake-utils nixpkgs lib;
+      inherit (hob) flake-utils lib;
       inherit (localSources)
         kor
         neksysNames

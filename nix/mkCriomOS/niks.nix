@@ -53,6 +53,7 @@ let
         repo = "nixpkgs.lib";
       };
 
+      # TODO - broken
       nixpkgs = {
         owner = "NixOS";
         repo = "nixpkgs";

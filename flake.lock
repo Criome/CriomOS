@@ -1129,6 +1129,22 @@
         "type": "github"
       }
     },
+    "nixpkgs_3": {
+      "locked": {
+        "lastModified": 1746663370,
+        "narHash": "sha256-YASlc7rfbP8EKFa1Rz72H2var63OSpqnX2cnATka3L0=",
+        "owner": "criome",
+        "repo": "nixpkgs",
+        "rev": "f2db2db78e0743155f75a1c5ece7ddb0acd80098",
+        "type": "github"
+      },
+      "original": {
+        "owner": "criome",
+        "ref": "testing",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "postcss-scss": {
       "flake": false,
       "locked": {
@@ -1184,6 +1200,8 @@
         "goldragon": "goldragon",
         "hob": "hob",
         "maisiliym": "maisiliym_2",
+        "nixpkgs": "nixpkgs_3",
+        "rust-overlay": "rust-overlay_2",
         "seahawk": "seahawk_2"
       }
     },
@@ -1200,6 +1218,26 @@
         "owner": "oxalica",
         "repo": "rust-overlay",
         "rev": "fb5fdba697ee9a2391ca9ceea3b853b4e3ce37a5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_2": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1741660300,
+        "narHash": "sha256-0jldJ58sC5RjqwpwE+ER+RPMeX4Moz5im/evQ3SU/dU=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "ac2f556db0eb5cbba3c4f5f5989c46330f439b0b",
         "type": "github"
       },
       "original": {
