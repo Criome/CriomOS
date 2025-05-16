@@ -1,5 +1,7 @@
 (use-package apheleia)
 
+(use-package caser)
+
 (use-package telega)
 
 (use-package envrc :config (envrc-global-mode))
