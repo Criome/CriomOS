@@ -32,6 +32,38 @@
         "type": "github"
       }
     },
+    "ChibiOS-Contrib_2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1630157004,
+        "narHash": "sha256-mjILJeNdmn6iDMRUjgQh4Wz7We77TC1QmUgAdK220T8=",
+        "owner": "qmk",
+        "repo": "ChibiOS-Contrib",
+        "rev": "4568901a91e9bef78ea96a7a83e8150fe1f7353a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "qmk",
+        "repo": "ChibiOS-Contrib",
+        "type": "github"
+      }
+    },
+    "ChibiOS_2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1613226400,
+        "narHash": "sha256-yfEbgFN1scjDtza2L5s4QnxrlFjpnKDYBM7Ak7WP4QU=",
+        "owner": "qmk",
+        "repo": "ChibiOS",
+        "rev": "413e39c5681d181720440f2a8b7391f581788d7b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "qmk",
+        "repo": "ChibiOS",
+        "type": "github"
+      }
+    },
     "attic": {
       "inputs": {
         "crane": "crane",
@@ -482,6 +514,22 @@
         "type": "github"
       }
     },
+    "googletest_2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1627529225,
+        "narHash": "sha256-VuOfUPwl3QHtxjGfWq2tjObutncRoOjEJoY1ET+4pNI=",
+        "owner": "qmk",
+        "repo": "googletest",
+        "rev": "2d924d7a971e9667d76ad09727fb2402b4f8a1e3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "qmk",
+        "repo": "googletest",
+        "type": "github"
+      }
+    },
     "helix": {
       "inputs": {
         "crane": [
@@ -516,6 +564,22 @@
       }
     },
     "hexdumpSrc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1615171434,
+        "narHash": "sha256-nQR61r37koQkN46vQyDFBTij7se9+z0xg89b90UkLIM=",
+        "owner": "sarnold",
+        "repo": "hexdump",
+        "rev": "a1686f09a70091d6bbb1aa6f2f8a255db8fcb3cf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "sarnold",
+        "repo": "hexdump",
+        "type": "github"
+      }
+    },
+    "hexdumpSrc_2": {
       "flake": false,
       "locked": {
         "lastModified": 1615171434,
@@ -772,7 +836,51 @@
         "type": "github"
       }
     },
+    "kibord_2": {
+      "inputs": {
+        "ChibiOS": "ChibiOS_2",
+        "ChibiOS-Contrib": "ChibiOS-Contrib_2",
+        "googletest": "googletest_2",
+        "hexdumpSrc": "hexdumpSrc_2",
+        "kp_boot_32u4": "kp_boot_32u4_2",
+        "lufa": "lufa_2",
+        "printf": "printf_2",
+        "qmk_firmware": "qmk_firmware_2",
+        "uGFX": "uGFX_2",
+        "v-usb": "v-usb_2"
+      },
+      "locked": {
+        "lastModified": 1748028181,
+        "narHash": "sha256-KJ3kYboS5JS4+q6VOlykNVU0wsC0vOJo6Zob1VeVnW4=",
+        "owner": "LiGoldragon",
+        "repo": "kibord",
+        "rev": "3d65962c07b96a919d29613fca9801c4fdc340a8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "LiGoldragon",
+        "ref": "testing",
+        "repo": "kibord",
+        "type": "github"
+      }
+    },
     "kp_boot_32u4": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1559970181,
+        "narHash": "sha256-wSqaTAgaW+6cu9F8F4Vvq/8ga7ADlTEz2Api/g7UXWk=",
+        "owner": "ahtn",
+        "repo": "kp_boot_32u4",
+        "rev": "54e899e9b1a06bb310a2d72bf9cc3017a8513ea2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ahtn",
+        "repo": "kp_boot_32u4",
+        "type": "github"
+      }
+    },
+    "kp_boot_32u4_2": {
       "flake": false,
       "locked": {
         "lastModified": 1559970181,
@@ -858,6 +966,22 @@
         "type": "github"
       }
     },
+    "lufa_2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1630764587,
+        "narHash": "sha256-8KOBLQbd5107t8849Unir8KTxNoV2OGRlD/R8tBXhbc=",
+        "owner": "qmk",
+        "repo": "lufa",
+        "rev": "d6df70b8b691390865878f2a3a66bf3da84fe138",
+        "type": "github"
+      },
+      "original": {
+        "owner": "qmk",
+        "repo": "lufa",
+        "type": "github"
+      }
+    },
     "maisiliym": {
       "locked": {
         "lastModified": 1730039186,
@@ -875,15 +999,16 @@
     },
     "maisiliym_2": {
       "locked": {
-        "lastModified": 1747929634,
-        "narHash": "sha256-V6VQVwflejCrTEjSCgQ3xUfuD41cJiHh9c9JKVVWVVQ=",
+        "lastModified": 1748031936,
+        "narHash": "sha256-PpWmyB+4H5JfB0BSuCmpKgKbRKtK38YjhnNWCzrD9gU=",
         "owner": "LiGoldragon",
         "repo": "maisiliym",
-        "rev": "78e3daabab7d84832586b7bbb8db501331a66952",
+        "rev": "2992b247d75e338a6888e757b6474a34514dcd53",
         "type": "github"
       },
       "original": {
         "owner": "LiGoldragon",
+        "ref": "testing",
         "repo": "maisiliym",
         "type": "github"
       }
@@ -1177,7 +1302,40 @@
         "type": "github"
       }
     },
+    "printf_2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1577899008,
+        "narHash": "sha256-uLN9MtmL/6aE+TRRM0OFcL1xi4gGQNFvooEJkiVIabU=",
+        "owner": "qmk",
+        "repo": "printf",
+        "rev": "d3b984684bb8a8bdc48cc7a1abecb93ce59bbe3e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "qmk",
+        "repo": "printf",
+        "type": "github"
+      }
+    },
     "qmk_firmware": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1600364742,
+        "narHash": "sha256-HB/hlkWtdITfrPiwM97svvyEgK3PaMisO34UTURbpxs=",
+        "owner": "qmk",
+        "repo": "qmk_firmware",
+        "rev": "bc15c4f4ab81c1e2950dfc1c38cf86dc626573c9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "qmk",
+        "repo": "qmk_firmware",
+        "rev": "bc15c4f4ab81c1e2950dfc1c38cf86dc626573c9",
+        "type": "github"
+      }
+    },
+    "qmk_firmware_2": {
       "flake": false,
       "locked": {
         "lastModified": 1600364742,
@@ -1199,10 +1357,12 @@
         "attic": "attic",
         "goldragon": "goldragon",
         "hob": "hob",
+        "kibord": "kibord_2",
         "maisiliym": "maisiliym_2",
         "nixpkgs": "nixpkgs_3",
         "rust-overlay": "rust-overlay_2",
-        "seahawk": "seahawk_2"
+        "seahawk": "seahawk_2",
+        "skrips": "skrips_2"
       }
     },
     "rust-overlay": {
@@ -1355,6 +1515,22 @@
         "type": "github"
       }
     },
+    "skrips_2": {
+      "locked": {
+        "lastModified": 1748032049,
+        "narHash": "sha256-NZLbRftgyXk80zLqUdhaar8kIV7H8COmEIaWIbJJWOY=",
+        "owner": "criome",
+        "repo": "skrips",
+        "rev": "05f2c298b924c7a00a51a76c9995df1655b8b14c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "criome",
+        "ref": "testing",
+        "repo": "skrips",
+        "type": "github"
+      }
+    },
     "systems": {
       "locked": {
         "lastModified": 1681028828,
@@ -1480,7 +1656,39 @@
         "type": "github"
       }
     },
+    "uGFX_2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1578814645,
+        "narHash": "sha256-ADuZ2SnWbLZ7lK6G3Zy2jxcpm5AuQ2M92sP5+caxh54=",
+        "owner": "qmk",
+        "repo": "uGFX",
+        "rev": "40b48f470addad6a4fb1177de1a69a181158739b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "qmk",
+        "repo": "uGFX",
+        "type": "github"
+      }
+    },
     "v-usb": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1597536441,
+        "narHash": "sha256-TMX0BowFBzQtS+7I86bwYsCl0qFrxmFbTvOLEqhDwjY=",
+        "owner": "qmk",
+        "repo": "v-usb",
+        "rev": "bdb53e4c043d089279d9891b68bea77614cb97ee",
+        "type": "github"
+      },
+      "original": {
+        "owner": "qmk",
+        "repo": "v-usb",
+        "type": "github"
+      }
+    },
+    "v-usb_2": {
       "flake": false,
       "locked": {
         "lastModified": 1597536441,
