@@ -140,13 +140,13 @@ rec {
   makeSearchPath =
     subDir: paths: concatStringsSep ":" (map (path: path + "/" + subDir) (filter (x: x != null) paths));
 
-  getSpici =
+  getSpecies =
     datom:
-    assert mesydj (isAttrs datom) "Spici-Datom is not Attrs";
+    assert mesydj (isAttrs datom) "Species-Datom is not Attrs";
     let
       names = attrNames datom;
     in
-    assert mesydj ((length names) == 1) "Spici-Datom has more than one Attr";
+    assert mesydj ((length names) == 1) "Species-Datom has more than one Attr";
     let
       name = head names;
     in
@@ -158,18 +158,18 @@ rec {
   matc =
     matcSet: datom:
     let
-      spici = getSpici datom;
-      inherit (spici) name value;
+      species = getSpecies datom;
+      inherit (species) name value;
       matcValiu = matcSet.${name};
     in
     if isFunction matcValiu then matcValiu value else value;
 
-  indeksSpiciz =
-    spiciz:
+  indeksSpecies =
+    species:
     let
-      aylSpiciz = map getSpici spiciz;
-      names = unique (map (s: s.name) aylSpiciz);
-      meikNamedYrei = name: map (s: s.value) (filter (s: s.name == name) aylSpiciz);
+      aylSpecies = map getSpecies species;
+      names = unique (map (s: s.name) aylSpecies);
+      meikNamedYrei = name: map (s: s.value) (filter (s: s.name == name) aylSpecies);
     in
     genAttrs names meikNamedYrei;
 
@@ -282,13 +282,13 @@ rec {
       }
     ) lamdyz;
 
-  # TODO(desc: "remove", tags: [ "mkHyraizyn" ])
-  spiciDatum =
+  # TODO(desc: "remove", tags: [ "mkHorizon" ])
+  speciesDatum =
     { datum, spek }:
     let
-      inherit (datum) spici;
+      inherit (datum) species;
       allSpeksNames = concatMap (n: getAttr n spek) (attrNames spek);
-      wantedAttrsNames = spek.${spici};
+      wantedAttrsNames = spek.${species};
       izyntWanted = n: !(elem n wantedAttrsNames);
       unwantedAttrs = filter izyntWanted allSpeksNames;
     in

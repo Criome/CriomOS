@@ -2,8 +2,8 @@
   lib,
   config,
   kor,
-  metastrizSpiciz,
-  Metastriz,
+  clustersSpecies,
+  Clusters,
   ...
 }:
 let
@@ -20,7 +20,7 @@ let
     louestOf
     nameValuePair
     filterAttrs
-    spiciDatum
+    speciesDatum
     optional
     mapAttrsToList
     optionalAttrs
@@ -28,17 +28,17 @@ let
     arkSistymMap
     unique
     ;
-  inherit (config) clusterName astraName spiciz;
-  inherit (metastrizSpiciz) metastriNames astriSpiciz;
+  inherit (config) clusterName astraName species;
+  inherit (clustersSpecies) metnodeNames nodeSpecies;
 
-  inputCluster = Metastriz.${clusterName};
-  inputAstriz = inputCluster.astriz;
-  inputAstra = inputAstriz.${astraName};
+  inputCluster = Clusters.${clusterName};
+  inputNodes = inputCluster.nodes;
+  inputAstra = inputNodes.${astraName};
 
-  astriNames = attrNames inputCluster.astriz;
+  nodeNames = attrNames inputCluster.nodes;
   userNames = attrNames inputCluster.users;
 
-  neksysCriomOSName = concatStringsSep "." [
+  nodeCriomOSName = concatStringsSep "." [
     clusterName
     "criome"
   ];
@@ -47,7 +47,7 @@ let
 
   mkTrost = yrei: louestOf (yrei ++ [ metaTrost ]);
 
-  mkEseseitcString =
+  mkSshString =
     preCriome:
     if (preCriome == null) then
       ""
@@ -57,16 +57,16 @@ let
         preCriome
       ];
 
-  mkAstri =
-    astriName:
+  mkNode =
+    nodeName:
     let
       # (TODO typecheck)
-      inputAstri = inputAstriz.${astriName};
-      inherit (inputAstri) saiz spici;
-      inherit (inputAstri.preCriomes) yggdrasil;
+      inputNode = inputNodes.${nodeName};
+      inherit (inputNode) saiz species;
+      inherit (inputNode.preCriomes) yggdrasil;
 
-      filteredMycin = spiciDatum {
-        datum = inputAstri.mycin;
+      filteredMycin = speciesDatum {
+        datum = inputNode.mycin;
         spek = {
           metyl = [
             "ark"
@@ -75,7 +75,7 @@ let
           ];
           pod = [
             "ark"
-            "ubyrAstri"
+            "ubyrNode"
             "ubyrUser"
           ];
         };
@@ -86,8 +86,8 @@ let
       tcekdArk =
         if (filteredMycin.ark != null) then
           filteredMycin.ark
-        else if (filteredMycin.spici == "pod") then
-          astriz.${filteredMycin.ubyrAstri}.mycin.ark
+        else if (filteredMycin.species == "pod") then
+          nodes.${filteredMycin.ubyrNode}.mycin.ark
         else if (filteredMycin.mothyrBord != null) then
           (rytyrnArkFromMothyrBord filteredMycin.mothyrBord)
         else
@@ -101,58 +101,58 @@ let
         linkLocalIP:
         with linkLocalIP;
         let
-          interface = if (spici == "ethernet") then "enp0s25" else "wlp3s0";
+          interface = if (species == "ethernet") then "enp0s25" else "wlp3s0";
         in
         "fe80::${suffix}%${interface}";
 
-      neksysIp = inputAstri.neksysIp or null;
-      wireguardPreCriome = inputAstri.wireguardPreCriome or null;
+      nodeIp = inputNode.nodeIp or null;
+      wireguardPreCriome = inputNode.wireguardPreCriome or null;
 
       mkTypeIsFromTypeName =
         name:
         let
-          isOfThisType = name == spici;
+          isOfThisType = name == species;
         in
         nameValuePair name isOfThisType;
 
-      astri = {
-        inherit saiz spici;
+      node = {
+        inherit saiz species;
 
-        name = astriName;
-        inherit mycin wireguardPreCriome neksysIp;
+        name = nodeName;
+        inherit mycin wireguardPreCriome nodeIp;
 
         linkLocalIPs =
-          if (hasAttr "linkLocalIPs" inputAstri) then (map mkLinkLocalIP inputAstri.linkLocalIPs) else [ ];
+          if (hasAttr "linkLocalIPs" inputNode) then (map mkLinkLocalIP inputNode.linkLocalIPs) else [ ];
 
         trost = mkTrost [
-          inputAstri.trost
-          inputCluster.trost.astriz.${astriName}
+          inputNode.trost
+          inputCluster.trost.nodes.${nodeName}
         ];
 
-        eseseitc = mkEseseitcString inputAstri.preCriomes.eseseitc;
+        ssh = mkSshString inputNode.preCriomes.ssh;
 
         yggPreCriome = yggdrasil.preCriome;
         yggAddress = yggdrasil.address;
         yggSubnet = yggdrasil.subnet;
 
-        inherit (inputAstri.preCriomes) niksPreCriome;
+        inherit (inputNode.preCriomes) niksPreCriome;
 
         criomOSName = concatStringsSep "." [
-          astriName
-          neksysCriomOSName
+          nodeName
+          nodeCriomOSName
         ];
 
         sistym = arkSistymMap.${mycin.ark};
 
         nbOfBildKorz = 1; # TODO
 
-        typeIs = listToAttrs (map mkTypeIsFromTypeName astriSpiciz);
+        typeIs = listToAttrs (map mkTypeIsFromTypeName nodeSpecies);
       };
 
       methods =
         let
-          inherit (astri)
-            spici
+          inherit (node)
+            species
             trost
             saiz
             niksPreCriome
@@ -165,19 +165,18 @@ let
         rec {
           isFullyTrusted = trost == 3;
           sizedAtLeast = kor.mkSaizAtList saiz;
-          isBuilder = !typeIs.edj && isFullyTrusted && (sizedAtLeast.med || typeIs.sentyr) && hasBasePrecriads;
+          isBuilder =
+            !typeIs.edj && isFullyTrusted && (sizedAtLeast.med || typeIs.sentyr) && hasBasePrecriads;
           isDispatcher = !typeIs.sentyr && isFullyTrusted && sizedAtLeast.min;
           isNixCache = typeIs.sentyr && sizedAtLeast.min && hasBasePrecriads;
           izNiksCriodaizd = niksPreCriome != null && niksPreCriome != "";
           hasYggPrecriad = yggAddress != null && yggAddress != "";
-          izNeksisCriodaizd = hasYggPrecriad;
-          hasSshPrecriad = hasAttr "eseseitc" inputAstri.preCriomes;
+          hasSshPrecriad = hasAttr "ssh" inputNode.preCriomes;
           hasWireguardPrecriad = wireguardPreCriome != null;
 
           hasBasePrecriads = izNiksCriodaizd && hasYggPrecriad && hasSshPrecriad;
 
-          sshPrecriome =
-            if !hasSshPrecriad then "" else mkEseseitcString inputAstri.preCriomes.eseseitc;
+          sshPrecriome = if !hasSshPrecriad then "" else mkSshString inputNode.preCriomes.ssh;
 
           nixPreCriome = optionalString izNiksCriodaizd (
             concatStringsSep ":" [
@@ -192,12 +191,12 @@ let
         };
 
     in
-    astri // { inherit methods; };
+    node // { inherit methods; };
 
-  exAstriNames = attrNames exAstriz;
-  bildyrz = filter (n: astriz.${n}.methods.isBuilder) exAstriNames;
-  kacyz = filter (n: astriz.${n}.methods.isNixCache) exAstriNames;
-  dispatcyrz = filter (n: astriz.${n}.methods.isDispatcher) exAstriNames;
+  exNodeNames = attrNames exNodes;
+  bildyrz = filter (n: nodes.${n}.methods.isBuilder) exNodeNames;
+  kacyz = filter (n: nodes.${n}.methods.isNixCache) exNodeNames;
+  dispatcyrz = filter (n: nodes.${n}.methods.isDispatcher) exNodeNames;
 
   adminUserNames = filter (n: users.${n}.trost == 3) userNames;
 
@@ -206,33 +205,33 @@ let
       mkBildyr =
         n:
         let
-          astri = exAstriz.${n};
+          node = exNodes.${n};
         in
         {
-          hostName = astri.criomOSName;
+          hostName = node.criomOSName;
           sshUser = "nixBuilder";
           sshKey = "/etc/ssh/ssh_host_ed25519_key";
-          supportedFeatures = optional (!astri.typeIs.edj) "big-parallel";
-          system = astri.sistym;
-          systems = lib.optional (astri.sistym == "x86_64-linux") "i686-linux";
-          maxJobs = astri.nbOfBildKorz;
+          supportedFeatures = optional (!node.typeIs.edj) "big-parallel";
+          system = node.sistym;
+          systems = lib.optional (node.sistym == "x86_64-linux") "i686-linux";
+          maxJobs = node.nbOfBildKorz;
         };
 
       mkAdminUserPreCriomes =
         adminUserName:
         let
           adminUser = users.${adminUserName};
-          preCriomeAstriNames = attrNames adminUser.preCriomes;
-          izAstriFulyTrostyd = n: astriz.${n}.methods.isFullyTrusted;
-          fulyTrostydPreCriomeNames = filter izAstriFulyTrostyd preCriomeAstriNames;
-          getEseseitcString =
+          preCriomeNodeNames = attrNames adminUser.preCriomes;
+          izNodeFulyTrostyd = n: nodes.${n}.methods.isFullyTrusted;
+          fulyTrostydPreCriomeNames = filter izNodeFulyTrostyd preCriomeNodeNames;
+          getSshString =
             n:
-            if (adminUser.preCriomes.${n}.eseseitc == null) then
+            if (adminUser.preCriomes.${n}.ssh == null) then
               ""
             else
-              (mkEseseitcString adminUser.preCriomes.${n}.eseseitc);
+              (mkSshString adminUser.preCriomes.${n}.ssh);
         in
-        map getEseseitcString fulyTrostydPreCriomeNames;
+        map getSshString fulyTrostydPreCriomeNames;
 
       inherit (astra.mycin) modyl;
       thinkpadModylz = [
@@ -251,15 +250,15 @@ let
 
       kacURLz =
         let
-          mkKacURL = n: exAstriz.${n}.methods.nixUrl;
+          mkKacURL = n: exNodes.${n}.methods.nixUrl;
         in
         map mkKacURL kacyz;
 
-      exAstrizEseseitcPreCriomes = map (n: exAstriz.${n}.eseseitc) exAstriNames;
+      exNodesSshPreCriomes = map (n: exNodes.${n}.ssh) exNodeNames;
 
-      dispatcyrzEseseitcKiz = map (n: exAstriz.${n}.eseseitc) dispatcyrz;
+      dispatcyrzSshKiz = map (n: exNodes.${n}.ssh) dispatcyrz;
 
-      adminEseseitcPreCriomes = unique (concatMap mkAdminUserPreCriomes adminUserNames);
+      adminSshPreCriomes = unique (concatMap mkAdminUserPreCriomes adminUserNames);
 
       tcipIzIntel = elem astra.mycin.ark [
         "x86-64"
@@ -282,12 +281,12 @@ let
     let
       inputUser = inputCluster.users.${userName};
 
-      tcekPreCriome = astriName: preCriome: hasAttr astriName astriz;
+      tcekPreCriome = nodeName: preCriome: hasAttr nodeName nodes;
 
       user = {
         name = userName;
 
-        inherit (inputUser) stail spici kibord;
+        inherit (inputUser) stail species kibord;
 
         saiz = louestOf [
           inputUser.saiz
@@ -317,47 +316,47 @@ let
 
           iuzColemak = user.kibord == "colemak";
 
-          izSemaDev = elem user.spici [
+          izSemaDev = elem user.species [
             "Sema"
             "Onlimityd"
           ];
-          izNiksDev = elem user.spici [
+          izNiksDev = elem user.species [
             "Niks"
             "Onlimityd"
           ];
 
-          eseseitcyz = mapAttrsToList (n: pk: mkEseseitcString pk.eseseitc) user.preCriomes;
+          sshyz = mapAttrsToList (n: pk: mkSshString pk.ssh) user.preCriomes;
 
         }
         // (kor.optionalAttrs hazPreCriome {
-          eseseitc = mkEseseitcString user.preCriomes.${astra.name}.eseseitc;
+          ssh = mkSshString user.preCriomes.${astra.name}.ssh;
         });
 
     in
     user // { inherit methods; };
 
-  astriz = listToAttrs (
-    map (y: nameValuePair y.name y) (filter (x: x.trost != 0) (map (n: mkAstri n) astriNames))
+  nodes = listToAttrs (
+    map (y: nameValuePair y.name y) (filter (x: x.trost != 0) (map (n: mkNode n) nodeNames))
   );
 
   cluster = {
     name = clusterName;
 
     methods = {
-      trostydBildPreCriomes = map (n: astriz.${n}.methods.nixPreCriome) astriNames;
+      trostydBildPreCriomes = map (n: nodes.${n}.methods.nixPreCriome) nodeNames;
     };
   };
 
-  exAstriz = kor.filterAttrs (n: v: n != astraName) astriz;
+  exNodes = kor.filterAttrs (n: v: n != astraName) nodes;
 
   astra =
     let
-      astri = astriz.${astraName};
+      node = nodes.${astraName};
     in
-    astri
+    node
     // {
       inherit (inputAstra) io;
-      methods = astri.methods // astraMethods;
+      methods = node.methods // astraMethods;
     };
 
   users = listToAttrs (
@@ -366,11 +365,11 @@ let
 
 in
 {
-  hyraizyn = {
+  horizon = {
     inherit
       cluster
       astra
-      exAstriz
+      exNodes
       users
       ;
   };

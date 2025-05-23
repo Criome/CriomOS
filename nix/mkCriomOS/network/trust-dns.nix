@@ -3,7 +3,7 @@
   lib,
   pkgs,
   kor,
-  hyraizyn,
+  horizon,
   pkdjz,
   ...
 }:
@@ -11,7 +11,7 @@
 let
   inherit (builtins) map;
   inherit (lib) mkOverride;
-  inherit (hyraizyn.astra) criomOSName;
+  inherit (horizon.astra) criomOSName;
   inherit (pkdjz) trust-dns;
 
   trustDnsEksek = "${trust-dns}/bin/named";

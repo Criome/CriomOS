@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  hyraizyn,
+  horizon,
   ...
 }:
 let
@@ -13,7 +13,7 @@ let
     attrNames
     ;
   inherit (lib) mapAttrsToList concatMapStringsSep lowPrio;
-  inherit (hyraizyn.astra) typeIs criomOSName;
+  inherit (horizon.astra) typeIs criomOSName;
 
   listenIPs = [
     "::1"

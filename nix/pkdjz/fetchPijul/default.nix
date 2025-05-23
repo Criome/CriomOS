@@ -10,7 +10,7 @@
   url,
   sha256,
   ancestor ? null,
-}@argz:
+}@arguments:
 
 let
   caCertFile = "${cacert}/etc/ssl/certs/ca-bundle.crt";

@@ -1,7 +1,7 @@
 {
   pkgs,
   lib,
-  hyraizyn,
+  horizon,
   kor,
   criomOS,
   uyrld,
@@ -13,7 +13,7 @@ let
   inherit (lib) mkOverride;
   inherit (uyrld) mkHomeConfig pkdjz;
 
-  iuzMetylModule = hyraizyn.astra.mycin.spici == "metyl";
+  iuzMetylModule = horizon.astra.mycin.species == "metyl";
   profile = {
     dark = false;
   };
@@ -44,12 +44,12 @@ in
         kor
         pkdjz
         uyrld
-        hyraizyn
+        horizon
         ;
     };
     sharedModules = [ homeModule ];
     useGlobalPkgs = true;
-    users = mapAttrs mkUserConfig hyraizyn.users;
+    users = mapAttrs mkUserConfig horizon.users;
   };
 
   isoImage = {

@@ -8,7 +8,7 @@
 let
   l = lib // builtins;
   inherit (builtins) hasAttr mapAttrs readDir;
-  inherit (localSources) kor neksysNames mkPkgs;
+  inherit (localSources) kor nodeNames mkPkgs;
   inherit (kor) mkLamdy optionalAttrs genAttrs;
   inherit (uyrld) pkdjz mkZolaWebsite;
 
@@ -160,14 +160,14 @@ let
         in
         sobUyrldz;
 
-      mkNeksysWebpageName = neksysName: [
-        (neksysName + "Webpage")
-        (neksysName + "Website")
+      mkNodeWebpageName = nodeName: [
+        (nodeName + "Webpage")
+        (nodeName + "Website")
       ];
 
-      neksysWebpageSpokNames = lib.concatMap mkNeksysWebpageName neksysNames;
+      nodeWebpageSpokNames = lib.concatMap mkNodeWebpageName nodeNames;
 
-      isWebpageSpok = spokName: l.elem spokName neksysWebpageSpokNames;
+      isWebpageSpok = spokName: l.elem spokName nodeWebpageSpokNames;
 
       optionalSystemAttributes = {
         packages = fleik.packages.${system} or { };

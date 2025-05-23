@@ -1,6 +1,6 @@
 {
   lib,
-  priMetastriz,
+  preClusters,
   config,
   ...
 }@topArgs:
@@ -16,18 +16,18 @@ let
     attrs
     listOf
     ;
-  inherit (config.spiciz)
+  inherit (config.species)
     magnytiud
-    metastriNames
-    astriSpiciz
+    metnodeNames
+    nodeSpecies
     komynUserOptions
-    mycinSpici
+    mycinSpecie
     IoOptions
     ;
 
-  AstriPreCriomeSpici = submodule {
+  NodePreCriomeSpecies = submodule {
     options = {
-      eseseitc = mkOption {
+      ssh = mkOption {
         type = nullOr str;
         default = null;
       };
@@ -56,10 +56,10 @@ let
     };
   };
 
-  astriSubmodule = {
+  nodeSubmodule = {
     options = {
-      spici = mkOption {
-        type = enum astriSpiciz;
+      species = mkOption {
+        type = enum nodeSpecies;
         default = "sentyr";
       };
 
@@ -74,7 +74,7 @@ let
       };
 
       mycin = mkOption {
-        type = mycinSpici;
+        type = mycinSpecies;
       };
 
       io = mkOption {
@@ -83,7 +83,7 @@ let
       };
 
       preCriomes = mkOption {
-        type = AstriPreCriomeSpici;
+        type = NodePreCriomeSpecies;
         default = { };
       };
 
@@ -92,7 +92,7 @@ let
         default = [ ];
       };
 
-      neksysIp = mkOption {
+      nodeIp = mkOption {
         type = nullOr str;
         default = null;
       };
@@ -116,11 +116,11 @@ let
         default = 1;
       };
 
-      metastriz = mkOption {
+      clusters = mkOption {
         type = attrsOf (enum magnytiud);
       };
 
-      astriz = mkOption {
+      nodes = mkOption {
         type = attrsOf (enum magnytiud);
       };
 
@@ -132,7 +132,7 @@ let
 
   domeinSubmodule = {
     options = {
-      spici = mkOption {
+      species = mkOption {
         type = enum [ "cloudflare" ];
         default = "cloudflare";
       };
@@ -143,16 +143,16 @@ let
     options = komynUserOptions;
   };
 
-  metastriSubmodule = (
-    { name, config, ... }@metastriArgs:
+  metnodeSubmodule = (
+    { name, config, ... }@metnodeArgs:
     let
-      priMetastri = priMetastriz."${name}";
-      mkDefaultAstriTrost = name: astri: priMetastri.trost.astriz."${name}" or 1;
+      preCluster = preClusters."${name}";
+      mkDefaultNodeTrost = name: node: preCluster.trost.nodes."${name}" or 1;
     in
     {
       options = {
-        astriz = mkOption {
-          type = attrsOf (submodule astriSubmodule);
+        nodes = mkOption {
+          type = attrsOf (submodule nodeSubmodule);
         };
 
         users = mkOption {
@@ -172,11 +172,11 @@ let
                 default = 1;
               };
 
-              metastriz = mkOption {
+              clusters = mkOption {
                 type = attrsOf (enum magnytiud);
               };
 
-              astriz = mkOption {
+              nodes = mkOption {
                 type = attrsOf (enum magnytiud);
               };
 
@@ -186,7 +186,7 @@ let
             };
 
             config = {
-              astriz = mapAttrs mkDefaultAstriTrost priMetastri.astriz;
+              nodes = mapAttrs mkDefaultNodeTrost preCluster.nodes;
             };
           });
         };
@@ -197,15 +197,11 @@ let
 in
 {
   options = {
-    # PriMetastriz = mkOption {
-    #   type = attrsOf (submodule metastriSubmodule);
-    # };
-
-    Metastriz = mkOption {
-      type = attrsOf (submodule metastriSubmodule);
+    Clusters = mkOption {
+      type = attrsOf (submodule metnodeSubmodule);
     };
   };
 
-  # Normalize Metastriz here
-  config.Metastriz = priMetastriz;
+  # Normalize Clusters here
+  config.Clusters = preClusters;
 }

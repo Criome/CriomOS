@@ -5,7 +5,7 @@
   user,
   config,
   profile,
-  hyraizyn,
+  horizon,
   ...
 }:
 let
@@ -25,7 +25,7 @@ let
     optionalAttrs
     ;
   inherit (user.methods) izNiksDev sizedAtLeast iuzColemak;
-  inherit (hyraizyn) astra;
+  inherit (horizon) astra;
   inherit (profile) dark;
   inherit (pkgs) parinfer-rust writeText;
   inherit (pkdjz) vimPloginz;

@@ -6,29 +6,29 @@
 let
   inherit (lib) evalModules;
 
-  priMetastriz = uncheckedCrioSphereProposal;
+  preClusters = uncheckedCrioSphereProposal;
 
-  argzModule = {
+  argumentsModule = {
     config = {
       _module.args = {
-        inherit kor lib priMetastriz;
+        inherit kor lib preClusters;
       };
     };
   };
 
-  metastrizModule = import ./metastrizModule.nix;
-  spicizModule = import ./spicizModule.nix;
+  clustersModule = import ./clustersModule.nix;
+  speciesModule = import ./speciesModule.nix;
 
-  ivaliueicyn = evalModules {
+  evaluation = evalModules {
     modules = [
-      argzModule
-      metastrizModule
-      spicizModule
+      argumentsModule
+      clustersModule
+      speciesModule
     ];
   };
 
 in
 {
-  inherit (ivaliueicyn.config) spiciz;
-  datom = ivaliueicyn.config.Metastriz;
+  inherit (evaluation.config) species;
+  datom = evaluation.config.Clusters;
 }

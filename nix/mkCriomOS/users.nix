@@ -1,5 +1,5 @@
 {
-  hyraizyn,
+  horizon,
   config,
   kor,
   pkgs,
@@ -22,23 +22,23 @@ let
     optionalAttrs
     ;
 
-  inherit (hyraizyn) astra exAstriz users;
-  inherit (astra.methods) adminEseseitcPreCriomes;
+  inherit (horizon) astra exNodes users;
+  inherit (astra.methods) adminSshPreCriomes;
 
   userNames = attrNames users;
 
-  mkEseseitcString =
+  mkSshString =
     preCriome:
     concatStringsSep " " [
       "ed25519"
-      preCriome.eseseitc
+      preCriome.ssh
     ];
 
   mkUser =
     attrName: user:
     let
       inherit (user) trost methods;
-      inherit (user.methods) eseseitcyz hazPreCriome;
+      inherit (user.methods) sshyz hazPreCriome;
 
     in
     optionalAttrs (trost > 0) {
@@ -47,7 +47,7 @@ let
       useDefaultShell = true;
       isNormalUser = true;
 
-      openssh.authorizedKeys.keys = eseseitcyz;
+      openssh.authorizedKeys.keys = sshyz;
 
       extraGroups =
         [ "audio" ]
@@ -70,7 +70,7 @@ let
 
   rootUserAkses = {
     root = {
-      openssh.authorizedKeys.keys = adminEseseitcPreCriomes;
+      openssh.authorizedKeys.keys = adminSshPreCriomes;
     };
   };
 

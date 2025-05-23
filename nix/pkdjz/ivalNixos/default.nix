@@ -5,7 +5,7 @@ inputs@{
   system,
 }:
 
-argz@{
+arguments@{
   pkgs ? inputs.pkgs,
   modules ? [ ],
   moduleArgs ? { },
@@ -51,7 +51,7 @@ in
 evalModules {
   inherit specialArgs;
   modules =
-    argz.modules
+    arguments.modules
     ++ baseModules
     ++ [ moduleArgsModule ]
     ++ (optional iuzQemuVmModule qemuVmModule)

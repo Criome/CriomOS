@@ -1,6 +1,6 @@
 {
   lib,
-  hyraizyn,
+  horizon,
   config,
   pkgs,
   ...
@@ -16,9 +16,9 @@ let
     isOdd
     ;
   inherit (lib.generators) toINI;
-  inherit (hyraizyn.astra) typeIs;
-  inherit (hyraizyn.astra.mycin) modyl korz;
-  inherit (hyraizyn.astra.methods)
+  inherit (horizon.astra) typeIs;
+  inherit (horizon.astra.mycin) modyl korz;
+  inherit (horizon.astra.methods)
     sizedAtLeast
     tcipIzIntel
     modylIzThinkpad

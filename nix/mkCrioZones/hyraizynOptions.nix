@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  metastrizSpiciz,
+  clustersSpecies,
   ...
 }:
 let
@@ -18,23 +18,23 @@ let
     attrs
     ;
 
-  inherit (metastrizSpiciz)
-    metastriNames
-    astriSpiciz
+  inherit (clustersSpecies)
+    metnodeNames
+    nodeSpecies
     magnytiud
     sistymz
     komynUserOptions
-    mycinSpici
+    mycinSpecies
     IoOptions
     ;
 
-  astriOptions = {
+  nodeOptions = {
     name = mkOption {
       type = str;
     };
 
-    spici = mkOption {
-      type = enum astriSpiciz;
+    species = mkOption {
+      type = enum nodeSpecies;
       default = "sentyr";
     };
 
@@ -60,7 +60,7 @@ let
     };
 
     mycin = mkOption {
-      type = mycinSpici;
+      type = mycinSpecies;
     };
 
     yggPreCriome = mkOption {
@@ -78,7 +78,7 @@ let
       default = null;
     };
 
-    eseseitc = mkOption {
+    ssh = mkOption {
       type = nullOr str;
       default = null;
     };
@@ -93,7 +93,7 @@ let
       default = [ ];
     };
 
-    neksysIp = mkOption {
+    nodeIp = mkOption {
       type = nullOr str;
       default = null;
     };
@@ -122,7 +122,7 @@ let
   clusterSubmodule = {
     options = {
       name = mkOption {
-        type = enum metastriNames;
+        type = enum metnodeNames;
       };
 
       methods = mkOption {
@@ -132,7 +132,7 @@ let
     };
   };
 
-  astraOptions = astriOptions // {
+  astraOptions = nodeOptions // {
     io = mkOption {
       type = submodule { options = IoOptions; };
       default = { };
@@ -156,7 +156,7 @@ let
     };
   };
 
-  hyraizynOptions = {
+  horizonOptions = {
     options = {
       cluster = mkOption {
         type = submodule clusterSubmodule;
@@ -166,9 +166,9 @@ let
         type = submodule { options = astraOptions; };
       };
 
-      exAstriz = mkOption {
+      exNodes = mkOption {
         type = attrsOf (submodule {
-          options = astriOptions;
+          options = nodeOptions;
         });
       };
 
@@ -186,8 +186,8 @@ let
 in
 {
   options = {
-    hyraizyn = mkOption {
-      type = submodule hyraizynOptions;
+    horizon = mkOption {
+      type = submodule horizonOptions;
     };
 
     astraName = mkOption {

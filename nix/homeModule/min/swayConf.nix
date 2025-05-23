@@ -1,4 +1,4 @@
-argz: with argz; ''
+arguments: with arguments; ''
   exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
   # ## Variables
 

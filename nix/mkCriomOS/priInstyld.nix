@@ -1,9 +1,9 @@
-{ kor, hyraizyn, ... }:
+{ kor, horizon, ... }:
 let
   inherit (builtins) mapAttrs attrNames filter;
   inherit (kor) optionals mkIf optional;
 
-  inherit (hyraizyn.astra.io) disks swapDevices butlodyr;
+  inherit (horizon.astra.io) disks swapDevices butlodyr;
 
 in
 {

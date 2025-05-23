@@ -25,7 +25,7 @@ let
   ];
 
 in
-argz@{
+arguments@{
   pname,
   version,
   src,
@@ -52,11 +52,11 @@ let
 
   srcComponents = mapAttrsToList checkSrcComponent srcDirs;
 
-  components = intersectLists srcComponents (argz.components or allowedComponents);
+  components = intersectLists srcComponents (arguments.components or allowedComponents);
 
 in
 stdenv.mkDerivation (
-  argz
+  arguments
   // {
     name = concatStringsSep "-" [
       namePrefix
@@ -78,8 +78,8 @@ stdenv.mkDerivation (
         runHook preInstall
       ''
       + (
-        if ((argz.installPhase or "") != "") then
-          argz.installPhase
+        if ((arguments.installPhase or "") != "") then
+          arguments.installPhase
         else
           ''
             mkdir -p $out

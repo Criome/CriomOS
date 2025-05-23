@@ -32,7 +32,7 @@
             mkCriomOS = ./nix/mkCriomOS;
             pkdjz = ./nix/pkdjz;
             homeModule = ./nix/homeModule;
-            neksysNames = ./neksysNames.nix;
+            nodeNames = ./nodeNames.nix;
             tests = ./nix/tests;
             files = ./nix/files;
           };
@@ -53,7 +53,7 @@
       inherit (hob) flake-utils lib;
       inherit (localSources)
         kor
-        neksysNames
+        nodeNames
         mkPkgs
         homeModule
         mkCriomOS
@@ -98,24 +98,24 @@
       generateCrioSphereProposalFromName =
         name:
         let
-          subCriomeConfig = inputs."${name}".NeksysProposal or { };
-          explicitNodes = subCriomeConfig.astriz or { };
+          subCriomeConfig = inputs."${name}".NodeProposal or { };
+          explicitNodes = subCriomeConfig.nodes or { };
           implicitNodes = import ./implicitNodes.nix;
           allNodes = explicitNodes // implicitNodes;
         in
-        subCriomeConfig // { astriz = allNodes; };
+        subCriomeConfig // { nodes = allNodes; };
 
-      uncheckedCrioSphereProposal = genAttrs neksysNames generateCrioSphereProposalFromName;
+      uncheckedCrioSphereProposal = genAttrs nodeNames generateCrioSphereProposalFromName;
 
-      mkNeksysDerivations =
-        priNeksysName: crioZone:
+      mkNodeDerivations =
+        preNodeName: crioZone:
         let
           inherit (crioZone) users;
           inherit (crioZone.astra.mycin) ark;
           system = arkSistymMap.${ark};
           pkgsAndUyrld = mkPkgsAndUyrld system;
           inherit (pkgsAndUyrld) pkgs uyrld;
-          hyraizyn = crioZone;
+          horizon = crioZone;
 
           userProfiles = {
             light = {
@@ -140,7 +140,7 @@
                       kor
                       pkdjz
                       uyrld
-                      hyraizyn
+                      horizon
                       user
                       profile
                       ;
@@ -167,7 +167,7 @@
               criomOS
               kor
               uyrld
-              hyraizyn
+              horizon
               homeModule
               hob
               ;
@@ -179,10 +179,10 @@
       mkEachCrioZoneDerivations =
         crioZones:
         let
-          mkNeksysDerivationIndex =
-            neksysName: neksysPrineksysIndeks: mapAttrs mkNeksysDerivations neksysPrineksysIndeks;
+          mkNodeDerivationIndex =
+            nodeName: nodePreNodeIndeks: mapAttrs mkNodeDerivations nodePreNodeIndeks;
         in
-        mapAttrs mkNeksysDerivationIndex crioZones;
+        mapAttrs mkNodeDerivationIndex crioZones;
 
       mkNixApiOutputsPerSystem =
         system:

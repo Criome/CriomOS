@@ -4,7 +4,7 @@
   pkgs,
   pkdjz,
   user,
-  hyraizyn,
+  horizon,
   config,
   profile,
   uyrld,
@@ -22,7 +22,7 @@ let
     importJSON
     ;
   inherit (pkdjz) kynvyrt;
-  inherit (hyraizyn) astra;
+  inherit (horizon) astra;
   inherit (user.methods)
     iuzColemak
     hazPreCriome
@@ -136,7 +136,7 @@ let
     waylandPass
     # helvum # Broken? Pipewire nodes UI
     coppwr # Pipewire Nodes UI
-    # TODO('hyraizyn language')
+    # TODO('horizon language')
     (hunspellWithDicts [ hunspellDicts.en-us-large ])
     (aspellWithDicts (
       ds: with ds; [

@@ -1,7 +1,7 @@
 {
   config,
   kor,
-  hyraizyn,
+  horizon,
   pkgs,
   lib,
   uyrld,
@@ -19,27 +19,27 @@ let
     optionalAttrs
     ;
   inherit (pkgs) mksh writeScript gnupg;
-  inherit (hyraizyn) astra exAstriz;
-  inherit (hyraizyn.astra) typeIs;
-  inherit (hyraizyn.astra.methods) tcipIzIntel sizedAtLeast iuzColemak;
+  inherit (horizon) astra exNodes;
+  inherit (horizon.astra) typeIs;
+  inherit (horizon.astra.methods) tcipIzIntel sizedAtLeast iuzColemak;
 
   # TODO
   hasAudioOutput = true;
   hasVideoOutput = true;
   hasAcceleratedVideoOutput = true;
 
-  jsonHyraizynFail = eksportJSON "hyraizyn.json" hyraizyn;
+  jsonHorizonFail = eksportJSON "horizon.json" horizon;
 
   criomOSShell = mksh + mksh.shellPath;
 
-  mkAstriKnownHost =
-    n: astri:
+  mkNodeKnownHost =
+    n: node:
     concatStringsSep " " [
-      astri.criomOSName
-      astri.eseseitc
+      node.criomOSName
+      node.ssh
     ];
 
-  sshKnownHosts = concatStringsSep "\n" (mapAttrsToList mkAstriKnownHost exAstriz);
+  sshKnownHosts = concatStringsSep "\n" (mapAttrsToList mkNodeKnownHost exNodes);
 
 in
 {
@@ -72,8 +72,8 @@ in
           echo "SSH_AUTH_SOCK=$(${gnupg}/bin/gpgconf --list-dirs agent-ssh-socket)"
       '';
       "ssh/ssh_known_hosts".text = sshKnownHosts;
-      "hyraizyn.json" = {
-        source = jsonHyraizynFail;
+      "horizon.json" = {
+        source = jsonHorizonFail;
         mode = "0600";
       };
     };

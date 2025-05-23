@@ -1,6 +1,6 @@
 {
   kor,
-  hyraizyn,
+  horizon,
   config,
   pkgs,
   lib,
@@ -18,8 +18,8 @@ let
     ;
   inherit (lib) mkOverride;
 
-  inherit (hyraizyn.astra) typeIs;
-  inherit (hyraizyn.astra.methods) sizedAtLeast;
+  inherit (horizon.astra) typeIs;
+  inherit (horizon.astra.methods) sizedAtLeast;
 
   minPackages = optionals sizedAtLeast.min (
     with pkgs;

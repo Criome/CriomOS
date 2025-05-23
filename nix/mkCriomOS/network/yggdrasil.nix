@@ -1,14 +1,14 @@
 {
   kor,
   pkgs,
-  hyraizyn,
+  horizon,
   konstynts,
   ...
 }:
 let
   inherit (builtins) mapAttrs attrNames filter;
   inherit (kor) mkIf optionalString;
-  inherit (hyraizyn.astra.methods) hasYggPrecriad;
+  inherit (horizon.astra.methods) hasYggPrecriad;
   inherit (konstynts) fileSystem;
   inherit (konstynts.fileSystem.yggdrasil)
     preCriadJson

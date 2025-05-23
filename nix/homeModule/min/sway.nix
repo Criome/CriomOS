@@ -5,7 +5,7 @@
   user,
   config,
   profile,
-  hyraizyn,
+  horizon,
   ...
 }:
 let
@@ -24,7 +24,7 @@ let
   inherit (user) saiz;
   inherit (profile) dark;
   inherit (pkgs) writeText;
-  inherit (hyraizyn.astra.mycin) modyl;
+  inherit (horizon.astra.mycin) modyl;
 
   shellLaunch = command: "${shell} -c '${command}'";
   homeDir = config.home.homeDirectory;
@@ -39,7 +39,7 @@ let
   termBrowser = shellLaunch "exec ${terminal} -e ${nixProfileExec "w3m"}";
   terminal = nixProfileExec "foot";
 
-  swayArgz = {
+  swayArguments = {
     inherit iuzColemak optionalString;
     waybarEksek = nixProfileExec "waybar";
     swaylockEksek = nixProfileExec "swaylock";
@@ -50,7 +50,7 @@ let
     shellTerm = shellLaunch "export SHELL=${zshEksek}; exec ${terminal} ${zshEksek}";
   };
 
-  swayConfigString = import ./swayConf.nix swayArgz;
+  swayConfigString = import ./swayConf.nix swayArguments;
 
 in
 mkIf sizedAtLeast.min {

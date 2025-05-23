@@ -1,9 +1,9 @@
 {
   liveIso-x86-64-small = {
-    spici = "haibrid";
+    species = "haibrid";
     saiz = 1;
     mycin = {
-      spici = "metyl";
+      species = "metyl";
       ark = "x86-64";
     };
   };

@@ -7,41 +7,41 @@ let
   inherit (builtins) mapAttrs;
   inherit (lib) evalModules;
 
-  metastriz = proposedCrioSphere;
+  clusters = proposedCrioSphere;
 
-  hyraizynOptions = import ./hyraizynOptions.nix;
-  mkHyraizynModule = import ./mkHyraizynModule.nix;
+  horizonOptions = import ./horizonOptions.nix;
+  mkHorizonModule = import ./mkHorizonModule.nix;
 
   mkCrioZone =
     clusterName: astraName:
     let
-      argzModule = {
+      argumentsModule = {
         config = {
           inherit astraName clusterName;
           _module.args = {
             inherit kor lib;
-            Metastriz = metastriz.datom;
-            metastrizSpiciz = metastriz.spiciz;
+            Clusters = clusters.datom;
+            clustersSpecies = clusters.species;
           };
         };
       };
 
-      ivaliueicyn = evalModules {
+      evaluation = evalModules {
         modules = [
-          argzModule
-          hyraizynOptions
-          mkHyraizynModule
+          argumentsModule
+          horizonOptions
+          mkHorizonModule
         ];
       };
 
-      crioZone = ivaliueicyn.config.hyraizyn;
+      crioZone = evaluation.config.horizon;
 
     in
     crioZone;
 
-  mkNeksysCrioZones = neksysName: neksys: mapAttrs (pnn: pn: mkCrioZone neksysName pnn) neksys.astriz;
+  mkNodeCrioZones = nodeName: node: mapAttrs (pnn: pn: mkCrioZone nodeName pnn) node.nodes;
 
-  ryzylt = mapAttrs mkNeksysCrioZones proposedCrioSphere.datom;
+  ryzylt = mapAttrs mkNodeCrioZones proposedCrioSphere.datom;
 
 in
 ryzylt

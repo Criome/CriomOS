@@ -3,7 +3,7 @@
   lib,
   pkgs,
   hob,
-  hyraizyn,
+  horizon,
   uyrld,
   konstynts,
   config,
@@ -21,13 +21,13 @@ let
     optionalAttrs
     ;
 
-  inherit (hyraizyn.cluster.methods) trostydBildPreCriomes;
-  inherit (hyraizyn) astra;
-  inherit (hyraizyn.astra.methods)
+  inherit (horizon.cluster.methods) trostydBildPreCriomes;
+  inherit (horizon) astra;
+  inherit (horizon.astra.methods)
     bildyrKonfigz
     kacURLz
-    dispatcyrzEseseitcKiz
-    exAstrizEseseitcPreCriomes
+    dispatcyrzSshKiz
+    exNodesSshPreCriomes
     sizedAtLeast
     isBuilder
     isNixCache
@@ -39,7 +39,7 @@ let
   inherit (konstynts.fileSystem.niks) preCriad;
   inherit (konstynts.network.niks) serve;
 
-  jsonHyraizynFail = eksportJSON "hyraizyn.json" hyraizyn;
+  jsonHorizonFail = eksportJSON "horizon.json" horizon;
 
   flakeEntriesOverrides =
     {
@@ -124,8 +124,8 @@ let
 
 in
 {
-  environment.etc."hyraizyn.json" = {
-    source = jsonHyraizynFail;
+  environment.etc."horizon.json" = {
+    source = jsonHorizonFail;
     mode = "0600";
   };
 
@@ -167,7 +167,7 @@ in
     };
 
     sshServe.enable = true;
-    sshServe.keys = exAstrizEseseitcPreCriomes;
+    sshServe.keys = exNodesSshPreCriomes;
 
     # Lowest priorities
     daemonCPUSchedPolicy = "idle";
@@ -210,7 +210,7 @@ in
         nixBuilder = {
           isNormalUser = true;
           useDefaultShell = true;
-          openssh.authorizedKeys.keys = dispatcyrzEseseitcKiz;
+          openssh.authorizedKeys.keys = dispatcyrzSshKiz;
         };
       });
   };

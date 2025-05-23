@@ -1,7 +1,7 @@
 {
   kor,
   pkgs,
-  hyraizyn,
+  horizon,
   konstynts,
   pkdjz,
   ...
@@ -19,8 +19,8 @@ let
     optionalAttrs
     filterAttrs
     ;
-  inherit (hyraizyn) astra exAstriz;
-  inherit (hyraizyn.astra.methods)
+  inherit (horizon) astra exNodes;
+  inherit (horizon.astra.methods)
     hasWireguardPrecriad
     wireguardUntrustedProxies
     ;
@@ -36,15 +36,15 @@ let
 
   untrustedProxiesIps = map mkUntrustedProxyIp wireguardUntrustedProxies;
 
-  mkNeksysPeer = name: astri: {
-    allowedIPs = [ astri.neksysIp ];
-    publicKey = astri.wireguardPreCriome;
-    endpoint = "wg.${astri.criomOSName}:51820";
+  mkNodePeer = name: node: {
+    allowedIPs = [ node.nodeIp ];
+    publicKey = node.wireguardPreCriome;
+    endpoint = "wg.${node.criomOSName}:51820";
   };
 
-  criomeaizdPriNeksiz = filterAttrs (n: v: v.methods.hasWireguardPrecriad) exAstriz;
+  validPreNodes = filterAttrs (n: v: v.methods.hasWireguardPrecriad) exNodes;
 
-  neksysPeers = mapAttrsToList mkNeksysPeer criomeaizdPriNeksiz;
+  nodePeers = mapAttrsToList mkNodePeer validPreNodes;
 
   privateKeyFile = "/etc/wireguard/privateKey";
 
@@ -60,10 +60,10 @@ in
           inherit privateKeyFile;
         };
 
-        wgNeksys = {
-          ips = [ astra.neksysIp ];
+        wgNode = {
+          ips = [ astra.nodeIp ];
           inherit privateKeyFile;
-          peers = neksysPeers;
+          peers = nodePeers;
           listenPort = 51820;
         };
 

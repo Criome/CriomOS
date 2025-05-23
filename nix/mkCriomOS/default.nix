@@ -3,17 +3,17 @@
   homeModule,
   kor,
   uyrld,
-  hyraizyn,
+  horizon,
   hob,
 }:
 let
   inherit (kor) optional;
   inherit (uyrld) pkdjz home-manager;
   inherit (pkdjz) ivalNixos;
-  inherit (hyraizyn.astra) mycin io typeIs;
+  inherit (horizon.astra) mycin io typeIs;
 
-  iuzPodModule = (mycin.spici == "pod");
-  iuzMetylModule = (mycin.spici == "metyl");
+  iuzPodModule = (mycin.species == "pod");
+  iuzMetylModule = (mycin.species == "metyl");
 
   useRouterModule = typeIs.haibrid || typeIs.router;
   iuzEdjModule = typeIs.edj || typeIs.haibrid || typeIs.edjTesting;
@@ -55,7 +55,7 @@ let
       kor
       uyrld
       pkdjz
-      hyraizyn
+      horizon
       criomOS
       homeModule
       hob
@@ -63,15 +63,15 @@ let
     konstynts = import ./konstynts.nix;
   };
 
-  ivaliueicyn = ivalNixos {
+  evaluation = ivalNixos {
     inherit iuzIsoModule;
     moduleArgs = nixosArgs;
     modules = nixosModules;
   };
 
-  bildNiksOSVM = ivaliueicyn.config.system.build.vm;
-  bildNiksOSIso = ivaliueicyn.config.system.build.isoImage;
-  bildNiksOS = ivaliueicyn.config.system.build.toplevel;
+  bildNiksOSVM = evaluation.config.system.build.vm;
+  bildNiksOSIso = evaluation.config.system.build.isoImage;
+  bildNiksOS = evaluation.config.system.build.toplevel;
 
 in
 if iuzIsoModule then bildNiksOSIso else bildNiksOS

@@ -2,7 +2,7 @@
   kor,
   lib,
   config,
-  priMetastriz,
+  preClusters,
   ...
 }:
 let
@@ -41,7 +41,7 @@ let
     "colemak"
   ];
 
-  astriSpiciz = [
+  nodeSpecies = [
     "sentyr"
     "haibrid"
     "edj"
@@ -50,11 +50,11 @@ let
     "router"
   ];
 
-  metastriNames = attrNames priMetastriz;
+  metnodeNames = attrNames preClusters;
 
   preCriomeSubmodule = {
     options = {
-      eseseitc = mkOption {
+      ssh = mkOption {
         type = str;
       };
 
@@ -70,7 +70,7 @@ let
       default = 0;
     };
 
-    spici = mkOption {
+    species = mkOption {
       type = enum [
         "Niks"
         "Sema"
@@ -106,9 +106,9 @@ let
 
   };
 
-  mycinSpici = submodule {
+  mycinSpecies = submodule {
     options = {
-      spici = mkOption {
+      species = mkOption {
         type = enum [
           "metyl"
           "pod"
@@ -132,11 +132,11 @@ let
       };
 
       mothyrBord = mkOption {
-        type = nullOr (enum mothyrBordSpiciNames);
+        type = nullOr (enum mothyrBordSpeciesNames);
         default = null;
       };
 
-      ubyrAstri = mkOption {
+      ubyrNode = mkOption {
         type = nullOr str;
         default = null;
       };
@@ -170,27 +170,27 @@ let
     };
   };
 
-  mothyrBordSpiciNames = [ "ondyfaind" ];
+  mothyrBordSpeciesNames = [ "ondyfaind" ];
 
 in
 {
   options = {
-    spiciz = mkOption {
+    species = mkOption {
       type = attrs;
       default = { };
     };
   };
 
-  config.spiciz = {
+  config.species = {
     inherit
       komynUserOptions
       IoOptions
-      mycinSpici
+      mycinSpecies
       kibordz
       butlodyrz
       magnytiud
-      metastriNames
-      astriSpiciz
+      metnodeNames
+      nodeSpecies
       sistymz
       ;
   };

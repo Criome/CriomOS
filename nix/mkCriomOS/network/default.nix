@@ -1,34 +1,34 @@
 {
   kor,
   lib,
-  hyraizyn,
+  horizon,
   ...
 }:
 let
   inherit (kor) concatMapAttrs;
   inherit (lib) mkOverride optional optionals;
-  inherit (hyraizyn) astra exAstriz;
+  inherit (horizon) astra exNodes;
   inherit (builtins) concatStringsSep;
 
   mkCriomeHostEntries =
-    name: astri:
+    name: node:
     let
-      inherit (astri) criomOSName neksysIp yggAddress;
-      inherit (astri.methods) isNixCache nixCacheDomain;
+      inherit (node) criomOSName nodeIp yggAddress;
+      inherit (node.methods) isNixCache nixCacheDomain;
 
-      mkPreNeksysHost = linkLocalIP: {
+      mkPreNodeHost = linkLocalIP: {
         name = linkLocalIP;
         value = [ ("wg." + criomOSName) ];
       };
 
-      neksysHost = {
-        name = neksysIp;
+      nodeHost = {
+        name = nodeIp;
         value = [ criomOSName ];
       };
 
-      preNeksysHosts = map mkPreNeksysHost astri.linkLocalIPs;
+      preNodeHosts = map mkPreNodeHost node.linkLocalIPs;
 
-      neksysHosts = optionals (neksysIp != null) ([ neksysHost ] ++ preNeksysHosts);
+      nodeHosts = optionals (nodeIp != null) ([ nodeHost ] ++ preNodeHosts);
 
       yggdrasilHost = optional (yggAddress != null) {
         name = yggAddress;
@@ -36,7 +36,7 @@ let
       };
 
     in
-    yggdrasilHost ++ neksysHosts;
+    yggdrasilHost ++ nodeHosts;
 
 in
 {
@@ -52,7 +52,7 @@ in
       "::1"
       "127.0.0.1"
     ];
-    hosts = concatMapAttrs mkCriomeHostEntries exAstriz;
+    hosts = concatMapAttrs mkCriomeHostEntries exNodes;
   };
 
   services = {

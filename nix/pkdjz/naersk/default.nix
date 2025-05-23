@@ -1,4 +1,4 @@
-argz@{
+arguments@{
   self,
   cargo,
   darwin,
@@ -15,8 +15,8 @@ argz@{
   zstd,
 }:
 let
-  buildArgz =
-    (removeAttrs argz [
+  buildArguments =
+    (removeAttrs arguments [
       "self"
       "xorg"
     ])
@@ -26,4 +26,4 @@ let
   buildLamdy = import (self + /default.nix);
 
 in
-buildLamdy buildArgz
+buildLamdy buildArguments

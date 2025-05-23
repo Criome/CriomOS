@@ -1,12 +1,12 @@
 {
   lib,
-  hyraizyn,
+  horizon,
   config,
   ...
 }:
 let
   l = lib // builtins;
-  inherit (hyraizyn.astra) typeIs;
+  inherit (horizon.astra) typeIs;
 
   wanInterface = "enp0s20u2c2";
   lanInterfaceOne = "enp0s25";
