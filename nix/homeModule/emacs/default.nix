@@ -7,8 +7,8 @@
   ...
 }:
 let
-  inherit (pkdjz) meikImaks;
-  package = meikImaks { inherit user profile; };
+  inherit (pkdjz) mkEmacs;
+  package = mkEmacs { inherit user profile; };
 
 in
 {

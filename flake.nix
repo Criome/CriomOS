@@ -152,13 +152,13 @@
             in
             mapAttrs mkProfileHom userProfiles;
 
-          mkUserImaks =
+          mkUserEmacs =
             userName: user:
             let
-              inherit (world.pkdjz) meikImaks;
-              mkProfileImaks = profileName: profile: meikImaks { inherit user profile; };
+              inherit (world.pkdjz) mkEmacs;
+              mkProfileEmacs = profileName: profile: mkEmacs { inherit user profile; };
             in
-            mapAttrs mkProfileImaks userProfiles;
+            mapAttrs mkProfileEmacs userProfiles;
 
         in
         {
@@ -173,7 +173,7 @@
               ;
           };
           hom = mapAttrs mkUserHomes users;
-          imaks = mapAttrs mkUserImaks users;
+          emacs = mapAttrs mkUserEmacs users;
         };
 
       mkEachCrioZoneDerivations =

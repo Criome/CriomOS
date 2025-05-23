@@ -19,13 +19,13 @@ let
       name = flake.name or name;
     };
 
-  meikSobWorld =
-    SobWorld@{
+  mkSubWorld =
+    SubWorld@{
       lamdy,
       modz,
       self ? src,
       src ? self,
-      sobWorlds ? { },
+      subWorlds ? { },
     }:
     let
       Modz = [
@@ -51,7 +51,7 @@ let
         // optionalAttrs useMod.pkgsSet { inherit pkgs; }
         // optionalAttrs useMod.worldSet { inherit world; }
         // optionalAttrs useMod.mkPkgs { inherit mkPkgs; }
-        // sobWorlds
+        // subWorlds
         // {
           inherit kor lib;
         }
@@ -71,7 +71,7 @@ let
 
   mkWorldFunction =
     flake:
-    meikSobWorld {
+    mkSubWorld {
       modz = [
         "pkgs"
         "pkdjz"
@@ -84,18 +84,18 @@ let
     spokName:
     fleik@{ ... }:
     let
-      priMeikSobWorld =
+      priMkSubWorld =
         name:
-        SobWorld@{
+        SubWorld@{
           modz ? [ ],
           lamdy,
           ...
         }:
         let
-          src = SobWorld.src or (SobWorld.self or fleik);
+          src = SubWorld.src or (SubWorld.self or fleik);
           self = src;
         in
-        meikSobWorld {
+        mkSubWorld {
           inherit
             src
             self
@@ -104,7 +104,7 @@ let
             ;
         };
 
-      priMeikHobWorld =
+      priMkHobWorld =
         name:
         HobWorld@{
           modz ? [ "pkgs" ],
@@ -116,7 +116,7 @@ let
           src = HobWorld.src or (HobWorld.self or implaidSelf);
           self = src;
         in
-        meikSobWorld {
+        mkSubWorld {
           inherit
             src
             self
@@ -125,40 +125,40 @@ let
             ;
         };
 
-      meikHobWorlds =
+      mkHobWorlds =
         HobWorlds:
         let
           priHobWorlds = HobWorlds hob;
         in
-        mapAttrs priMeikHobWorld priHobWorlds;
+        mapAttrs priMkHobWorld priHobWorlds;
 
-      meikSobWorlds =
-        SobWorlds:
+      mkSubWorlds =
+        SubWorlds:
         let
-          priMeikSobWorlds =
+          priMkSubWorlds =
             name:
-            SobWorld@{
+            SubWorld@{
               modz ? [ ],
               lamdy,
               ...
             }:
             let
-              src = SobWorld.src or (SobWorld.self or fleik);
+              src = SubWorld.src or (SubWorld.self or fleik);
               self = src;
             in
-            meikSobWorld {
+            mkSubWorld {
               inherit
                 src
                 self
                 modz
                 lamdy
-                sobWorlds
+                subWorlds
                 ;
             };
 
-          sobWorlds = mapAttrs priMeikSobWorlds SobWorlds;
+          subWorlds = mapAttrs priMkSubWorlds SubWorlds;
         in
-        sobWorlds;
+        subWorlds;
 
       mkNodeWebpageName = nodeName: [
         (nodeName + "Webpage")
@@ -210,13 +210,13 @@ let
     if (hasAttr "type" fleik) then
       mkTypedFlake
     else if (hasAttr "HobWorlds" fleik) then
-      meikHobWorlds fleik.HobWorlds
+      mkHobWorlds fleik.HobWorlds
     else if (hasAttr "HobWorld" fleik) then
-      priMeikHobWorld spokName (fleik.HobWorld hob)
-    else if (hasAttr "SobWorlds" fleik) then
-      meikSobWorlds fleik.SobWorlds
-    else if (hasAttr "SobWorld" fleik) then
-      priMeikSobWorld spokName fleik.SobWorld
+      priMkHobWorld spokName (fleik.HobWorld hob)
+    else if (hasAttr "SubWorlds" fleik) then
+      mkSubWorlds fleik.SubWorlds
+    else if (hasAttr "SubWorld" fleik) then
+      priMkSubWorld spokName fleik.SubWorld
     else if (isWebpageSpok spokName) then
       mkZolaWebsite { src = fleik; }
     # else if hasFleikFile then makeFleik

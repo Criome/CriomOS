@@ -136,10 +136,10 @@ in
 
 { user, profile }:
 let
-  imaksTheme = if profile.dark then "'modus-vivendi" else "'modus-operandi";
+  emacsTheme = if profile.dark then "'modus-vivendi" else "'modus-operandi";
 
   loadTheme = ''
-    (load-theme ${imaksTheme} t)
+    (load-theme ${emacsTheme} t)
   '';
 
   commonPackagesEl = readFile ./packages.el;
@@ -184,8 +184,8 @@ let
 
   treeSitterPackages = [ (emacsPackages.treesit-grammars.with-all-grammars) ];
 
-  imaksPackages = usePackages ++ [ defaultElPackage ] ++ treeSitterPackages;
-  imaks = withPackages imaksPackages;
+  emacsPackages = usePackages ++ [ defaultElPackage ] ++ treeSitterPackages;
+  emacs = withPackages emacsPackages;
 
 in
-imaks
+emacs

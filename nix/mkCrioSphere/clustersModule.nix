@@ -21,7 +21,7 @@ let
     metnodeNames
     nodeSpecies
     komynUserOptions
-    machineSpecie
+    machineSpecies
     IoOptions
     ;
 

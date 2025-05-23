@@ -169,9 +169,9 @@ rec {
     let
       aylSpecies = map getSpecies species;
       names = unique (map (s: s.name) aylSpecies);
-      meikNamedYrei = name: map (s: s.value) (filter (s: s.name == name) aylSpecies);
+      mkNamedYrei = name: map (s: s.value) (filter (s: s.name == name) aylSpecies);
     in
-    genAttrs names meikNamedYrei;
+    genAttrs names mkNamedYrei;
 
   matchEnum = enum: match: genAttrs enum (name: name == match);
 

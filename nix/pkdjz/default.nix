@@ -66,8 +66,8 @@ let
       lamdy = import ./mach-nix;
     };
 
-    meikImaks = {
-      lamdy = import ./meikImaks;
+    mkEmacs = {
+      lamdy = import ./mkEmacs;
       modz = [
         "pkgsSet"
         "hob"
