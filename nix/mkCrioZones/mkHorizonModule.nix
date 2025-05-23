@@ -169,7 +169,7 @@ let
             !typeIs.edj && isFullyTrusted && (sizedAtLeast.med || typeIs.sentyr) && hasBasePrecriads;
           isDispatcher = !typeIs.sentyr && isFullyTrusted && sizedAtLeast.min;
           isNixCache = typeIs.sentyr && sizedAtLeast.min && hasBasePrecriads;
-          hasNixPreCriad = nixPreCriome != null && nixPreCriome != "";
+          hasNixPreCriad = node.nixPreCriome != null && node.nixPreCriome != "";
           hasYggPrecriad = yggAddress != null && yggAddress != "";
           hasSshPrecriad = hasAttr "ssh" inputNode.preCriomes;
           hasWireguardPrecriad = wireguardPreCriome != null;
@@ -181,7 +181,7 @@ let
           nixPreCriome = optionalString hasNixPreCriad (
             concatStringsSep ":" [
               criomOSName
-              nixPreCriome
+              node.nixPreCriome
             ]
           );
 
