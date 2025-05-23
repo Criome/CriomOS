@@ -25,7 +25,7 @@ let
     optionalAttrs
     ;
   inherit (user.methods) isCodeDev sizedAtLeast useColemak;
-  inherit (horizon) astra;
+  inherit (horizon) node;
   inherit (profile) dark;
   inherit (pkgs) parinfer-rust writeText;
   inherit (pkdjz) vimPloginz;

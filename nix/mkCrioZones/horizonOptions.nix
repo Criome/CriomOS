@@ -132,7 +132,7 @@ let
     };
   };
 
-  astraOptions = nodeOptions // {
+  nodeOptions = nodeOptions // {
     io = mkOption {
       type = submodule { options = IoOptions; };
       default = { };
@@ -162,8 +162,8 @@ let
         type = submodule clusterSubmodule;
       };
 
-      astra = mkOption {
-        type = submodule { options = astraOptions; };
+      node = mkOption {
+        type = submodule { options = nodeOptions; };
       };
 
       exNodes = mkOption {
@@ -190,7 +190,7 @@ in
       type = submodule horizonOptions;
     };
 
-    astraName = mkOption {
+    nodeName = mkOption {
       type = str;
     };
 

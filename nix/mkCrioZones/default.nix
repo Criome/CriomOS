@@ -13,11 +13,11 @@ let
   mkHorizonModule = import ./mkHorizonModule.nix;
 
   mkCrioZone =
-    clusterName: astraName:
+    clusterName: nodeName:
     let
       argumentsModule = {
         config = {
-          inherit astraName clusterName;
+          inherit nodeName clusterName;
           _module.args = {
             inherit kor lib;
             Clusters = clusters.datom;

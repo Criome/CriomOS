@@ -6,7 +6,7 @@
 }:
 let
   l = lib // builtins;
-  inherit (horizon.astra) typeIs;
+  inherit (horizon.node) typeIs;
 
   wanInterface = "enp0s20u2c2";
   lanInterfaceOne = "enp0s25";

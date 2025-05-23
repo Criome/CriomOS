@@ -114,7 +114,7 @@
         preNodeName: crioZone:
         let
           inherit (crioZone) users;
-          inherit (crioZone.astra.machine) arch;
+          inherit (crioZone.node.machine) arch;
           system = archToSystemMap.${arch};
           pkgsAndWorld = mkPkgsAndWorld system;
           inherit (pkgsAndWorld) pkgs world;

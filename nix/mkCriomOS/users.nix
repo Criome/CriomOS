@@ -22,8 +22,8 @@ let
     optionalAttrs
     ;
 
-  inherit (horizon) astra exNodes users;
-  inherit (astra.methods) adminSshPreCriomes;
+  inherit (horizon) node exNodes users;
+  inherit (node.methods) adminSshPreCriomes;
 
   userNames = attrNames users;
 

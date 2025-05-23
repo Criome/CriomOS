@@ -11,12 +11,12 @@
 let
   inherit (builtins) map;
   inherit (lib) mkOverride;
-  inherit (horizon.astra) criomOSName;
+  inherit (horizon.node) criomOSName;
   inherit (pkdjz) trust-dns;
 
   trustDnsEksek = "${trust-dns}/bin/named";
 
-  astraZone = {
+  nodeZone = {
     zone = criomOSName;
     zone_type = "Master";
     file = "example.com.zone";

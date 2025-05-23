@@ -22,7 +22,7 @@ let
     importJSON
     ;
   inherit (pkdjz) kynvyrt;
-  inherit (horizon) astra;
+  inherit (horizon) node;
   inherit (user.methods)
     useColemak
     hasPreCriome
@@ -168,7 +168,7 @@ let
       parted # Disk utils
       wireguard-tools
     ]
-    ++ (optionals (astra.machine.arch == "x86-64") [ i7z ]);
+    ++ (optionals (node.machine.arch == "x86-64") [ i7z ]);
 
   programmingTools = with pkgs; [
     # C
@@ -322,7 +322,7 @@ mkIf sizedAtLeast.min {
       defaultCacheTtlSsh = 3600;
       maxCacheTtlSsh = 86400;
       enableSshSupport = true;
-      sshKeys = (optional hasPreCriome user.preCriomes.${astra.name}.keygrip);
+      sshKeys = (optional hasPreCriome user.preCriomes.${node.name}.keygrip);
     };
 
     mpd = {

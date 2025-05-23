@@ -3,7 +3,7 @@ let
   inherit (builtins) mapAttrs attrNames filter;
   inherit (kor) optionals mkIf optional;
 
-  inherit (horizon.astra.io) disks swapDevices bootloader;
+  inherit (horizon.node.io) disks swapDevices bootloader;
 
 in
 {

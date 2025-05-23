@@ -8,7 +8,7 @@
 let
   inherit (builtins) mapAttrs attrNames filter;
   inherit (kor) mkIf optionalString;
-  inherit (horizon.astra.methods) hasYggPrecriad;
+  inherit (horizon.node.methods) hasYggPrecriad;
   inherit (konstynts) fileSystem;
   inherit (konstynts.fileSystem.yggdrasil)
     preCriadJson

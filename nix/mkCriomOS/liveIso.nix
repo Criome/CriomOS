@@ -13,7 +13,7 @@ let
   inherit (lib) mkOverride;
   inherit (world) mkHomeConfig pkdjz;
 
-  useMetalModule = horizon.astra.machine.species == "metal";
+  useMetalModule = horizon.node.machine.species == "metal";
   profile = {
     dark = false;
   };

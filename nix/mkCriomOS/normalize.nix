@@ -19,9 +19,9 @@ let
     optionalAttrs
     ;
   inherit (pkgs) mksh writeScript gnupg;
-  inherit (horizon) astra exNodes;
-  inherit (horizon.astra) typeIs;
-  inherit (horizon.astra.methods) tcipIzIntel sizedAtLeast useColemak;
+  inherit (horizon) node exNodes;
+  inherit (horizon.node) typeIs;
+  inherit (horizon.node.methods) tcipIzIntel sizedAtLeast useColemak;
 
   # TODO
   hasAudioOutput = true;

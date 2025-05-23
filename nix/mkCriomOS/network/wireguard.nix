@@ -19,8 +19,8 @@ let
     optionalAttrs
     filterAttrs
     ;
-  inherit (horizon) astra exNodes;
-  inherit (horizon.astra.methods)
+  inherit (horizon) node exNodes;
+  inherit (horizon.node.methods)
     hasWireguardPrecriad
     wireguardUntrustedProxies
     ;
@@ -61,7 +61,7 @@ in
         };
 
         wgNode = {
-          ips = [ astra.nodeIp ];
+          ips = [ node.nodeIp ];
           inherit privateKeyFile;
           peers = nodePeers;
           listenPort = 51820;

@@ -24,7 +24,7 @@ let
   inherit (user) size;
   inherit (profile) dark;
   inherit (pkgs) writeText;
-  inherit (horizon.astra.machine) model;
+  inherit (horizon.node.machine) model;
 
   shellLaunch = command: "${shell} -c '${command}'";
   homeDir = config.home.homeDirectory;

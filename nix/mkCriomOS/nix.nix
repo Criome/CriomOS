@@ -22,8 +22,8 @@ let
     ;
 
   inherit (horizon.cluster.methods) trustydBildPreCriomes;
-  inherit (horizon) astra;
-  inherit (horizon.astra.methods)
+  inherit (horizon) node;
+  inherit (horizon.node.methods)
     bildyrKonfigz
     kacURLz
     dispatcyrzSshKiz
@@ -154,7 +154,7 @@ in
         "nix-serve"
       ];
 
-      build-cores = astra.nbOfBuildCores;
+      build-cores = node.nbOfBuildCores;
 
       connect-timeout = 5;
       fallback = true;

@@ -18,8 +18,8 @@ let
     ;
   inherit (lib) mkOverride;
 
-  inherit (horizon.astra) typeIs;
-  inherit (horizon.astra.methods) sizedAtLeast;
+  inherit (horizon.node) typeIs;
+  inherit (horizon.node.methods) sizedAtLeast;
 
   minPackages = optionals sizedAtLeast.min (
     with pkgs;

@@ -13,7 +13,7 @@ let
     attrNames
     ;
   inherit (lib) mapAttrsToList concatMapStringsSep lowPrio;
-  inherit (horizon.astra) typeIs criomOSName;
+  inherit (horizon.node) typeIs criomOSName;
 
   listenIPs = [
     "::1"

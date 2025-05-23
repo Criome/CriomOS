@@ -10,7 +10,7 @@ let
   inherit (kor) optional;
   inherit (world) pkdjz home-manager;
   inherit (pkdjz) evalNixos;
-  inherit (horizon.astra) machine io typeIs;
+  inherit (horizon.node) machine io typeIs;
 
   usePodModule = (machine.species == "pod");
   useMetalModule = (machine.species == "metal");

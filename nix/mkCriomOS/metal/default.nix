@@ -16,9 +16,9 @@ let
     isOdd
     ;
   inherit (lib.generators) toINI;
-  inherit (horizon.astra) typeIs;
-  inherit (horizon.astra.machine) model cores;
-  inherit (horizon.astra.methods)
+  inherit (horizon.node) typeIs;
+  inherit (horizon.node.machine) model cores;
+  inherit (horizon.node.methods)
     sizedAtLeast
     tcipIzIntel
     modelIzThinkpad

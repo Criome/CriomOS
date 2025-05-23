@@ -7,7 +7,7 @@
 let
   inherit (kor) concatMapAttrs;
   inherit (lib) mkOverride optional optionals;
-  inherit (horizon) astra exNodes;
+  inherit (horizon) node exNodes;
   inherit (builtins) concatStringsSep;
 
   mkCriomeHostEntries =
@@ -46,7 +46,7 @@ in
   ];
 
   networking = {
-    hostName = astra.name;
+    hostName = node.name;
     dhcpcd.extraConfig = "noipv4ll";
     nameservers = [
       "::1"

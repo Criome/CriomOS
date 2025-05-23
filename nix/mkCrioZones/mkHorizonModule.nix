@@ -28,12 +28,12 @@ let
     archToSystemMap
     unique
     ;
-  inherit (config) clusterName astraName species;
+  inherit (config) clusterName nodeName species;
   inherit (clustersSpecies) metnodeNames nodeSpecies;
 
   inputCluster = Clusters.${clusterName};
   inputNodes = inputCluster.nodes;
-  inputAstra = inputNodes.${astraName};
+  inputNode = inputNodes.${nodeName};
 
   nodeNames = attrNames inputCluster.nodes;
   userNames = attrNames inputCluster.users;
@@ -200,7 +200,7 @@ let
 
   adminUserNames = filter (n: users.${n}.trust == 3) userNames;
 
-  astraMethods =
+  nodeMethods =
     let
       mkBildyr =
         n:
@@ -230,7 +230,7 @@ let
         in
         map getSshString fulyTrustydPreCriomeNames;
 
-      inherit (astra.machine) model;
+      inherit (node.machine) model;
       thinkpadModels = [
         "ThinkPadX240"
         "ThinkPadX230"
@@ -257,20 +257,20 @@ let
 
       adminSshPreCriomes = unique (concatMap mkAdminUserPreCriomes adminUserNames);
 
-      tcipIzIntel = elem astra.machine.arch [
+      tcipIzIntel = elem node.machine.arch [
         "x86-64"
         "i686"
       ]; # TODO
 
-      modelIzThinkpad = elem astra.machine.model thinkpadModels;
+      modelIzThinkpad = elem node.machine.model thinkpadModels;
 
-      impozyzHaipyrThreding = elem astra.machine.model impozdHTModels;
+      impozyzHaipyrThreding = elem node.machine.model impozdHTModels;
 
-      useColemak = astra.io.keyboard == "colemak";
+      useColemak = node.io.keyboard == "colemak";
 
       computerIs = computerIsNotMap // (optionalAttrs (model != null) { "${model}" = true; });
 
-      wireguardUntrustedProxies = astra.wireguardUntrustedProxies or [ ];
+      wireguardUntrustedProxies = node.wireguardUntrustedProxies or [ ];
     };
 
   mkUser =
@@ -287,7 +287,7 @@ let
 
         size = lowestOf [
           inputUser.size
-          astra.size
+          node.size
         ];
 
         trust = inputCluster.trust.users.${userName};
@@ -298,7 +298,7 @@ let
 
       };
 
-      hasPreCriome = hasAttr astra.name user.preCriomes;
+      hasPreCriome = hasAttr node.name user.preCriomes;
 
       methods =
         {
@@ -309,7 +309,7 @@ let
           emailAddress = "${user.name}@${cluster.name}.criome.me";
           matrixID = "@${user.name}:${cluster.name}.criome.me";
 
-          gitSigningKey = if hasPreCriome then ("&" + user.preCriomes.${astra.name}.keygrip) else null;
+          gitSigningKey = if hasPreCriome then ("&" + user.preCriomes.${node.name}.keygrip) else null;
 
           useColemak = user.keyboard == "colemak";
 
@@ -326,7 +326,7 @@ let
 
         }
         // (kor.optionalAttrs hasPreCriome {
-          ssh = mkSshString user.preCriomes.${astra.name}.ssh;
+          ssh = mkSshString user.preCriomes.${node.name}.ssh;
         });
 
     in
@@ -344,16 +344,16 @@ let
     };
   };
 
-  exNodes = kor.filterAttrs (n: v: n != astraName) nodes;
+  exNodes = kor.filterAttrs (n: v: n != nodeName) nodes;
 
-  astra =
+  node =
     let
-      node = nodes.${astraName};
+      node = nodes.${nodeName};
     in
     node
     // {
-      inherit (inputAstra) io;
-      methods = node.methods // astraMethods;
+      inherit (inputNode) io;
+      methods = node.methods // nodeMethods;
     };
 
   users = listToAttrs (
@@ -365,7 +365,7 @@ in
   horizon = {
     inherit
       cluster
-      astra
+      node
       exNodes
       users
       ;
