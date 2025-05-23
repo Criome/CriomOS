@@ -11,9 +11,12 @@
     # Todo - binary cache
     attic.url = "github:zhaofengli/attic";
 
-    maisiliym.url = "github:LiGoldragon/maisiliym";
+    maisiliym.url = "github:LiGoldragon/maisiliym/testing";
     goldragon.url = "github:LiGoldragon/goldragon";
     seahawk.url = "github:criome/seahawk";
+
+    kibord.url = "github:LiGoldragon/kibord/testing";
+    skrips.url = "github:criome/skrips/testing";
   };
 
   outputs =
@@ -41,7 +44,7 @@
 
       localHobSources = {
         inherit nixpkgs;
-        inherit (inputs) rust-overlay;
+        inherit (inputs) rust-overlay kibord skrips;
         inherit (localSources) mkWebpage;
         pkdjz = {
           HobWorlds = localSources.pkdjz;
