@@ -75,8 +75,8 @@ let
           ];
           pod = [
             "arch"
-            "ubyrNode"
-            "ubyrUser"
+            "superNode"
+            "superUser"
           ];
         };
       };
@@ -87,7 +87,7 @@ let
         if (filteredMachine.arch != null) then
           filteredMachine.arch
         else if (filteredMachine.species == "pod") then
-          nodes.${filteredMachine.ubyrNode}.machine.arch
+          nodes.${filteredMachine.superNode}.machine.arch
         else if (filteredMachine.motherBoard != null) then
           (archFromMotherboard filteredMachine.motherBoard)
         else

@@ -136,12 +136,12 @@ let
         default = null;
       };
 
-      ubyrNode = mkOption {
+      superNode = mkOption {
         type = nullOr str;
         default = null;
       };
 
-      ubyrUser = mkOption {
+      superUser = mkOption {
         type = nullOr str;
         default = null;
       };
