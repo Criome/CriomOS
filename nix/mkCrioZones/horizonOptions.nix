@@ -22,7 +22,7 @@ let
     metnodeNames
     nodeSpecies
     magnytiud
-    sistymz
+    systems
     komynUserOptions
     machineSpecies
     IoOptions
@@ -46,8 +46,8 @@ let
       type = str;
     };
 
-    sistym = mkOption {
-      type = enum sistymz;
+    system = mkOption {
+      type = enum systems;
     };
 
     nbOfBuildCores = mkOption {

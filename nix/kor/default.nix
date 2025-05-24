@@ -283,16 +283,16 @@ rec {
     ) lambdas;
 
   # TODO(desc: "remove", tags: [ "mkHorizon" ])
-  speciesDatum =
-    { datum, spek }:
+  speciesDatom =
+    { datom, spec }:
     let
-      inherit (datum) species;
-      allSpeksNames = concatMap (n: getAttr n spek) (attrNames spek);
-      wantedAttrsNames = spek.${species};
-      izyntWanted = n: !(elem n wantedAttrsNames);
-      unwantedAttrs = filter izyntWanted allSpeksNames;
+      inherit (datom) species;
+      allSpecsNames = concatMap (n: getAttr n spec) (attrNames spec);
+      wantedAttrsNames = spec.${species};
+      isNotWanted = n: !(elem n wantedAttrsNames);
+      unwantedAttrs = filter isNotWanted allSpecsNames;
     in
-    removeAttrs datum unwantedAttrs;
+    removeAttrs datom unwantedAttrs;
 
   rem = a: b: a - (b * (a / b));
 

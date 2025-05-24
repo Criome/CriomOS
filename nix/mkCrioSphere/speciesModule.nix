@@ -29,7 +29,7 @@ let
   ];
 
   machineArchs = attrNames archToSystemMap;
-  sistymz = attrValues archToSystemMap;
+  systems = attrValues archToSystemMap;
 
   bootloaders = [
     "uefi"
@@ -191,7 +191,7 @@ in
       magnytiud
       metnodeNames
       nodeSpecies
-      sistymz
+      systems
       ;
   };
 

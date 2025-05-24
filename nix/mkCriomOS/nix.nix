@@ -24,9 +24,9 @@ let
   inherit (horizon.cluster.methods) trustydBildPreCriomes;
   inherit (horizon) node;
   inherit (horizon.node.methods)
-    bildyrKonfigz
-    kacURLz
-    dispatcyrzSshKiz
+    builderConfigs
+    cacheURLs
+    dispatchersSshPreCriomes
     exNodesSshPreCriomes
     sizedAtLeast
     isBuilder
@@ -160,8 +160,8 @@ in
       fallback = true;
 
       trusted-public-keys = trustydBildPreCriomes;
-      substituters = kacURLz;
-      trusted-binary-caches = kacURLz;
+      substituters = cacheURLs;
+      trusted-binary-caches = cacheURLs;
 
       auto-optimise-store = true;
     };
@@ -183,7 +183,7 @@ in
     '';
 
     distributedBuilds = isDispatcher;
-    buildMachines = optionals isDispatcher bildyrKonfigz;
+    buildMachines = optionals isDispatcher builderConfigs;
 
   };
 
@@ -210,7 +210,7 @@ in
         nixBuilder = {
           isNormalUser = true;
           useDefaultShell = true;
-          openssh.authorizedKeys.keys = dispatcyrzSshKiz;
+          openssh.authorizedKeys.keys = dispatchersSshPreCriomes;
         };
       });
   };

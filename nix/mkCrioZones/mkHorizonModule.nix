@@ -20,7 +20,7 @@ let
     lowestOf
     nameValuePair
     filterAttrs
-    speciesDatum
+    speciesDatom
     optional
     mapAttrsToList
     optionalAttrs
@@ -65,9 +65,9 @@ let
       inherit (inputNode) size species;
       inherit (inputNode.preCriomes) yggdrasil;
 
-      filteredMachine = speciesDatum {
-        datum = inputNode.machine;
-        spek = {
+      filteredMachine = speciesDatom {
+        datom = inputNode.machine;
+        spec = {
           metal = [
             "arch"
             "motherBoard"
@@ -142,7 +142,7 @@ let
           nodeCriomOSName
         ];
 
-        sistym = archToSystemMap.${machine.arch};
+        system = archToSystemMap.${machine.arch};
 
         nbOfBuildCores = 1; # TODO
 
@@ -194,15 +194,15 @@ let
     node // { inherit methods; };
 
   exNodeNames = attrNames exNodes;
-  bildyrz = filter (n: nodes.${n}.methods.isBuilder) exNodeNames;
-  kacyz = filter (n: nodes.${n}.methods.isNixCache) exNodeNames;
-  dispatcyrz = filter (n: nodes.${n}.methods.isDispatcher) exNodeNames;
+  builders = filter (n: nodes.${n}.methods.isBuilder) exNodeNames;
+  caches = filter (n: nodes.${n}.methods.isNixCache) exNodeNames;
+  dispatchers = filter (n: nodes.${n}.methods.isDispatcher) exNodeNames;
 
   adminUserNames = filter (n: users.${n}.trust == 3) userNames;
 
   nodeMethods =
     let
-      mkBildyr =
+      mkBuilder =
         n:
         let
           node = exNodes.${n};
@@ -212,8 +212,8 @@ let
           sshUser = "nixBuilder";
           sshKey = "/etc/ssh/ssh_host_ed25519_key";
           supportedFeatures = optional (!node.typeIs.edj) "big-parallel";
-          system = node.sistym;
-          systems = lib.optional (node.sistym == "x86_64-linux") "i686-linux";
+          system = node.system;
+          systems = lib.optional (node.system == "x86_64-linux") "i686-linux";
           maxJobs = node.nbOfBuildCores;
         };
 
@@ -222,20 +222,20 @@ let
         let
           adminUser = users.${adminUserName};
           preCriomeNodeNames = attrNames adminUser.preCriomes;
-          izNodeFulyTrustyd = n: nodes.${n}.methods.isFullyTrusted;
-          fulyTrustydPreCriomeNames = filter izNodeFulyTrustyd preCriomeNodeNames;
+          isFullyTrustedNode = n: nodes.${n}.methods.isFullyTrusted;
+          fullyTrustedPreCriomeNames = filter isFullyTrustedNode preCriomeNodeNames;
           getSshString =
             n:
             if (adminUser.preCriomes.${n}.ssh == null) then "" else (mkSshString adminUser.preCriomes.${n}.ssh);
         in
-        map getSshString fulyTrustydPreCriomeNames;
+        map getSshString fullyTrustedPreCriomeNames;
 
       inherit (node.machine) model;
       thinkpadModels = [
         "ThinkPadX240"
         "ThinkPadX230"
       ];
-      impozdHTModels = [ "ThinkPadX240" ];
+      imposedHTModels = [ "ThinkPadX240" ];
 
       computerModels = thinkpadModels ++ [ "rpi3B" ];
 
@@ -243,17 +243,17 @@ let
 
     in
     {
-      bildyrKonfigz = map mkBildyr bildyrz;
+      builderConfigs = map mkBuilder builders;
 
-      kacURLz =
+      cacheURLs =
         let
           mkKacURL = n: exNodes.${n}.methods.nixUrl;
         in
-        map mkKacURL kacyz;
+        map mkKacURL caches;
 
       exNodesSshPreCriomes = map (n: exNodes.${n}.ssh) exNodeNames;
 
-      dispatcyrzSshKiz = map (n: exNodes.${n}.ssh) dispatcyrz;
+      dispatchersSshPreCriomes = map (n: exNodes.${n}.ssh) dispatchers;
 
       adminSshPreCriomes = unique (concatMap mkAdminUserPreCriomes adminUserNames);
 
@@ -264,7 +264,7 @@ let
 
       modelIzThinkpad = elem node.machine.model thinkpadModels;
 
-      impozyzHaipyrThreding = elem node.machine.model impozdHTModels;
+      impozyzHaipyrThreding = elem node.machine.model imposedHTModels;
 
       useColemak = node.io.keyboard == "colemak";
 
