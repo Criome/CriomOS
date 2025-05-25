@@ -2,22 +2,22 @@
   kor,
   pkgs,
   horizon,
-  konstynts,
+  constants,
   ...
 }:
 let
   inherit (builtins) mapAttrs attrNames filter;
   inherit (kor) mkIf optionalString;
   inherit (horizon.node.methods) hasYggPrecriad;
-  inherit (konstynts) fileSystem;
-  inherit (konstynts.fileSystem.yggdrasil)
+  inherit (constants) fileSystem;
+  inherit (constants.fileSystem.yggdrasil)
     preCriadJson
     subDirName
     preCriomeJson
     interfaceName
     combinedConfigJson
     ;
-  inherit (konstynts.network.yggdrasil) ports;
+  inherit (constants.network.yggdrasil) ports;
 
   package = pkgs.yggdrasil;
   yggExec = "${package}/bin/yggdrasil";

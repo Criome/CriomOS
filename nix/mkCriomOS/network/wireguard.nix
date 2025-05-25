@@ -2,7 +2,7 @@
   kor,
   pkgs,
   horizon,
-  konstynts,
+  constants,
   pkdjz,
   ...
 }:

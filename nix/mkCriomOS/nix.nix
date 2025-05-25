@@ -5,7 +5,7 @@
   hob,
   horizon,
   world,
-  konstynts,
+  constants,
   config,
   criomOS,
   ...
@@ -36,8 +36,8 @@ let
     nixCacheDomain
     ;
 
-  inherit (konstynts.fileSystem.niks) preCriad;
-  inherit (konstynts.network.niks) serve;
+  inherit (constants.fileSystem.niks) preCriad;
+  inherit (constants.network.niks) serve;
 
   jsonHorizonFail = eksportJSON "horizon.json" horizon;
 

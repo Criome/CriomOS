@@ -60,7 +60,7 @@ let
       homeModule
       hob
       ;
-    konstynts = import ./konstynts.nix;
+    constants = import ./constants.nix;
   };
 
   evaluation = evalNixos {
