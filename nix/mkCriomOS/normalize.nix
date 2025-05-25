@@ -52,6 +52,7 @@ in
       [
         "xfs"
         "btrfs"
+        "ntfs"
       ]
       ++ (optional sizedAtLeast.min "exfat")
     );
@@ -83,6 +84,8 @@ in
       tcpdump
       librist
       openssh
+      ntfs3g
+      fuse
     ];
 
     interactiveShellInit = optionalString useColemak "stty -ixon";

@@ -32,6 +32,7 @@ in
       "vfat"
       "xfs"
       "ntfs"
+      "ntfs3g"
     ];
   };
 
