@@ -5,7 +5,7 @@
 }:
 let
   inherit (builtins) elem all;
-  inherit (kor) mesydj;
+  inherit (kor) message;
 
   allowedComponents = [
     "bin"
@@ -39,7 +39,7 @@ arguments@{
   components ? [ ],
   ...
 }:
-assert mesydj (all (
+assert message (all (
   c: elem c allowedComponents
 ) components) "Component not allowed in: ${toString components}";
 let

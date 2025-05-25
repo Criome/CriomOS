@@ -151,7 +151,7 @@ kor.mkIf sizedAtLeast.med {
       ".config/rustfmt/rustfmt.toml".source = kynvyrt {
         name = "rustfmt.toml";
         format = "toml";
-        valiu = {
+        value = {
           edition = "2021";
         };
       };
@@ -159,7 +159,7 @@ kor.mkIf sizedAtLeast.med {
       ".config/luaformatter/config.yaml".source = kynvyrt {
         name = "luaFormatterConfig.yaml";
         format = "yaml";
-        valiu = {
+        value = {
           indent_width = 2;
           continuation_indent_width = 2;
           align_args = false;

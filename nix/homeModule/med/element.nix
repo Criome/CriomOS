@@ -1,10 +1,10 @@
 { kor, pkgs, ... }:
 let
-  inherit (kor) eksportJSON;
+  inherit (kor) exportJSON;
 
   config = { };
 
-  configFile = eksportJSON "element-config.json" config;
+  configFile = exportJSON "element-config.json" config;
 
 in
 {

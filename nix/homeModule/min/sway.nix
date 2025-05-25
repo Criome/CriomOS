@@ -13,7 +13,7 @@ let
     mkIf
     optionals
     optionalString
-    matcSize
+    matchSize
     ;
   inherit (user.methods)
     sizedAtLeast
@@ -44,7 +44,7 @@ let
     waybarEksek = nixProfileExec "waybar";
     swaylockEksek = nixProfileExec "swaylock";
     browser =
-      matcSize size "" termBrowser "${nixProfileExec "qutebrowser"}"
+      matchSize size "" termBrowser "${nixProfileExec "qutebrowser"}"
         "${nixProfileExec "qutebrowser"}";
     launcher = "${nixProfileExec "wofi"} --show drun";
     shellTerm = shellLaunch "export SHELL=${zshEksek}; exec ${terminal} ${zshEksek}";

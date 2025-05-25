@@ -9,7 +9,7 @@
 }:
 let
   l = lib // builtins;
-  inherit (kor) mapAttrsToList eksportJSON;
+  inherit (kor) mapAttrsToList exportJSON;
   inherit (lib)
     concatStringsSep
     mkOverride
@@ -28,7 +28,7 @@ let
   hasVideoOutput = true;
   hasAcceleratedVideoOutput = true;
 
-  jsonHorizonFail = eksportJSON "horizon.json" horizon;
+  jsonHorizonFail = exportJSON "horizon.json" horizon;
 
   criomOSShell = mksh + mksh.shellPath;
 

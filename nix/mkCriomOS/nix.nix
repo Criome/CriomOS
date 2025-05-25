@@ -17,7 +17,7 @@ let
     optionals
     mkIf
     optional
-    eksportJSON
+    exportJSON
     optionalAttrs
     ;
 
@@ -39,7 +39,7 @@ let
   inherit (constants.fileSystem.nix) preCriad;
   inherit (constants.network.nix) serve;
 
-  jsonHorizonFail = eksportJSON "horizon.json" horizon;
+  jsonHorizonFail = exportJSON "horizon.json" horizon;
 
   flakeEntriesOverrides =
     {
@@ -120,7 +120,7 @@ let
     version = 2;
   };
 
-  nixFlakeRegistryJson = eksportJSON "nixFlakeRegistry.json" nixFlakeRegistry;
+  nixFlakeRegistryJson = exportJSON "nixFlakeRegistry.json" nixFlakeRegistry;
 
 in
 {

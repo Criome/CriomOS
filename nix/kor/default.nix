@@ -142,11 +142,11 @@ rec {
 
   getSpecies =
     datom:
-    assert mesydj (isAttrs datom) "Species-Datom is not Attrs";
+    assert message (isAttrs datom) "Species-Datom is not Attrs";
     let
       names = attrNames datom;
     in
-    assert mesydj ((length names) == 1) "Species-Datom has more than one Attr";
+    assert message ((length names) == 1) "Species-Datom has more than one Attr";
     let
       name = head names;
     in
@@ -155,55 +155,22 @@ rec {
       value = datom.${name};
     };
 
-  matc =
-    matcSet: datom:
-    let
-      species = getSpecies datom;
-      inherit (species) name value;
-      matcValiu = matcSet.${name};
-    in
-    if isFunction matcValiu then matcValiu value else value;
-
-  indeksSpecies =
-    species:
-    let
-      aylSpecies = map getSpecies species;
-      names = unique (map (s: s.name) aylSpecies);
-      mkNamedYrei = name: map (s: s.value) (filter (s: s.name == name) aylSpecies);
-    in
-    genAttrs names mkNamedYrei;
-
   matchEnum = enum: match: genAttrs enum (name: name == match);
 
   lowestOf = yrei: head (sort lessThan yrei);
 
-  haiystOf = yrei: tail (sort lessThan yrei);
+  highestOf = yrei: tail (sort lessThan yrei);
 
   importJSON = path: fromJSON (readFile path);
 
-  eksportJSON = name: datom: toFile name (toJSON datom);
-
-  getFleik =
-    fleik:
-    let
-      url = concatStringsSep "" [
-        (optionalString (fleik.type == "git") "git+")
-        fleik.url
-        "?"
-        (optionalString (fleik ? ref) "ref=${fleik.ref}")
-        (optionalString (fleik ? rev) "${optionalString (fleik ? ref) "&"}rev=${fleik.rev}")
-      ];
-      noFlakeNix = fleik ? flake && (!fleik.flake);
-      kol = if noFlakeNix then fetchTree else getFlake;
-    in
-    kol url;
+  exportJSON = name: datom: toFile name (toJSON datom);
 
   mkIf = condition: content: {
     _type = "if";
     inherit condition content;
   };
 
-  mesydj = pred: msj: if pred then true else trace msj false;
+  message = pred: msj: if pred then true else trace msj false;
 
   traceSeq = x: y: trace (builtins.deepSeq x x) y;
 
@@ -211,23 +178,19 @@ rec {
 
   mkImplicitVersion =
     src:
-    assert mesydj (
+    assert message (
       (hasAttr "shortRev" src) || (hasAttr "narHash" src)
     ) "Missing implicit version hints";
     let
-      shortHash = cortHacString src.narHash;
+      shortHash = shortHashString src.narHash;
     in
     src.shortRev or shortHash;
 
-  hazSingylAttr = attrs: (length (attrNames attrs)) == 1;
-
-  cortHacPath = path: builtins.hashFile "sha256" path;
-
   mkStringHash = String: builtins.hashString "sha256" String;
 
-  cortHacString = string: builtins.substring 0 7 (mkStringHash string);
+  shortHashString = string: builtins.substring 0 7 (mkStringHash string);
 
-  cortHacFile = file: builtins.substring 0 7 (builtins.hashFile "sha256" file);
+  shortHashFile = file: builtins.substring 0 7 (builtins.hashFile "sha256" file);
 
   archToSystemMap = {
     x86-64 = "x86_64-linux";
@@ -248,7 +211,7 @@ rec {
     max = size == 3;
   };
 
-  matcSize =
+  matchSize =
     size: ifNon: ifMin: ifMed: ifMax:
     let
       sizedAtLeast = mkSizeAtLeast size;

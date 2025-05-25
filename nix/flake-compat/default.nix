@@ -1,6 +1,6 @@
 let
   kor = import ../kor;
-  inherit (kor) importJSON mesydj;
+  inherit (kor) importJSON message;
   getLockFileInput =
     lockFile: inputName:
     let
@@ -8,7 +8,7 @@ let
       lockedInput = lockDatom.nodes.${inputName}.locked;
       inherit (lockedInput) type;
     in
-    assert mesydj (type == "github") "getLockFileInput does not support `${type}` type";
+    assert message (type == "github") "getLockFileInput does not support `${type}` type";
     let
       inherit (lockedInput)
         owner

@@ -545,7 +545,7 @@ mkIf sizedAtLeast.min {
       ".cargo/config.toml".source = kynvyrt {
         name = "cargo-config";
         format = "toml";
-        valiu = {
+        value = {
           build.target-dir = "${homeDir}/.cargo/sharedTarget";
           unstable.weak-dep-features = true;
         };

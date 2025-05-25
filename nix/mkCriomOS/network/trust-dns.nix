@@ -72,8 +72,8 @@ let
 
   configFile = toFormatFile {
     name = "trust-dns-config";
-    valiu = config;
-    preti = true;
+    value = config;
+    pretty = true;
   };
 
 in

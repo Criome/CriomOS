@@ -177,7 +177,7 @@ let
 
   defaultElPackage = trivialBuild {
     pname = "default-el";
-    version = kor.cortHacString defaultEl;
+    version = kor.shortHashString defaultEl;
     src = writeText "default.el" defaultEl;
     packageRequires = usePackages;
   };
