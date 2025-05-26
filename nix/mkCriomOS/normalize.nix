@@ -86,6 +86,7 @@ in
       openssh
       ntfs3g
       fuse
+      ifmetric
     ];
 
     interactiveShellInit = optionalString useColemak "stty -ixon";
