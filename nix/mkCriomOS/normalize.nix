@@ -21,7 +21,7 @@ let
   inherit (pkgs) mksh writeScript gnupg;
   inherit (horizon) node exNodes;
   inherit (horizon.node) typeIs;
-  inherit (horizon.node.methods) tcipIzIntel sizedAtLeast useColemak;
+  inherit (horizon.node.methods) chipIsIntel sizedAtLeast useColemak;
 
   # TODO
   hasAudioOutput = true;

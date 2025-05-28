@@ -257,14 +257,12 @@ let
 
       adminSshPreCriomes = unique (concatMap mkAdminUserPreCriomes adminUserNames);
 
-      tcipIzIntel = elem node.machine.arch [
+      chipIsIntel = elem node.machine.arch [
         "x86-64"
         "i686"
       ]; # TODO
 
-      modelIzThinkpad = elem node.machine.model thinkpadModels;
-
-      impozyzHaipyrThreding = elem node.machine.model imposedHTModels;
+      modelIsThinkpad = elem node.machine.model thinkpadModels;
 
       useColemak = node.io.keyboard == "colemak";
 

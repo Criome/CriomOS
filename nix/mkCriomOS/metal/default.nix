@@ -20,9 +20,8 @@ let
   inherit (horizon.node.machine) model cores;
   inherit (horizon.node.methods)
     sizedAtLeast
-    tcipIzIntel
-    modelIzThinkpad
-    impozyzHaipyrThreding
+    chipIsIntel
+    modelIsThinkpad
     useColemak
     computerIs
     ;
@@ -84,7 +83,7 @@ let
 in
 {
   hardware = {
-    cpu.intel.updateMicrocode = tcipIzIntel;
+    cpu.intel.updateMicrocode = chipIsIntel;
 
     firmware =
       with pkgs;
@@ -102,7 +101,7 @@ in
     ledger.enable = typeIs.edge;
 
     graphics.extraPackages =
-      optionals tcipIzIntel intelGraphicsPackages
+      optionals chipIsIntel intelGraphicsPackages
       ++ optional hasQuickSyncSupport pkgs.intel-media-driver;
 
   };
@@ -112,7 +111,7 @@ in
   boot = {
     extraModulePackages =
       [ ]
-      ++ (optional modelIzThinkpad config.boot.kernelPackages.acpi_call)
+      ++ (optional modelIsThinkpad config.boot.kernelPackages.acpi_call)
       ++ (optional sizedAtLeast.max config.boot.kernelPackages.v4l2loopback);
 
     initrd = {
@@ -150,7 +149,7 @@ in
     systemPackages =
       with pkgs;
       [ lm_sensors ]
-      ++ optionals tcipIzIntel [
+      ++ optionals chipIsIntel [
         libva-utils
         i7z
       ]
@@ -220,7 +219,7 @@ in
       lidSwitchExternalPower = if typeIs.edge then "suspend" else "ignore";
     };
 
-    thinkfan = mkIf modelIzThinkpad {
+    thinkfan = mkIf modelIsThinkpad {
       enable = true;
       levels = (
         if izX230 then
