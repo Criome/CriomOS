@@ -339,7 +339,7 @@ let
     name = clusterName;
 
     methods = {
-      trustydBuildPreCriomes = map (n: nodes.${n}.methods.nixPreCriome) nodeNames;
+      trustedBuildPreCriomes = map (n: nodes.${n}.methods.nixPreCriome) nodeNames;
     };
   };
 

@@ -21,7 +21,7 @@ let
     optionalAttrs
     ;
 
-  inherit (horizon.cluster.methods) trustydBuildPreCriomes;
+  inherit (horizon.cluster.methods) trustedBuildPreCriomes;
   inherit (horizon) node;
   inherit (horizon.node.methods)
     builderConfigs
@@ -159,7 +159,7 @@ in
       connect-timeout = 5;
       fallback = true;
 
-      trusted-public-keys = trustydBuildPreCriomes;
+      trusted-public-keys = trustedBuildPreCriomes;
       substituters = cacheURLs;
       trusted-binary-caches = cacheURLs;
 
