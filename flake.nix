@@ -3,7 +3,7 @@
 
   inputs = {
     hob.url = "github:criome/hob/testing";
-    nixpkgs.url = "github:criome/nixpkgs/stable";
+    nixpkgs.url = "github:criome/nixpkgs/testing";
 
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
