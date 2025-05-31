@@ -84,6 +84,8 @@ let
     "*.x.com"
     "*.linktr.ee"
     "*.facebook.com"
+    "*.instagram.com"
+    "*.streamyard.com"
     "*.amazon.com"
     "*.amazon.ca"
   ];
