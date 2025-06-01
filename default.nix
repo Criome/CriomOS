@@ -5,6 +5,8 @@ let
   inherit (inputs) nixpkgs;
   lib = inputs.lib // (import ./libExtension.nix);
 
+  mkCriomOS = import ./nix/mkCriomOS;
+
   localSources =
     let
       importInput = name: value: import value;
@@ -13,7 +15,6 @@ let
         mkWorld = ./nix/mkWorld;
         mkCrioSphere = ./nix/mkCrioSphere;
         mkCrioZones = ./nix/mkCrioZones;
-        mkCriomOS = ./nix/mkCriomOS;
         pkdjz = ./nix/pkdjz;
         homeModule = ./nix/homeModule;
         nodeNames = ./nodeNames.nix;
@@ -36,7 +37,6 @@ let
     nodeNames
     mkPkgs
     homeModule
-    mkCriomOS
     mkWorld
     ;
 

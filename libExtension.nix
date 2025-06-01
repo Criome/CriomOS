@@ -1,7 +1,6 @@
 with builtins;
 
 rec {
-  exportJSON = name: datom: toFile name (toJSON datom);
 
   highestOf = list: tail (sort lessThan list);
 

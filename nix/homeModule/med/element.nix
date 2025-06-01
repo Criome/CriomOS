@@ -1,7 +1,7 @@
-{ lib, pkgs, ... }:
+{ pkdjz, pkgs, ... }:
 let
   config = { };
-  configFile = lib.exportJSON "element-config.json" config;
+  configFile = pkdjz.exportJSON "element-config.json" config;
 
 in
 {

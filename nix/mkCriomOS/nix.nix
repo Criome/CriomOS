@@ -1,5 +1,6 @@
 {
   lib,
+  pkdjz,
   pkgs,
   hob,
   horizon,
@@ -15,9 +16,10 @@ let
     importJSON
     optionals
     optional
-    exportJSON
     optionalAttrs
     ;
+
+  inherit (pkdjz) exportJSON;
 
   inherit (horizon.cluster.methods) trustedBuildPreCriomes;
   inherit (horizon) node;

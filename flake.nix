@@ -7,7 +7,7 @@
   inputs = {
     # Nixpkgs & lib
     nixpkgs.url = "github:criome/nixpkgs/testing";
-    lib.url = "github:criome/lib";
+    lib.url = "github:criome/lib/testing";
     lib.inputs.nixpkgs.follows = "nixpkgs";
 
     # Nixpkgs overlays

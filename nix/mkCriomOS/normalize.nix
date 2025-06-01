@@ -4,12 +4,12 @@
   pkgs,
   lib,
   world,
+  pkdjz,
   ...
 }:
 let
   inherit (lib)
     mapAttrsToList
-    exportJSON
     concatStringsSep
     mkOverride
     optional
@@ -17,6 +17,7 @@ let
     optionalString
     optionalAttrs
     ;
+  inherit (pkdjz) exportJSON;
   inherit (pkgs) mksh writeScript gnupg;
   inherit (horizon) node exNodes;
   inherit (horizon.node) typeIs;

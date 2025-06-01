@@ -112,7 +112,7 @@ let
       };
 
       arch = mkOption {
-        type = str;
+        type = nullOr str;
         default = null;
       };
 

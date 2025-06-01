@@ -4,6 +4,10 @@ let
 
 in
 {
+  exportJSON = {
+    lambda = { }: name: datom: builtins.toFile name (builtins.toJSON datom);
+  };
+
   base16-styles = {
     lambda =
       { src, stdenv }:

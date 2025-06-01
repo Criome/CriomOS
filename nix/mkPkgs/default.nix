@@ -1,12 +1,12 @@
 ## Lean version of (nixpkgs + /pkgs/top-level/impure.nix)
 args@{
   nixpkgs,
+  lib,
   system ? localSystem.system,
   localSystem ? {
     system = args.system;
   },
   crossSystem ? localSystem,
-  lib ? import (nixpkgs + /lib),
   overlays ? [ ],
   config ? {
     allowUnfree = true;
@@ -15,8 +15,15 @@ args@{
 }:
 let
   forcedNonOptionalArguments = {
-    inherit config overlays localSystem;
+    inherit
+      lib
+      nixpkgs
+      config
+      overlays
+      localSystem
+      ;
   };
+
   mkPkgsFn = import (nixpkgs + /pkgs/top-level);
   explicitArguments = builtins.removeAttrs args [ "system" ];
   pkgsTopLevelArguments = explicitArguments // forcedNonOptionalArguments;

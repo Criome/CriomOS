@@ -329,15 +329,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1702361717,
-        "narHash": "sha256-RuJkKuTMftaa2k9xJOawosSkb60dW6uOxTGBNiRw3j8=",
+        "lastModified": 1748763185,
+        "narHash": "sha256-JUE0cpsD7cBSk9VpuNhN/ezcVjjxjpwUxSWPRW3MbkA=",
         "owner": "criome",
         "repo": "lib",
-        "rev": "f6baecf1016dab267da43cbd232f13f67645a97c",
+        "rev": "aa1ef7cd4a2ade7e48df130be79ce76c48980238",
         "type": "github"
       },
       "original": {
         "owner": "criome",
+        "ref": "testing",
         "repo": "lib",
         "type": "github"
       }
