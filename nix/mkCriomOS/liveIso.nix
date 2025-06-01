@@ -3,7 +3,6 @@
   lib,
   horizon,
   kor,
-  criomOS,
   world,
   homeModule,
   ...
@@ -12,6 +11,8 @@ let
   inherit (builtins) mapAttrs;
   inherit (lib) mkOverride;
   inherit (world) mkHomeConfig pkdjz;
+
+  criomosVersion = "unversioned"; # TODO
 
   useMetalModule = horizon.node.machine.species == "metal";
   profile = {
@@ -54,8 +55,8 @@ in
   };
 
   isoImage = {
-    isoBaseName = "criomOS";
-    volumeID = "criomOS-${criomOS.shortRev}-${pkgs.stdenv.hostPlatform.uname.processor}";
+    isoBaseName = "CriomOS";
+    volumeID = "CriomOS-${criomosVersion}-${pkgs.stdenv.hostPlatform.uname.processor}";
 
     makeUsbBootable = true;
     makeEfiBootable = true;

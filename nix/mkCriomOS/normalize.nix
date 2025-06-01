@@ -26,11 +26,10 @@ let
   # TODO
   hasAudioOutput = true;
   hasVideoOutput = true;
-  hasAcceleratedVideoOutput = true;
 
   jsonHorizonFail = exportJSON "horizon.json" horizon;
 
-  criomOSShell = mksh + mksh.shellPath;
+  criomosShell = mksh + mksh.shellPath;
 
   mkNodeKnownHost =
     n: node:
@@ -64,7 +63,7 @@ in
   };
 
   environment = {
-    binsh = criomOSShell;
+    binsh = criomosShell;
     shells = [ "/run/current-system/sw${mksh.shellPath}" ];
 
     etc = {

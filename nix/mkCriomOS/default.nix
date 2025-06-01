@@ -1,5 +1,4 @@
 {
-  criomOS,
   homeModule,
   kor,
   world,
@@ -56,7 +55,6 @@ let
       world
       pkdjz
       horizon
-      criomOS
       homeModule
       hob
       ;

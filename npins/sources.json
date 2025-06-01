@@ -1,0 +1,17 @@
+{
+  "pins": {
+    "flake-inputs": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "fricklerhandwerk",
+        "repo": "flake-inputs"
+      },
+      "branch": "main",
+      "revision": "362d7e7a83090c650d3ff4d3279520dd5805526f",
+      "url": "https://github.com/fricklerhandwerk/flake-inputs/archive/362d7e7a83090c650d3ff4d3279520dd5805526f.tar.gz",
+      "hash": "1ns2a2ssrjz7mdd15i33k57bg8kqx6w71xpi9fj1yg1p2vlmcrss"
+    }
+  },
+  "version": 3
+}
