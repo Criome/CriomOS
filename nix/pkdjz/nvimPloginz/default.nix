@@ -6,24 +6,22 @@ let
 
   eksplisitSpoks = { };
 
-  mkImplaidSpoks = name: spok: spok;
-
   spoks = eksplisitSpoks // (mapAttrs (n: s: s) implaidSpoks);
 
-  ovyraidzIndeks = { };
+  overridesIndeks = { };
 
   mkSpok =
-    name: self:
+    name: src:
     let
-      ovyraidz = ovyraidzIndeks.${name} or { };
+      overrides = overridesIndeks.${name} or { };
     in
     buildNvimPlogin (
       {
         pname = name;
-        version = self.shortRev;
-        src = self;
+        version = src.shortRev;
+        inherit src;
       }
-      // ovyraidz
+      // overrides
     );
 
   ryzylt = mapAttrs mkSpok spoks;

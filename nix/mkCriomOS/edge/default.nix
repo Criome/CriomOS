@@ -1,23 +1,11 @@
 {
-  kor,
-  horizon,
-  config,
-  pkgs,
   lib,
-  world,
-  pkdjz,
+  horizon,
+  pkgs,
   ...
 }:
 let
-  inherit (kor)
-    mkIf
-    optional
-    optionals
-    optionalString
-    optionalAttrs
-    ;
-  inherit (lib) mkOverride;
-
+  inherit (lib) mkIf optionals;
   inherit (horizon.node) typeIs;
   inherit (horizon.node.methods) sizedAtLeast;
 

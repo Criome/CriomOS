@@ -1,5 +1,4 @@
 {
-  kor,
   lib,
   proposedCrioSphere,
 }:
@@ -19,7 +18,7 @@ let
         config = {
           inherit nodeName clusterName;
           _module.args = {
-            inherit kor lib;
+            inherit lib;
             Clusters = clusters.datom;
             clustersSpecies = clusters.species;
           };

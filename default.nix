@@ -2,13 +2,13 @@
   inputs ? (import ./mkInputs.nix),
 }:
 let
-  inherit (inputs) nixpkgs lib;
+  inherit (inputs) nixpkgs;
+  lib = inputs.lib // (import ./libExtension.nix);
 
   localSources =
     let
       importInput = name: value: import value;
       modulePaths = {
-        kor = ./nix/kor;
         mkPkgs = ./nix/mkPkgs;
         mkWorld = ./nix/mkWorld;
         mkCrioSphere = ./nix/mkCrioSphere;
@@ -33,7 +33,6 @@ let
     hobInputs // adHocHobSpokes;
 
   inherit (localSources)
-    kor
     nodeNames
     mkPkgs
     homeModule
@@ -60,7 +59,6 @@ let
     };
 
   inherit (builtins) mapAttrs;
-  inherit (kor) archToSystemMap;
 
   generateCrioSphereProposalFromName =
     name:
@@ -78,8 +76,7 @@ let
     preNodeName: crioZone:
     let
       inherit (crioZone) users;
-      inherit (crioZone.node.machine) arch;
-      system = archToSystemMap.${arch};
+      inherit (crioZone.node) system;
       pkgsAndWorld = mkPkgsAndWorldFromSystem system;
       inherit (pkgsAndWorld) pkgs world;
       horizon = crioZone;
@@ -104,7 +101,6 @@ let
               modules = [ homeModule ];
               extraSpecialArgs = {
                 inherit
-                  kor
                   pkdjz
                   world
                   horizon
@@ -131,7 +127,6 @@ let
     {
       os = mkCriomOS {
         inherit
-          kor
           world
           horizon
           homeModule
@@ -170,7 +165,7 @@ let
         path = spok.outPath;
       };
 
-      allMeinHobOutputs = linkFarm "hob" (kor.mapAttrsToList mkSpokFarmEntry hobOutputs);
+      allMeinHobOutputs = linkFarm "hob" (lib.mapAttrsToList mkSpokFarmEntry hobOutputs);
 
     in
     {
@@ -181,10 +176,11 @@ let
       };
     };
 
+  # TODO: Consider using a 'system' input
   perSystemAllOutputs = inputs.flake-utils.lib.eachDefaultSystem mkNixApiOutputsPerSystem;
 
-  proposedCrioSphere = localSources.mkCrioSphere { inherit uncheckedCrioSphereProposal kor lib; };
-  proposedCrioZones = localSources.mkCrioZones { inherit kor lib proposedCrioSphere; };
+  proposedCrioSphere = localSources.mkCrioSphere { inherit uncheckedCrioSphereProposal lib; };
+  proposedCrioZones = localSources.mkCrioZones { inherit lib proposedCrioSphere; };
 
 in
 perSystemAllOutputs

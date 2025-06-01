@@ -1,7 +1,6 @@
 {
-  kor,
+  lib,
   pkgs,
-  pkdjz,
   user,
   config,
   profile,
@@ -9,11 +8,9 @@
   ...
 }:
 let
-  inherit (kor)
+  inherit (lib)
     mkIf
-    optionals
     optionalString
-    matchSize
     ;
   inherit (user.methods)
     sizedAtLeast
@@ -44,7 +41,7 @@ let
     waybarEksek = nixProfileExec "waybar";
     swaylockEksek = nixProfileExec "swaylock";
     browser =
-      matchSize size "" termBrowser "${nixProfileExec "qutebrowser"}"
+      lib.matchSize size "" termBrowser "${nixProfileExec "qutebrowser"}"
         "${nixProfileExec "qutebrowser"}";
     launcher = "${nixProfileExec "wofi"} --show drun";
     shellTerm = shellLaunch "export SHELL=${zshEksek}; exec ${terminal} ${zshEksek}";

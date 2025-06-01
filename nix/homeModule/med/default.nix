@@ -1,5 +1,4 @@
 {
-  kor,
   lib,
   user,
   pkgs,
@@ -9,7 +8,7 @@
 }:
 let
   inherit (builtins) readFile toJSON;
-  inherit (kor) optionalString optionals;
+  inherit (lib) optionalString optionals;
   inherit (pkdjz) kynvyrt;
   inherit (user) githubId;
   inherit (user.methods) isCodeDev useColemak sizedAtLeast;
@@ -101,7 +100,7 @@ let
   ];
 
 in
-kor.mkIf sizedAtLeast.med {
+lib.mkIf sizedAtLeast.med {
   programs = {
     starship = {
       enable = true;

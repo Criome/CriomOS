@@ -1,7 +1,6 @@
 {
   lib,
   config,
-  kor,
   clustersSpecies,
   Clusters,
   ...
@@ -16,16 +15,9 @@ let
     concatMap
     elem
     ;
-  inherit (kor)
-    lowestOf
-    nameValuePair
-    filterAttrs
-    speciesDatom
-    optional
-    mapAttrsToList
+  inherit (lib)
     optionalAttrs
     optionalString
-    archToSystemMap
     unique
     ;
   inherit (config) clusterName nodeName species;
@@ -38,6 +30,20 @@ let
   nodeNames = attrNames inputCluster.nodes;
   userNames = attrNames inputCluster.users;
 
+  # TODO - redesign
+  archToSystemMap = {
+    x86-64 = "x86_64-linux";
+    amd64 = "x86_64-linux";
+    i686 = "i686-linux";
+    x86 = "i686-linux";
+    aarch64 = "aarch64-linux";
+    arm64 = "aarch64-linux";
+    armv8 = "aarch64-linux";
+    armv7l = "armv7l-linux";
+    armv = "armv7l-linux";
+    avr = "avr-none";
+  };
+
   nodeCriomeDomainName = concatStringsSep "." [
     clusterName
     "criome"
@@ -45,7 +51,7 @@ let
 
   metaTrust = inputCluster.trust.cluster;
 
-  mkTrust = yrei: lowestOf (yrei ++ [ metaTrust ]);
+  mkTrust = yrei: lib.lowestOf (yrei ++ [ metaTrust ]);
 
   mkSshString =
     preCriome:
@@ -64,6 +70,17 @@ let
       inputNode = inputNodes.${nodeName};
       inherit (inputNode) size species;
       inherit (inputNode.preCriomes) yggdrasil;
+
+      speciesDatom =
+        { datom, spec }:
+        let
+          inherit (datom) species;
+          allSpecsNames = concatMap (n: lib.getAttr n spec) (attrNames spec);
+          wantedAttrsNames = spec.${species};
+          isNotWanted = n: !(elem n wantedAttrsNames);
+          unwantedAttrs = filter isNotWanted allSpecsNames;
+        in
+        removeAttrs datom unwantedAttrs;
 
       filteredMachine = speciesDatom {
         datom = inputNode.machine;
@@ -113,7 +130,7 @@ let
         let
           isOfThisType = name == species;
         in
-        nameValuePair name isOfThisType;
+        lib.nameValuePair name isOfThisType;
 
       node = {
         inherit size species;
@@ -164,7 +181,7 @@ let
         in
         rec {
           isFullyTrusted = trust == 3;
-          sizedAtLeast = kor.mkSizeAtLeast size;
+          sizedAtLeast = mkSizeAtLeast size;
           isBuilder =
             !typeIs.edge && isFullyTrusted && (sizedAtLeast.med || typeIs.center) && hasBasePrecriads;
           isDispatcher = !typeIs.center && isFullyTrusted && sizedAtLeast.min;
@@ -211,7 +228,7 @@ let
           hostName = node.criomeDomainName;
           sshUser = "nixBuilder";
           sshKey = "/etc/ssh/ssh_host_ed25519_key";
-          supportedFeatures = optional (!node.typeIs.edge) "big-parallel";
+          supportedFeatures = lib.optional (!node.typeIs.edge) "big-parallel";
           system = node.system;
           systems = lib.optional (node.system == "x86_64-linux") "i686-linux";
           maxJobs = node.nbOfBuildCores;
@@ -239,7 +256,7 @@ let
 
       computerModels = thinkpadModels ++ [ "rpi3B" ];
 
-      computerIsNotMap = listToAttrs (map (n: nameValuePair n false) computerModels);
+      computerIsNotMap = listToAttrs (map (n: lib.nameValuePair n false) computerModels);
 
     in
     {
@@ -283,14 +300,14 @@ let
 
         inherit (inputUser) style species keyboard;
 
-        size = lowestOf [
+        size = lib.lowestOf [
           inputUser.size
           node.size
         ];
 
         trust = inputCluster.trust.users.${userName};
 
-        preCriomes = filterAttrs tcekPreCriome inputUser.preCriomes;
+        preCriomes = lib.filterAttrs tcekPreCriome inputUser.preCriomes;
 
         githubId = if (inputUser.githubId == null) then userName else inputUser.githubId;
 
@@ -302,7 +319,7 @@ let
         {
           inherit hasPreCriome;
 
-          sizedAtLeast = kor.mkSizeAtLeast user.size;
+          sizedAtLeast = mkSizeAtLeast user.size;
 
           emailAddress = "${user.name}@${cluster.name}.criome.me";
           matrixID = "@${user.name}:${cluster.name}.criome.me";
@@ -321,10 +338,10 @@ let
             "unlimited"
           ];
 
-          sshCriomes = mapAttrsToList (n: pk: mkSshString pk.ssh) user.preCriomes;
+          sshCriomes = lib.mapAttrsToList (n: pk: mkSshString pk.ssh) user.preCriomes;
 
         }
-        // (kor.optionalAttrs hasPreCriome {
+        // (lib.optionalAttrs hasPreCriome {
           ssh = mkSshString user.preCriomes.${node.name}.ssh;
         });
 
@@ -332,7 +349,7 @@ let
     user // { inherit methods; };
 
   nodes = listToAttrs (
-    map (y: nameValuePair y.name y) (filter (x: x.trust != 0) (map (n: mkNode n) nodeNames))
+    map (y: lib.nameValuePair y.name y) (filter (x: x.trust != 0) (map (n: mkNode n) nodeNames))
   );
 
   cluster = {
@@ -343,7 +360,7 @@ let
     };
   };
 
-  exNodes = kor.filterAttrs (n: v: n != nodeName) nodes;
+  exNodes = lib.lib.filterAttrs (n: v: n != nodeName) nodes;
 
   node =
     let
@@ -356,7 +373,7 @@ let
     };
 
   users = listToAttrs (
-    map (y: nameValuePair y.name y) (filter (x: x.trust != 0) (map (n: mkUser n) userNames))
+    map (y: lib.nameValuePair y.name y) (filter (x: x.trust != 0) (map (n: mkUser n) userNames))
   );
 
 in

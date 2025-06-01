@@ -4,7 +4,6 @@ let
   pkdjz = {
     beaker = {
       lambda = import ./beaker;
-      self = null;
     };
 
     buildNvimPlogin = {
@@ -13,7 +12,6 @@ let
         "pkgs"
         "pkdjz"
       ];
-      self = null;
     };
 
     home-manager = {
@@ -31,16 +29,15 @@ let
         "lib"
         "pkgsSet"
       ];
-      self = hob.nixpkgs;
+      src = hob.nixpkgs;
     };
 
-    kreitOvyraidz = {
-      lambda = import ./kreitOvyraidz;
+    crateOverrides = {
+      lambda = import ./crateOverrides;
       mods = [
         "pkgs"
         "lib"
       ];
-      self = null;
     };
 
     kynvyrt = {
@@ -49,13 +46,6 @@ let
         "pkgs"
         "world"
       ];
-      self = null;
-    };
-
-    lib = {
-      lambda = import ./lib;
-      mods = [ ];
-      self = hob.nixpkgs;
     };
 
     librem5-flash-image = {
@@ -73,7 +63,7 @@ let
         "hob"
         "pkdjz"
       ];
-      self = hob.emacs-overlay;
+      src = hob.emacs-overlay;
     };
 
     mfgtools = {
@@ -86,7 +76,6 @@ let
         "hob"
         "pkdjz"
       ];
-      self = null;
     };
 
     nvimPloginz = {
@@ -95,12 +84,10 @@ let
         "hob"
         "pkdjz"
       ];
-      self = null;
     };
 
     nerd-fonts = {
       lambda = import ./nerd-fonts;
-      self = null;
     };
 
     pkgsNvimPloginz = {
@@ -110,29 +97,27 @@ let
         "lib"
         "pkdjz"
       ];
-      self = hob.nixpkgs;
+      src = hob.nixpkgs;
     };
 
     shen-bootstrap = {
       lambda = import ./shen/bootstrap.nix;
-      self = hob.shen;
+      src = hob.shen;
     };
 
     shen-ecl-bootstrap = {
       lambda = import ./shen/ecl.nix;
-      self = null;
     };
 
     remux = {
       lambda = import ./remux;
-      self = hob.videocut;
+      src = hob.videocut;
     };
 
     shenPrelude.lambda = import ./shen/prelude.nix;
 
     slynkPackages = {
       lambda = import ./slynkPackages;
-      self = null;
     };
 
     nix = {
@@ -149,7 +134,6 @@ let
         "pkgs"
         "pkdjz"
       ];
-      src = null;
       lambda = import ./obs-ndi;
     };
 
@@ -168,7 +152,6 @@ let
         "pkdjz"
         "hob"
       ];
-      self = null;
     };
   };
 

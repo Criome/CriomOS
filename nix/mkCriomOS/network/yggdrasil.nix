@@ -1,15 +1,13 @@
 {
-  kor,
+  lib,
   pkgs,
   horizon,
   constants,
   ...
 }:
 let
-  inherit (builtins) mapAttrs attrNames filter;
-  inherit (kor) mkIf optionalString;
+  inherit (lib) optionalString;
   inherit (horizon.node.methods) hasYggPrecriad;
-  inherit (constants) fileSystem;
   inherit (constants.fileSystem.yggdrasil)
     preCriadJson
     subDirName
@@ -22,9 +20,6 @@ let
   package = pkgs.yggdrasil;
   yggExec = "${package}/bin/yggdrasil";
   yggCtlExec = "${package}/bin/yggdrasilctl";
-  jqEksek = "${pkgs.jq}/bin/jq";
-
-  yggCriodFilterSocket = fileSystem.systemd.runtimeDirectory + "/yggCriodFilter";
 
   mkConfigFile =
     conf:

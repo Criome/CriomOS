@@ -1,1 +1,0 @@
-{ self }: import (self + /lib)

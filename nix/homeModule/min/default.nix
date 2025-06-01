@@ -1,5 +1,4 @@
 {
-  kor,
   lib,
   pkgs,
   pkdjz,
@@ -13,13 +12,12 @@
 }:
 let
   inherit (builtins) toString readFile toJSON;
-  inherit (lib) optionalAttrs;
-  inherit (kor)
+  inherit (lib)
+    optionalAttrs
     optionalString
     optionals
     mkIf
     optional
-    importJSON
     ;
   inherit (pkdjz) kynvyrt;
   inherit (horizon) node;
@@ -38,7 +36,7 @@ let
 
   homeDir = config.home.homeDirectory;
 
-  colemakZedKeys = importJSON ./zed_colemak_keybindings.json;
+  colemakZedKeys = lib.importJSON ./zed_colemak_keybindings.json;
 
   fzfColemakBinds = import ./fzfColemak.nix;
 
@@ -78,7 +76,7 @@ let
 
   mkFcCache = pkgs.makeFontsCache { fontDirectories = fontDeriveicynz; };
 
-  mkFontPaths = kor.concatMapStringsSep "\n" (path: "<dir>${path}/share/fonts</dir>") fontDeriveicynz;
+  mkFontPaths = lib.concatMapStringsSep "\n" (path: "<dir>${path}/share/fonts</dir>") fontDeriveicynz;
 
   mkFontConf = ''
     <?xml version='1.0'?>

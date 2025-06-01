@@ -1,5 +1,5 @@
 {
-  kor,
+  lib,
   systemd,
   cryptsetup,
   llvmPackages,
@@ -13,7 +13,7 @@
   expat,
 }:
 let
-  inherit (kor) concatMapStringsSep;
+  inherit (lib) concatMapStringsSep;
 
   inherit (llvmPackages) libclang;
 

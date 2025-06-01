@@ -1,44 +1,27 @@
 {
   horizon,
   config,
-  kor,
-  pkgs,
+  lib,
   ...
 }:
 let
   inherit (builtins)
-    filter
     mapAttrs
-    attrNames
-    hasAttr
-    concatStringsSep
-    concatMap
     ;
-  inherit (kor)
+  inherit (lib)
     optionals
     optional
-    optionalString
-    mkIf
     optionalAttrs
     ;
 
-  inherit (horizon) node exNodes users;
+  inherit (horizon) node users;
   inherit (node.methods) adminSshPreCriomes;
-
-  userNames = attrNames users;
-
-  mkSshString =
-    preCriome:
-    concatStringsSep " " [
-      "ed25519"
-      preCriome.ssh
-    ];
 
   mkUser =
     attrName: user:
     let
-      inherit (user) trust methods;
-      inherit (user.methods) sshCriomes hasPreCriome;
+      inherit (user) trust;
+      inherit (user.methods) sshCriomes;
 
     in
     optionalAttrs (trust > 0) {

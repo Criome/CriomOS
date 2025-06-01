@@ -2,7 +2,6 @@
   pkgs,
   lib,
   horizon,
-  kor,
   world,
   homeModule,
   ...
@@ -10,7 +9,7 @@
 let
   inherit (builtins) mapAttrs;
   inherit (lib) mkOverride;
-  inherit (world) mkHomeConfig pkdjz;
+  inherit (world) pkdjz;
 
   criomosVersion = "unversioned"; # TODO
 
@@ -41,14 +40,7 @@ in
 
   home-manager = {
     backupFileExtension = "backup";
-    extraSpecialArgs = {
-      inherit
-        kor
-        pkdjz
-        world
-        horizon
-        ;
-    };
+    extraSpecialArgs = { inherit pkdjz world horizon; };
     sharedModules = [ homeModule ];
     useGlobalPkgs = true;
     users = mapAttrs mkUserConfig horizon.users;

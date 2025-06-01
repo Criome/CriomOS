@@ -1,5 +1,5 @@
 {
-  kor,
+  lib,
   pkgs,
   pkdjz,
   user,
@@ -16,12 +16,9 @@ let
     concatMap
     toJSON
     ;
-  inherit (kor)
+  inherit (lib)
     optionalString
     optionals
-    mkIf
-    mapAttrsToList
-    optional
     optionalAttrs
     ;
   inherit (user.methods) isCodeDev sizedAtLeast useColemak;

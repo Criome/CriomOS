@@ -1,17 +1,11 @@
 {
-  config,
   lib,
-  pkgs,
-  kor,
   horizon,
   pkdjz,
   ...
 }:
 
 let
-  inherit (builtins) map;
-  inherit (lib) mkOverride;
-  inherit (horizon.node) criomeDomainName;
   inherit (pkdjz) trust-dns;
 
   trustDnsEksek = "${trust-dns}/bin/named";

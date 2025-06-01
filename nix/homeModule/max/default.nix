@@ -1,12 +1,12 @@
 {
-  kor,
+  lib,
   pkgs,
   user,
   pkdjz,
   ...
 }:
 let
-  inherit (kor) optionals;
+  inherit (lib) optionals;
   inherit (user.methods) isCodeDev isMultimediaDev sizedAtLeast;
 
   codingPackages = with pkgs; [
@@ -30,7 +30,7 @@ let
   ];
 
 in
-kor.mkIf sizedAtLeast.max {
+lib.mkIf sizedAtLeast.max {
   home = {
     packages =
       with pkgs;

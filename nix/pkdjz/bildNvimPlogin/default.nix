@@ -1,11 +1,10 @@
 {
-  kor,
+  lib,
   stdenv,
   neovim,
 }:
 let
   inherit (builtins) elem all;
-  inherit (kor) message;
 
   allowedComponents = [
     "bin"
@@ -39,26 +38,20 @@ arguments@{
   components ? [ ],
   ...
 }:
-assert message (all (
+assert lib.assertMsg (all (
   c: elem c allowedComponents
 ) components) "Component not allowed in: ${toString components}";
 let
-  inherit (builtins) readDir concatStringsSep;
-  inherit (kor) intersectLists mapAttrsToList optionalString;
-
-  srcDirs = readDir src;
-
-  checkSrcComponent = dirName: fileType: optionalString (fileType == "directory") dirName;
-
-  srcComponents = mapAttrsToList checkSrcComponent srcDirs;
-
-  components = intersectLists srcComponents (arguments.components or allowedComponents);
+  srcDirs = builtins.readDir src;
+  checkSrcComponent = dirName: fileType: lib.optionalString (fileType == "directory") dirName;
+  srcComponents = lib.mapAttrsToList checkSrcComponent srcDirs;
+  components = lib.intersectLists srcComponents (arguments.components or allowedComponents);
 
 in
 stdenv.mkDerivation (
   arguments
   // {
-    name = concatStringsSep "-" [
+    name = builtins.concatStringsSep "-" [
       namePrefix
       pname
       version

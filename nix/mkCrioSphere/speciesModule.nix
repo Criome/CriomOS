@@ -1,5 +1,4 @@
 {
-  kor,
   lib,
   config,
   preClusters,
@@ -7,7 +6,6 @@
 }:
 let
   inherit (builtins) attrNames attrValues;
-  inherit (kor) archToSystemMap;
   inherit (lib) mkOption;
   inherit (lib.types)
     enum
@@ -27,9 +25,6 @@ let
     2
     3
   ];
-
-  machineArchs = attrNames archToSystemMap;
-  systems = attrValues archToSystemMap;
 
   bootloaders = [
     "uefi"
@@ -117,7 +112,7 @@ let
       };
 
       arch = mkOption {
-        type = nullOr (enum machineArchs);
+        type = str;
         default = null;
       };
 
@@ -191,7 +186,6 @@ in
       magnitude
       clusterNames
       nodeSpecies
-      systems
       ;
   };
 

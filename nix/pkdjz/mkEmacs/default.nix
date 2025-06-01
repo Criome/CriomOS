@@ -1,5 +1,4 @@
 {
-  kor,
   lib,
   src,
   pkgs,
@@ -139,7 +138,7 @@ let
     launcherStyleEl
   ];
 
-  usePackagesNames = kor.unique (parsePackagesFromUsePackage {
+  usePackagesNames = lib.unique (parsePackagesFromUsePackage {
     configText = packagesEl;
     alwaysEnsure = true;
   });
@@ -162,9 +161,12 @@ let
   elpaFooter = ";;; default.el ends here";
   defaultEl = elpaHeader + packagesEl + loadTheme + elpaFooter;
 
+  mkStringHash = String: builtins.hashString "sha256" String;
+  shortHashString = string: builtins.substring 0 7 (mkStringHash string);
+
   defaultElPackage = trivialBuild {
     pname = "default-el";
-    version = kor.shortHashString defaultEl;
+    version = shortHashString defaultEl;
     src = writeText "default.el" defaultEl;
     packageRequires = usePackages;
   };

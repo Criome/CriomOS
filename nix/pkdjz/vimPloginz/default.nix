@@ -21,7 +21,7 @@ let
     src = fzf.src;
   };
 
-  ovyraidzIndeks = {
+  overridesIndeks = {
     fzf-vim = {
       dependencies = [ fzf-vim-core ];
     };
@@ -32,26 +32,26 @@ let
   buildVimPlogin =
     {
       name,
-      self,
-      ovyraidz,
+      src,
+      overrides,
     }:
     let
     in
     buildVimPluginFrom2Nix (
       {
         pname = name;
-        version = self.shortRev;
-        src = self;
+        version = src.shortRev;
+        inherit src;
       }
-      // ovyraidz
+      // overrides
     );
 
   mkSpok =
-    name: self:
+    name: src:
     let
-      ovyraidz = ovyraidzIndeks.${name} or { };
+      overrides = overridesIndeks.${name} or { };
     in
-    buildVimPlogin { inherit name self ovyraidz; };
+    buildVimPlogin { inherit name src overrides; };
 
   ryzylt = mapAttrs mkSpok spoks;
 

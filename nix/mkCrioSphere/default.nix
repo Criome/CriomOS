@@ -1,5 +1,4 @@
 {
-  kor,
   lib,
   uncheckedCrioSphereProposal,
 }:
@@ -11,7 +10,7 @@ let
   argumentsModule = {
     config = {
       _module.args = {
-        inherit kor lib preClusters;
+        inherit lib preClusters;
       };
     };
   };

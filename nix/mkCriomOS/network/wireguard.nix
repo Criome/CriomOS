@@ -1,5 +1,5 @@
 {
-  kor,
+  lib,
   pkgs,
   horizon,
   constants,
@@ -13,10 +13,8 @@ let
     filter
     concatStringsSep
     ;
-  inherit (kor)
-    mkIf
+  inherit (lib)
     mapAttrsToList
-    optionalAttrs
     filterAttrs
     ;
   inherit (horizon) node exNodes;

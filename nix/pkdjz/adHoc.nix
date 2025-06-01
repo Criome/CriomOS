@@ -192,7 +192,7 @@ in
   };
 
   nightlyRustDevEnv = {
-    self = hob.rust-overlay;
+    src = hob.rust-overlay;
     mods = [ "pkgs" ];
     lambda =
       { src, pkgs }:
@@ -236,22 +236,6 @@ in
           license = licenses.mit;
           maintainers = with maintainers; [ donovanglover ];
         };
-      };
-  };
-
-  pkgs-master = {
-    mods = [ "mkPkgs" ];
-    self = hob.nixpkgs-master;
-    lambda =
-      {
-        lib,
-        src,
-        system,
-        mkPkgs,
-      }:
-      mkPkgs {
-        inherit lib system;
-        nixpkgs = src;
       };
   };
 

@@ -1,10 +1,7 @@
-{ kor, pkgs, ... }:
+{ lib, pkgs, ... }:
 let
-  inherit (kor) exportJSON;
-
   config = { };
-
-  configFile = exportJSON "element-config.json" config;
+  configFile = lib.exportJSON "element-config.json" config;
 
 in
 {

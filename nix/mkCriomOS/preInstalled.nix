@@ -1,7 +1,7 @@
-{ kor, horizon, ... }:
+{ lib, horizon, ... }:
 let
   inherit (builtins) mapAttrs attrNames filter;
-  inherit (kor) optionals mkIf optional;
+  inherit (lib) optionals mkIf optional;
 
   inherit (horizon.node.io) disks swapDevices bootloader;
 

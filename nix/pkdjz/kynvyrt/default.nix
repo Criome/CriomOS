@@ -1,5 +1,5 @@
 {
-  kor,
+  lib,
   msgpack-tools,
   yj,
   runCommandLocal,
@@ -13,7 +13,6 @@
 }:
 let
   inherit (builtins) toJSON toString error;
-  inherit (kor) optionalString;
 
   kynvyrtMsgpackCmd = "${msgpack-tools}/bin/json2msgpack";
 
@@ -33,7 +32,7 @@ let
 
   jsonValue = toJSON value;
 
-  prettyFlag = optionalString (pretty && (format == "toml")) "-i";
+  prettyFlag = lib.optionalString (pretty && (format == "toml")) "-i";
 
 in
 runCommandLocal "${name}.${format}" { inherit jsonValue prettyFlag; } ''

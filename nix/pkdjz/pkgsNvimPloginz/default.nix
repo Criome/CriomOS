@@ -1,25 +1,23 @@
 {
-  self,
-  kor,
-  lib,
+  src,
+  mkLambda,
   pkgs,
   buildNvimPlogin,
 }:
 let
-  inherit (kor) mkLambda;
 
   ovyridynPkgs = pkgs // {
     buildVimPluginFrom2Nix = buildNvimPlogin;
   };
 
-  overridesLambda = import (self + /pkgs/misc/vim-plugins/overrides.nix);
+  overridesLambda = import (src + /pkgs/misc/vim-plugins/overrides.nix);
 
   overrides = mkLambda {
     lambda = overridesLambda;
     closure = ovyridynPkgs;
   };
 
-  lambda = import (self + /pkgs/misc/vim-plugins/generated.nix);
+  lambda = import (src + /pkgs/misc/vim-plugins/generated.nix);
 
   closure = ovyridynPkgs // {
     inherit overrides;

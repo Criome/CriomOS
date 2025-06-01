@@ -1,5 +1,4 @@
 {
-  kor,
   lib,
   pkgs,
   hob,
@@ -10,10 +9,11 @@
 }:
 with builtins;
 let
-  inherit (lib) boolToString mapAttrsToList importJSON;
-  inherit (kor)
+  inherit (lib)
+    boolToString
+    mapAttrsToList
+    importJSON
     optionals
-    mkIf
     optional
     exportJSON
     optionalAttrs

@@ -1,6 +1,5 @@
 {
   config,
-  kor,
   horizon,
   pkgs,
   lib,
@@ -8,9 +7,9 @@
   ...
 }:
 let
-  l = lib // builtins;
-  inherit (kor) mapAttrsToList exportJSON;
   inherit (lib)
+    mapAttrsToList
+    exportJSON
     concatStringsSep
     mkOverride
     optional

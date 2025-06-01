@@ -1,5 +1,5 @@
 {
-  kor,
+  lib,
   stdenv,
   fetchzip,
   fd,
@@ -28,8 +28,8 @@ let
       installPhase =
         let
           regex = if (regexMatch == "") then ".*" else regexMatch;
-          excludes = kor.optionalString (globExcludes != [ ]) (
-            kor.concatMapStringsSep " " (x: "--exclude '${x}'") globExcludes
+          excludes = lib.optionalString (globExcludes != [ ]) (
+            lib.concatMapStringsSep " " (x: "--exclude '${x}'") globExcludes
           );
         in
         ''

@@ -18,7 +18,7 @@ let
 
   spoks = eksplisitSpoks // (mapAttrs (n: s: s) implaidSpoks);
 
-  ovyraidzIndeks = {
+  overridesIndeks = {
     plenary-kor = {
       installPhase = ''
         runHook preInstall
@@ -32,16 +32,14 @@ let
   buildNvimLuaPlogin =
     {
       name,
-      self,
-      ovyraidz,
+      src,
+      overrides,
     }:
-    let
-    in
     buildNvimPlogin (
       {
         pname = name;
-        version = self.shortRev;
-        src = self;
+        version = src.shortRev;
+        inherit src;
         namePrefix = "nvimLuaPlogin";
         components = [
           "lua"
@@ -49,15 +47,15 @@ let
           "doc"
         ];
       }
-      // ovyraidz
+      // overrides
     );
 
   mkSpok =
-    name: self:
+    name: src:
     let
-      ovyraidz = ovyraidzIndeks.${name} or { };
+      overrides = overridesIndeks.${name} or { };
     in
-    buildNvimLuaPlogin { inherit name self ovyraidz; };
+    buildNvimLuaPlogin { inherit name src overrides; };
 
   ryzylt = mapAttrs mkSpok spoks;
 

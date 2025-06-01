@@ -1,14 +1,11 @@
 {
-  kor,
   lib,
   horizon,
   ...
 }:
 let
-  inherit (kor) concatMapAttrs;
   inherit (lib) mkOverride optional optionals;
   inherit (horizon) node exNodes;
-  inherit (builtins) concatStringsSep;
 
   mkCriomeHostEntries =
     name: node:
@@ -52,7 +49,7 @@ in
       "::1"
       "127.0.0.1"
     ];
-    hosts = concatMapAttrs mkCriomeHostEntries exNodes;
+    hosts = lib.concatMapAttrs mkCriomeHostEntries exNodes;
   };
 
   services = {

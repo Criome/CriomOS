@@ -1,12 +1,12 @@
 {
   homeModule,
-  kor,
+  lib,
   world,
   horizon,
   hob,
 }:
 let
-  inherit (kor) optional;
+  inherit (lib) optional;
   inherit (world) pkdjz home-manager;
   inherit (pkdjz) evalNixos;
   inherit (horizon.node) machine io typeIs;
@@ -51,7 +51,7 @@ let
 
   nixosArgs = {
     inherit
-      kor
+      lib
       world
       pkdjz
       horizon

@@ -46,10 +46,6 @@
       url = "github:league/base16-emacs";
       flake = false;
     };
-    flake-compat = {
-      url = "github:edolstra/flake-compat";
-      flake = false;
-    };
     flake-registry = {
       url = "github:NixOS/flake-registry";
       flake = false;

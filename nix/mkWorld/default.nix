@@ -3,22 +3,24 @@
   pkgs,
   hob,
   system,
-  localSources,
 }:
 let
   l = lib // builtins;
-  inherit (builtins) hasAttr mapAttrs readDir;
-  inherit (localSources) kor nodeNames mkPkgs;
-  inherit (kor) mkLambda optionalAttrs genAttrs;
   inherit (world) pkdjz mkZolaWebsite;
 
+  mkLambda =
+    { closure, lambda }:
+    let
+      requiredInputs = l.functionArgs lambda;
+      inputs = l.intersectAttrs requiredInputs closure;
+    in
+    lambda inputs;
+
   mkSubWorld =
-    SubWorld@{
+    {
       lambda,
       mods,
-      self ? src,
-      src ? self,
-      subWorlds ? { },
+      src ? null,
     }:
     let
       Mods = [
@@ -26,37 +28,29 @@ let
         "pkgsStatic"
         "pkgsSet"
         "hob"
-        "mkPkgs"
         "pkdjz"
         "world"
         "worldSet"
       ];
 
-      useMod = genAttrs Mods (n: (l.elem n mods));
+      useMod = l.genAttrs Mods (n: (l.elem n mods));
 
       # Warning: sets shadowing
       closure =
-        optionalAttrs useMod.pkgs pkgs
-        // optionalAttrs useMod.pkgsStatic pkgs.pkgsStatic
-        // optionalAttrs useMod.world world
-        // optionalAttrs useMod.pkdjz pkdjz
-        // optionalAttrs useMod.hob { inherit hob; }
-        // optionalAttrs useMod.pkgsSet { inherit pkgs; }
-        // optionalAttrs useMod.worldSet { inherit world; }
-        // optionalAttrs useMod.mkPkgs { inherit mkPkgs; }
-        // subWorlds
+        l.optionalAttrs useMod.pkgs pkgs
+        // l.optionalAttrs useMod.pkgsStatic pkgs.pkgsStatic
+        // l.optionalAttrs useMod.world world
+        // l.optionalAttrs useMod.pkdjz pkdjz
+        // l.optionalAttrs useMod.hob { inherit hob; }
+        // l.optionalAttrs useMod.pkgsSet { inherit pkgs; }
+        // l.optionalAttrs useMod.worldSet { inherit world; }
         // {
-          inherit kor lib;
-        }
-        // {
-          inherit system;
-        }
-        # TODO: deprecate `self` for `src`
-        // {
-          inherit self;
-        }
-        // {
-          src = self;
+          inherit
+            lib
+            system
+            src
+            mkLambda
+            ;
         };
 
     in
@@ -74,13 +68,11 @@ let
           ...
         }:
         let
-          src = SubWorld.src or (SubWorld.self or spoke);
-          self = src;
+          src = SubWorld.src or spoke;
         in
         mkSubWorld {
           inherit
             src
-            self
             mods
             lambda
             ;
@@ -94,14 +86,12 @@ let
           ...
         }:
         let
-          implaidSelf = hob.${name} or null;
-          src = HobWorld.src or (HobWorld.self or implaidSelf);
-          self = src;
+          impliedSrc = hob.${name} or null;
+          src = HobWorld.src or impliedSrc;
         in
         mkSubWorld {
           inherit
             src
-            self
             mods
             lambda
             ;
@@ -112,35 +102,7 @@ let
         let
           priHobWorlds = HobWorlds hob;
         in
-        mapAttrs priMkHobWorld priHobWorlds;
-
-      mkSubWorlds =
-        SubWorlds:
-        let
-          priMkSubWorlds =
-            name:
-            SubWorld@{
-              mods ? [ ],
-              lambda,
-              ...
-            }:
-            let
-              src = SubWorld.src or (SubWorld.self or spoke);
-              self = src;
-            in
-            mkSubWorld {
-              inherit
-                src
-                self
-                mods
-                lambda
-                subWorlds
-                ;
-            };
-
-          subWorlds = mapAttrs priMkSubWorlds SubWorlds;
-        in
-        subWorlds;
+        l.mapAttrs priMkHobWorld priHobWorlds;
 
       # TODO - Bad design
       spokeIsWebsite = spokeName: spokName == (spokeName + "Website");
@@ -151,18 +113,16 @@ let
       };
 
     in
-    if (hasAttr "HobWorlds" spoke) then
+    if (l.hasAttr "HobWorlds" spoke) then
       mkHobWorlds spoke.HobWorlds
-    else if (hasAttr "SubWorlds" spoke) then
-      mkSubWorlds spoke.SubWorlds
-    else if (hasAttr "SubWorld" spoke) then
+    else if (l.hasAttr "SubWorld" spoke) then
       priMkSubWorld spokName spoke.SubWorld
     else if (spokeIsWebsite spokName) then
       mkZolaWebsite { src = spoke; }
     else
       spoke // optionalSystemAttributes;
 
-  world = mapAttrs makeSpoke hob;
+  world = l.mapAttrs makeSpoke hob;
 
 in
 world
