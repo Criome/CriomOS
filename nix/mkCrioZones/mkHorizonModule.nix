@@ -126,6 +126,7 @@ let
         linkLocalIP:
         with linkLocalIP;
         let
+          # TODO
           interface = if (species == "ethernet") then "enp0s25" else "wlp3s0";
         in
         "fe80::${suffix}%${interface}";

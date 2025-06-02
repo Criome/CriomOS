@@ -13,27 +13,22 @@ let
       inherit (node) criomeDomainName nodeIp yggAddress;
       inherit (node.methods) isNixCache nixCacheDomain;
 
-      mkPreNodeHost = linkLocalIP: {
-        name = linkLocalIP;
-        value = [ ("wg." + criomeDomainName) ];
-      };
+      mkPreNodeHost = linkLocalIP: [ ("wg." + criomeDomainName) ];
 
       nodeHost = {
-        name = nodeIp;
-        value = [ criomeDomainName ];
+        "${nodeIp}" = [ criomeDomainName ];
       };
 
-      preNodeHosts = map mkPreNodeHost node.linkLocalIps;
+      preNodeHosts = lib.genAttrs node.linkLocalIps mkPreNodeHost;
 
-      nodeHosts = optionals (nodeIp != null) ([ nodeHost ] ++ preNodeHosts);
+      nodeHosts = lib.optionalAttrs (nodeIp != null) (nodeHost // preNodeHosts);
 
-      yggdrasilHost = optional (yggAddress != null) {
-        name = yggAddress;
-        value = [ criomeDomainName ] ++ (optional isNixCache nixCacheDomain);
+      yggdrasilHost = lib.optionalAttrs (yggAddress != null) {
+        "${yggAddress}" = [ criomeDomainName ] ++ (optional isNixCache nixCacheDomain);
       };
 
     in
-    yggdrasilHost ++ nodeHosts;
+    yggdrasilHost // nodeHosts;
 
 in
 {
@@ -49,8 +44,7 @@ in
       "::1"
       "127.0.0.1"
     ];
-    # URGENT TODO broken
-    # hosts = lib.concatMapAttrs mkCriomeHostEntries exNodes;
+    hosts = lib.concatMapAttrs mkCriomeHostEntries exNodes;
   };
 
   services = {
