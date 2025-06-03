@@ -119,6 +119,7 @@ let
     libva-utils
     ffmpeg-full
     # start("GTK")
+    appflowy
     wofi
     gitg
     pwvucontrol # Pipewire audio GTK UI
