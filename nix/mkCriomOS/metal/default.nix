@@ -189,20 +189,20 @@ in
       cups-pdf.enable = sizedAtLeast.min;
     };
 
-    # TODO - Broken
-    # udev.extraRules = ''
-    #   # USBasp - USB programmer for Atmel AVR controllers
-    #   SUBSYSTEM=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05dc", GROUP="plugdev"
-    #   # Pro-micro kp-boot-bootloader - Ergodone keyboard
-    #   SUBSYSTEM=="usb", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="bb05", GROUP="plugdev"
-    #   SUBSYSTEM!="usb", GOTO="librem5_rules_end"
-    #   # Librem 5 USB flash
-    #   ATTR{idVendor}=="1fc9", ATTR{idProduct}=="012b", GROUP+="plugdev", TAG+="uaccess"
-    #   ATTR{idVendor}=="0525", ATTR{idProduct}=="a4a5", GROUP+="plugdev", TAG+="uaccess"
-    #   ATTR{idVendor}=="0525", ATTR{idProduct}=="b4a4", GROUP+="plugdev", TAG+="uaccess"
-    #   ATTR{idVendor}=="316d", ATTR{idProduct}=="4c05", GROUP+="plugdev", TAG+="uaccess"
-    #   LABEL="librem5_rules_end"
-    # '';
+    udev.extraRules = ''
+      # USBasp - USB programmer for Atmel AVR controllers
+      SUBSYSTEM=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05dc", GROUP="plugdev"
+      # Pro-micro kp-boot-bootloader - Ergodone keyboard
+      SUBSYSTEM=="usb", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="bb05", GROUP="plugdev"
+      # TODO - Broken
+      # SUBSYSTEM!="usb", GOTO="librem5_rules_end"
+      # Librem 5 USB flash
+      # ATTR{idVendor}=="1fc9", ATTR{idProduct}=="012b", GROUP+="plugdev", TAG+="uaccess"
+      # ATTR{idVendor}=="0525", ATTR{idProduct}=="a4a5", GROUP+="plugdev", TAG+="uaccess"
+      # ATTR{idVendor}=="0525", ATTR{idProduct}=="b4a4", GROUP+="plugdev", TAG+="uaccess"
+      # ATTR{idVendor}=="316d", ATTR{idProduct}=="4c05", GROUP+="plugdev", TAG+="uaccess"
+      # LABEL="librem5_rules_end"
+    '';
 
     libinput = {
       enable = hasTouchpad;
