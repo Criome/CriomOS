@@ -399,7 +399,7 @@ mkIf sizedAtLeast.min {
           email = methods.emailAddress;
         };
         signing = {
-          sign-all = true;
+          behavior = "own";
           backend = "gpg";
           key = gitSigningKey;
         };
