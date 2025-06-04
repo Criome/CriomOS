@@ -426,8 +426,9 @@ mkIf sizedAtLeast.min {
       };
     };
 
+    # TODO broken
     zed-editor = {
-      enable = true;
+      enable = false;
       package = pkgs.zed-editor;
       extraPackages = with pkgs; [ ];
       userKeymaps = optionalAttrs useColemak colemakZedKeys;
