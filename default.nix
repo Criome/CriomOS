@@ -3,6 +3,8 @@
 }:
 let
   inherit (inputs) nixpkgs;
+
+  # TODO: re-design - Broken upstream
   lib = inputs.lib // (import ./libExtension.nix);
 
   mkCriomOS = import ./nix/mkCriomOS;
