@@ -41,11 +41,19 @@ let
 
   jsonHorizonFail = exportJSON "horizon.json" horizon;
 
+  optionalNixpkgsRef = optionalAttrs (hob.nixpkgs ? ref) { inherit (hob.nixpkgs) ref; };
+
   flakeEntriesOverrides = {
     lib = {
       owner = "nix-community";
       repo = "nixpkgs.lib";
     };
+
+    nixpkgs = {
+      owner = "criome";
+      repo = "nixpkgs";
+      inherit (hob.nixpkgs) rev;
+    } // optionalNixpkgsRef;
 
     nixpkgs-master = {
       owner = "NixOS";
