@@ -2,6 +2,9 @@
 
 (use-package caser)
 
+(use-package sublimity)
+(use-package sublimity-map)
+
 (use-package telega)
 
 (use-package envrc :config (envrc-global-mode))
