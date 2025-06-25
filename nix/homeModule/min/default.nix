@@ -399,7 +399,7 @@ mkIf sizedAtLeast.min {
           name = name;
           email = methods.emailAddress;
         };
-        signing = {
+        signing = mkIf hasPreCriome {
           behavior = "own";
           backend = "gpg";
           key = gitSigningKey;
