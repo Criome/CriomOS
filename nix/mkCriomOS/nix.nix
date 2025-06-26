@@ -161,9 +161,10 @@ in
     extraOptions = ''
       flake-registry = ${nixFlakeRegistryJson}
       experimental-features = nix-command flakes recursive-nix
-      secret-key-files = ${preCriad}
+      ${lib.optionalString hasNixPreCriad "secret-key-files = ${preCriad}"}
       keep-derivations = ${boolToString sizedAtLeast.med}
       keep-outputs = ${boolToString sizedAtLeast.max}
+      # !include <path>:  include without an error for missing file. 
       !include nixTokens
     '';
 
