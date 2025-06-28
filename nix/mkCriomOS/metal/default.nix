@@ -35,7 +35,14 @@ let
     "ThinkPadE15Gen2Intel"
     "ThinkPadT14Intel"
   ];
-  requiresSofFirmware = model == "ThinkPadE15Gen2Intel";
+
+  modelFirmwareIndex = with pkgs; {
+    ThinkPadE15Gen2Intel = [ sof-firmware ];
+    ThinkPadT14Intel = [ sof-firmware ];
+    rpi3B = [ raspberrypiWirelessFirmware ];
+  };
+
+  modelSpecificFirmware = modelFirmwareIndex."${model}" or [ ];
 
   izX230 = model == "ThinkPadX230";
   izX240 = model == "ThinkPadX240";
@@ -105,8 +112,7 @@ in
         alsa-firmware
         libreelec-dvb-firmware
       ]
-      ++ optional computerIs.rpi3B raspberrypiWirelessFirmware
-      ++ optional requiresSofFirmware sof-firmware;
+      ++ modelSpecificFirmware;
 
     ledger.enable = typeIs.edge;
 
