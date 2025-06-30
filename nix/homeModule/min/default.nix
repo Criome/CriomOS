@@ -107,6 +107,7 @@ let
 
   modernGraphicalPackages = with pkgs; [
     # C
+    mpv
     # ctags
     swaylock
     grim
@@ -211,7 +212,6 @@ let
       mksh # saner bash
       retry
       ncpamixer
-      mpv
       flac
       shntool
       dvtm
