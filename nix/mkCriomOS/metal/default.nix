@@ -126,17 +126,10 @@ in
   hardware = {
     cpu.intel.updateMicrocode = chipIsIntel;
 
-    firmware =
-      with pkgs;
-      [
-        firmwareLinuxNonfree
-        intel2200BGFirmware
-        rtl8192su-firmware
-        zd1211fw
-        alsa-firmware
-        libreelec-dvb-firmware
-      ]
-      ++ modelSpecificFirmware;
+    # Hack: TODO - tune per model, see `modelSpecificfirmware`
+    enableAllFirmware = true;
+
+    firmware = modelSpecificFirmware;
 
     ledger.enable = typeIs.edge;
 
