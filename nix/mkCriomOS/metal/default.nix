@@ -82,6 +82,7 @@ let
       "nvme"
       "thunderbolt"
       "sd_mod"
+      "xe"
     ];
     ThinkPadX250 = [
       "usb_storage"
@@ -160,10 +161,10 @@ in
       availableKernelModules = [
         "xhci_pci"
         "usb_storage"
-      ] ++ modelSpecificKernelModules;
+      ];
     };
 
-    kernelModules = [ "coretemp" ];
+    kernelModules = [ "coretemp" ] ++ modelSpecificKernelModules;
 
     extraModprobeConfig = (
       optionalString sizedAtLeast.max ''
