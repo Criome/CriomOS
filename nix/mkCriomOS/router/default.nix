@@ -11,7 +11,9 @@ let
   # TODO - massive hack
   wanInterface = "enp0s25";
   lanInterfaceOne = "enp0s20u1";
+  wlanDevice = "wlp3s0";
   # lanInterfaceTwo = "enp0s20u1";
+
   lanBridgeInterface = "br-lan";
   lanSubnetPrefix = "10.18.0";
   lanAddress = "${lanSubnetPrefix}.1";
@@ -74,13 +76,13 @@ in
     hostapd = {
       enable = true;
       radios = {
-        wlp3s0 = {
+        "${wlanDevice}" = {
           band = "2g";
           channel = 1;
           countryCode = "PL";
           wifi4.enable = true;
           networks = {
-            wlan0 = {
+            "${wlanDevice}" = {
               ssid = "wifi-name";
               authentication = {
                 mode = "wpa3-sae";
