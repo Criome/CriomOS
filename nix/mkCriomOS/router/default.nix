@@ -114,6 +114,7 @@ in
           };
           subnet4 = [
             {
+              id = 1;
               subnet = lanFullAdress;
               pools = [ { pool = "${lanSubnetPrefix}.100 - ${lanSubnetPrefix}.240"; } ];
               option-data = [
