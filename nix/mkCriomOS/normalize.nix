@@ -72,10 +72,6 @@ in
     shells = [ "/run/current-system/sw${mksh.shellPath}" ];
 
     etc = {
-      "systemd/user-environment-generators/ssh-sock.sh".source = writeScript "user-ssh-sock.sh" ''
-        #!${pkgs.mksh}/bin/mksh
-          echo "SSH_AUTH_SOCK=$(${gnupg}/bin/gpgconf --list-dirs agent-ssh-socket)"
-      '';
       "ssh/ssh_known_hosts".text = sshKnownHosts;
       "horizon.json" = {
         source = jsonHorizonFail;
