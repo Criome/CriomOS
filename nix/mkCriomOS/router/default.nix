@@ -47,7 +47,7 @@ in
 
             tcp dport ssh accept
 
-            iifname { ${lanBridgeInterface}, yggTun } accept comment "Allow local network to access the router"
+            iifname { ${lanBridgeInterface}, ${wlanDevice}, yggTun } accept comment "Allow local network to access the router"
             iifname "${wanInterface}" ct state { established, related } accept comment "Allow established traffic"
             iifname "${wanInterface}" icmp type { echo-request, destination-unreachable, time-exceeded } counter accept comment "Allow select ICMP"
             iifname "${wanInterface}" counter drop comment "Drop all other unsolicited traffic from ${wanInterface}"
