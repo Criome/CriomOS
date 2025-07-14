@@ -114,9 +114,13 @@ in
     bind = $SUPER, B, centerwindow
     bind = $SUPER, X, pin
     bind = $SUPER, ${fullscreen}, fullscreen
+
+    # TODO - not working
     bind = $SUPER, ${specialWorkspace}, togglespecialworkspace
+    # Double binding - which to keep?
     bind = $SUPER_SHIFT, ${specialWorkspace}, movetoworkspace, special
-    bind = $SUPER_SHIFT, ${specialWorkspace}, focuscurrentorlast
+    # bind = $SUPER_SHIFT, ${specialWorkspace}, focuscurrentorlast
+
     bind = $SUPER, F2, togglespecialworkspace
 
     bind = $SUPER, Return, layoutmsg, swapwithmaster master
@@ -142,6 +146,7 @@ in
     # bind = $SUPER, D, exec, warpd --normal
     # bind = $SUPER, G, exec, warpd --grid
 
+    # TODO - use hyprnome
     bind = SUPER_CONTROL, ${up}, workspace, r-1
     bind = SUPER_CONTROL, ${down}, workspace, r+1
     bind = SUPER_CONTROL, ${left}, movetoworkspace, r-1
