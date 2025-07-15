@@ -80,6 +80,8 @@ in
       autoSuspend = typeIs.edge;
     };
 
+    gvfs.enable = sizedAtLeast.min;
+
     gnome = {
       at-spi2-core.enable = true;
       core-apps.enable = true;
