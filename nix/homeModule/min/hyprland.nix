@@ -1,4 +1,4 @@
-{ pkdjz, ... }:
+{ pkgs, ... }:
 let
   terminal = "foot";
   keyboardLauncher = "wofi --show drun";
@@ -22,7 +22,7 @@ let
 
 in
 {
-  home.packages = with pkdjz; [ hyprland-relative-workspace ];
+  home.packages = with pkgs; [ hyprnome ];
 
   # (Todo theme)
   xdg.configFile."hypr/hyprland.conf".text = with keys; ''
@@ -149,10 +149,10 @@ in
     # bind = $SUPER, G, exec, warpd --grid
 
     # TODO - use hyprnome
-    bind = SUPER_CONTROL, ${up}, workspace, r-1
-    bind = SUPER_CONTROL, ${down}, workspace, r+1
-    bind = SUPER_CONTROL, ${left}, movetoworkspace, r-1
-    bind = SUPER_CONTROL, ${right}, movetoworkspace, r+1
+    bind = SUPER_CONTROL, ${up}, exec, hyprnome --previous
+    bind = SUPER_CONTROL, ${down}, exec, hyprnome
+    bind = SUPER_CONTROL, ${left}, exec, hyprnome --previous --move
+    bind = SUPER_CONTROL, ${right}, exec, hyprnome --move
 
     layerrule = blur,ironbar
     layerrule = blur,rofi
