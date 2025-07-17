@@ -156,7 +156,7 @@ let
   unixUtilities =
     with pkgs;
     [
-      erdtree # Disk usage
+      dua # Disk usage
       lsof # List open files
       delta # Git diff viewew
       cpulimit # Limit a process' CPU usage
