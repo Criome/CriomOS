@@ -86,10 +86,6 @@ let
       ];
     };
 
-    nerd-fonts = {
-      lambda = import ./nerd-fonts;
-    };
-
     pkgsNvimPloginz = {
       lambda = import ./pkgsNvimPloginz;
       mods = [
