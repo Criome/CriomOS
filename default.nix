@@ -99,7 +99,10 @@ let
           mkProfileHome =
             profileName: profile:
             let
-              modules = [ homeModule ];
+              modules = [
+                inputs.stylix.homeModules.stylix
+                homeModule
+              ];
               extraSpecialArgs = {
                 inherit
                   pkdjz

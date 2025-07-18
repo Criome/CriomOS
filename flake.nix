@@ -22,6 +22,12 @@
     # Todo - binary cache
     attic.url = "github:zhaofengli/attic";
 
+    # Styling
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Misc
     kibord.url = "github:LiGoldragon/kibord/testing";
     skrips.url = "github:criome/skrips/testing";
