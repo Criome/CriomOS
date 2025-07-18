@@ -104,7 +104,7 @@ let
                   profile
                   ;
               };
-              evalHomeManager = hob.home-manager.lib.homeManagerConfiguration;
+              evalHomeManager = inputs.home-manager.lib.homeManagerConfiguration;
               evaluation = evalHomeManager { inherit modules extraSpecialArgs pkgs; };
             in
             evaluation.config.home.activationPackage;
