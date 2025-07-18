@@ -9,21 +9,18 @@ let
 
   mkCriomOS = import ./nix/mkCriomOS;
 
-  local =
-    let
-      importInput = name: value: import value;
-      modulePaths = {
-        mkPkgs = ./nix/mkPkgs;
-        mkWorld = ./nix/mkWorld;
-        mkCrioSphere = ./nix/mkCrioSphere;
-        mkCrioZones = ./nix/mkCrioZones;
-        pkdjz = ./nix/pkdjz;
-        homeModule = ./nix/homeModule;
-        nodeNames = ./nodeNames.nix;
-        files = ./nix/files; # TODO: use?
-      };
-    in
-    mapAttrs importInput modulePaths;
+  importInput = name: value: import value;
+
+  local = mapAttrs importInput {
+    mkPkgs = ./nix/mkPkgs;
+    mkWorld = ./nix/mkWorld;
+    mkCrioSphere = ./nix/mkCrioSphere;
+    mkCrioZones = ./nix/mkCrioZones;
+    pkdjz = ./nix/pkdjz;
+    criomOSHomeModule = ./nix/homeModule;
+    nodeNames = ./nodeNames.nix;
+    files = ./nix/files; # TODO: use?
+  };
 
   hob =
     let
