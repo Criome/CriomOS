@@ -22,7 +22,6 @@ let
 
   codingPackages = with pkgs; [
     pandoc
-    gitkraken
   ];
 
   semaDevPackages = with pkgs; [
@@ -49,6 +48,7 @@ lib.mkIf sizedAtLeast.max {
         # freecad # broken
         wineWowPackages.waylandFull
         whatsapp-for-linux
+        gitkraken
       ]
       ++ (optionals isCodeDev codingPackages)
       ++ (optionals isMultimediaDev semaDevPackages);
