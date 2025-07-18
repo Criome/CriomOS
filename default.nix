@@ -116,6 +116,7 @@ let
               evaluation = evalHomeManager { inherit modules extraSpecialArgs pkgs; };
             in
             evaluation.config.home.activationPackage;
+
         in
         mapAttrs mkProfileHome userProfiles;
 
