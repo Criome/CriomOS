@@ -340,8 +340,8 @@ let
 
           sizedAtLeast = mkSizeAtLeast user.size;
 
-          emailAddress = "${user.name}@${cluster.name}.criome.me";
-          matrixID = "@${user.name}:${cluster.name}.criome.me";
+          emailAddress = "${user.name}@${cluster.name}.criome.net";
+          matrixID = "@${user.name}:${cluster.name}.criome.net";
 
           gitSigningKey = if hasPreCriome then ("&" + user.preCriomes.${node.name}.keygrip) else null;
 
