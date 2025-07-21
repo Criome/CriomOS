@@ -28,7 +28,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Misc
+    # System
     kibord.url = "github:LiGoldragon/kibord/testing";
     skrips.url = "github:criome/skrips/testing";
 
