@@ -271,6 +271,40 @@ in
       };
   };
 
+  videomass.lambda =
+    {
+      python3,
+      ffmpeg-full,
+      wrapGAppsHook,
+      fetchPypi,
+    }:
+    python3.pkgs.buildPythonPackage rec {
+      pname = "videomass";
+      version = "6.1.12";
+      pyproject = true;
+
+      src = fetchPypi {
+        inherit pname version;
+        hash = "sha256-gbJcnUilDcTgOVq/6t5wJw+l8b8IsMoSgePrcUu1PMo=";
+      };
+
+      build-system = with python3.pkgs; [
+        babel
+        hatchling
+        wheel
+        setuptools
+      ];
+
+      dependencies = with python3.pkgs; [
+        ffmpeg-full
+        pypubsub
+        wxpython
+        requests
+      ];
+
+      buildInputs = [ wrapGAppsHook ];
+    };
+
   wireguardNetresolved = {
     mods = [
       "pkgs"
