@@ -167,6 +167,7 @@ lib.mkIf sizedAtLeast.med {
           "yt": "https://www.youtube.com/results?search_query={}",
           "leet": "https://1337x.to/torrent/search/{}/1/",
           "gr": "https://www.goodreads.com/search?q={}",
+          "az": "https://www.amazon.ca/s?k={}",
           }
 
           c.bindings.commands["normal"] = {
