@@ -1,3 +1,5 @@
+(use-package chatgpt-shell)
+
 (use-package apheleia)
 
 (use-package caser)
