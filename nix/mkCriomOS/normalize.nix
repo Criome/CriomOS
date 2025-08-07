@@ -45,6 +45,11 @@ let
 
   sshKnownHosts = concatStringsSep "\n" (mapAttrsToList mkNodeKnownHost exNodes);
 
+  audioPackages = with pkgs; [
+    # To get all codecs in pipewire
+    pulseaudioFull
+  ];
+
 in
 {
   boot = {
@@ -79,15 +84,18 @@ in
       };
     };
 
-    systemPackages = with pkgs; [
-      world.skrips.root
-      tcpdump
-      librist
-      openssh
-      ntfs3g
-      fuse
-      ifmetric
-    ];
+    systemPackages =
+      with pkgs;
+      [
+        world.skrips.root
+        tcpdump
+        librist
+        openssh
+        ntfs3g
+        fuse
+        ifmetric
+      ]
+      ++ audioPackages;
 
     interactiveShellInit = optionalString useColemak "stty -ixon";
     sessionVariables = (
