@@ -45,19 +45,8 @@ let
 
   sshKnownHosts = concatStringsSep "\n" (mapAttrsToList mkNodeKnownHost exNodes);
 
-  libpulseaudioFull = pkgs.pulseaudio.override {
-    libOnly = true;
-    x11Support = true;
-    jackaudioSupport = true;
-    airtunesSupport = true;
-    bluetoothSupport = true;
-    advancedBluetoothCodecs = true;
-    remoteControlSupport = true;
-    zeroconfSupport = true;
-  };
-
   pipewireFull = pkgs.pipewire.override {
-    libpulseaudio = libpulseaudioFull;
+    libpulseaudio = pkgs.pulseaudioFull;
   };
 
 in
@@ -102,6 +91,7 @@ in
       ntfs3g
       fuse
       ifmetric
+      pulseaudioFull
     ];
 
     interactiveShellInit = optionalString useColemak "stty -ixon";
