@@ -2,7 +2,8 @@
   lib,
   world,
   horizon,
-  hob,
+  hob, # TODO: deprecate for `inputs`
+  inputs,
   homeModules,
   _withUsers ? true,
 }:

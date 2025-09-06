@@ -127,6 +127,7 @@ let
           horizon
           hob
           homeModules
+          inputs
           ;
       };
 
