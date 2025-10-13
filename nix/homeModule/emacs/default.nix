@@ -13,7 +13,8 @@ let
   baseDependencies = with pkgs; [
     nil
     nodejs
-    gh
+    # Collision - unknown source
+    # gh
   ];
 
   synthElDependencies = [
