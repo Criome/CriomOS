@@ -10,19 +10,22 @@ let
   inherit (pkdjz) mkEmacs;
   package = mkEmacs { inherit user profile; };
 
+  baseDependencies = with pkgs; [
+    nil
+    nodejs
+    gh
+  ];
+
+  synthElDependencies = [
+    (pkgs.python312.withPackages (ps: [ ps.aider-chat ]))
+  ];
+
 in
 {
   home = {
     file.".emacs".text = builtins.readFile ./init.el;
 
-    packages =
-      [ package ]
-      ++ (with pkgs; [
-        nil
-        (python3Packages.aider-chat)
-        nodejs
-        gh
-      ]);
+    packages = [ package ] ++ baseDependencies ++ synthElDependencies;
 
     sessionVariables = {
       EDITOR = "emacsclient -c";
