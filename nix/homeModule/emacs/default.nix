@@ -18,7 +18,7 @@ let
   ];
 
   synthElDependencies = [
-    (pkgs.python312.withPackages (ps: [ ps.aider-chat ]))
+    pkgs.aider-chat-full
   ];
 
 in
