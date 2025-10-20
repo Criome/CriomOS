@@ -125,7 +125,6 @@ let
     dino
     # ptask # Broken
     transmission-remote-gtk
-    bookworm
     # start("Qt")
     adwaita-qt
     qgnomeplatform
