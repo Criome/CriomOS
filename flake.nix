@@ -98,6 +98,10 @@
       url = "github:NHALX/shen-mode";
       flake = false;
     };
+    superchat = {
+      url = "github:yibie/superchat";
+      flake = false;
+    };
     tera-mode = {
       url = "github:svavs/tera-mode";
       flake = false;
