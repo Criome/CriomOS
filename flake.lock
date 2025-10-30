@@ -858,6 +858,7 @@
         "shen-mode": "shen-mode",
         "skrips": "skrips",
         "stylix": "stylix",
+        "superchat": "superchat",
         "tera-mode": "tera-mode",
         "ultra-scroll": "ultra-scroll",
         "videocut": "videocut",
@@ -994,6 +995,22 @@
       "original": {
         "owner": "danth",
         "repo": "stylix",
+        "type": "github"
+      }
+    },
+    "superchat": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1761297468,
+        "narHash": "sha256-0ZBQE7bAgJpDrfpkiWCe3OAx0Q++EFWJ6a7Es93dHVQ=",
+        "owner": "yibie",
+        "repo": "superchat",
+        "rev": "6f324271c1d221573a19b66ab41e84b02db3549d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yibie",
+        "repo": "superchat",
         "type": "github"
       }
     },
