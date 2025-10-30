@@ -1,3 +1,15 @@
+;;; crio-synth.el --- CriomOS dev loop helpers: GPTel + Superchat + Aidermacs -*- lexical-binding: t; -*-
+
+;; This file configures:
+;; - Copilot for inline completions
+;; - GPTel for ad-hoc chat/refactor flows (Markdown-first)
+;; - Superchat (Markdown chat interface atop GPTel) with lightweight memory
+;; - Aidermacs (Emacs-native UI for Aider) — no vterm dependency
+
+;; ─────────────────────────────────────────────────────────────
+;; Core group & defaults
+;; ─────────────────────────────────────────────────────────────
+
 (defgroup crio/develop nil
   "CriomOS development loop helpers."
   :group 'tools
@@ -5,18 +17,19 @@
 
 (defcustom crio/aider-default-command
   "aider --model openai/gpt-5 --no-auto-commit"
-  "Shell command used by `crio/aider-vterm' to start aider."
+  "Default aider command used by external scripts or shell invocations.
+Note: Aidermacs does not use this directly; it manages Aider via its own backend."
   :type 'string
   :group 'crio/develop)
 
 (defcustom crio/gptel-system-prompt
   "You are an expert NixOS, Emacs and systems programming pair-programmer."
-  "System prompt supplied to gptel helper commands."
+  "System prompt supplied to GPTel helper commands."
   :type 'string
   :group 'crio/develop)
 
 (defcustom crio/gptel-default-model 'gpt-5
-  "Default model identifier used for gptel sessions."
+  "Default model identifier used for GPTel sessions."
   :type 'symbol
   :group 'crio/develop)
 
@@ -38,6 +51,10 @@ or pass entry 'openai/api-key'. Never use 'openapi/api-key'."
       (error "No API key. Set OPENAI_API_KEY, add to auth-source (:host api.openai.com), or create pass 'openai/api-key' (first line = secret)."))
     key))
 
+;; ─────────────────────────────────────────────────────────────
+;; Copilot
+;; ─────────────────────────────────────────────────────────────
+
 (use-package copilot
   :hook (prog-mode . copilot-mode)
   :bind (:map copilot-completion-map
@@ -56,6 +73,10 @@ or pass entry 'openai/api-key'. Never use 'openapi/api-key'."
     (define-key company-active-map (kbd "TAB") nil))
   (with-eval-after-load 'projectile
     (define-key projectile-command-map (kbd "]") #'copilot-mode)))
+
+;; ─────────────────────────────────────────────────────────────
+;; GPTel: chat, explain, rewrite — Markdown-first
+;; ─────────────────────────────────────────────────────────────
 
 (use-package gptel
   :commands (gptel gptel-send gptel-rewrite gptel-menu)
@@ -80,7 +101,7 @@ or pass entry 'openai/api-key'. Never use 'openapi/api-key'."
         (setq-local gptel-model crio/gptel-default-model))
       buffer))
   (defun crio/gptel-explain-region (beg end)
-    "Explain the region between BEG and END in a dedicated gptel buffer."
+    "Explain the region between BEG and END in a dedicated GPTel buffer."
     (interactive "r")
     (let* ((code (buffer-substring-no-properties beg end))
            (mode major-mode)
@@ -92,11 +113,11 @@ or pass entry 'openai/api-key'. Never use 'openapi/api-key'."
         :system crio/gptel-system-prompt
         :model crio/gptel-default-model)))
   (defun crio/gptel-review-buffer ()
-    "Summarise the current buffer using gptel."
+    "Summarise the current buffer using GPTel."
     (interactive)
     (crio/gptel-explain-region (point-min) (point-max)))
   (defun crio/gptel-refactor-region (beg end instruction)
-    "Ask gptel to rewrite region BEG..END according to INSTRUCTION."
+    "Ask GPTel to rewrite region BEG..END according to INSTRUCTION."
     (interactive "r\nsRewrite instructions: ")
     (gptel-rewrite beg end instruction))
   (define-key global-map (kbd "C-c g g") #'gptel)
@@ -104,36 +125,146 @@ or pass entry 'openai/api-key'. Never use 'openapi/api-key'."
   (define-key global-map (kbd "C-c g b") #'crio/gptel-review-buffer)
   (define-key global-map (kbd "C-c g r") #'crio/gptel-refactor-region))
 
-(use-package vterm
-  :commands (vterm)
+;; ─────────────────────────────────────────────────────────────
+;; Superchat (Markdown chat interface built on GPTel)
+;; ─────────────────────────────────────────────────────────────
+
+(defcustom crio/superchat-data-directory "~/.emacs.d/superchat/"
+  "Base directory where Superchat stores its sessions and memory files."
+  :type 'directory
+  :group 'crio/develop)
+
+(defcustom crio/superchat-session-directory
+  (expand-file-name "sessions" crio/superchat-data-directory)
+  "Directory where Superchat saves Markdown chat sessions."
+  :type 'directory
+  :group 'crio/develop)
+
+(defcustom crio/superchat-memory-file
+  (expand-file-name "memory.org" crio/superchat-data-directory)
+  "Org file where Superchat stores active memory entries."
+  :type 'file
+  :group 'crio/develop)
+
+(defcustom crio/superchat-memory-archive-file
+  (expand-file-name "memory-archive.org" crio/superchat-data-directory)
+  "Org file where Superchat archives expired memory entries."
+  :type 'file
+  :group 'crio/develop)
+
+(defcustom crio/superchat-context-message-count 12
+  "Number of recent messages to include in Superchat context for continuity."
+  :type 'integer
+  :group 'crio/develop)
+
+(defcustom crio/superchat-auto-save-sessions t
+  "If non-nil, Superchat automatically saves all sessions to Markdown files."
+  :type 'boolean
+  :group 'crio/develop)
+
+(defcustom crio/superchat-use-memory t
+  "If non-nil, Superchat enables lightweight memory using Org files."
+  :type 'boolean
+  :group 'crio/develop)
+
+(use-package superchat
+  :after gptel
+  :commands (superchat superchat-new-chat)
+  :custom
+  (superchat-default-mode 'markdown-mode)
+  (superchat-data-directory crio/superchat-data-directory)
+  (superchat-session-directory crio/superchat-session-directory)
+  (superchat-context-message-count crio/superchat-context-message-count)
+  (superchat-session-auto-save crio/superchat-auto-save-sessions)
+  (superchat-backend gptel-default-backend)
+  (superchat-model crio/gptel-default-model)
+  (superchat-system-prompt crio/gptel-system-prompt)
+  (superchat-memory-auto-capture-enabled crio/superchat-use-memory)
+  (superchat-memory-file crio/superchat-memory-file)
+  (superchat-memory-archive-file crio/superchat-memory-archive-file)
+  :init
+  (dolist (dir (list crio/superchat-data-directory crio/superchat-session-directory))
+    (unless (file-directory-p dir)
+      (make-directory dir t)))
   :config
-  (setq vterm-max-scrollback 10000)
-  (defun crio/aider--project-root ()
-    (cond
-     ((and (boundp 'projectile-mode) projectile-mode (fboundp 'projectile-project-p)
-           (projectile-project-p))
-      (projectile-project-root))
-     ((fboundp 'project-current)
-      (when-let ((project (project-current)))
-        (project-root project)))
-     (t default-directory)))
-  (defun crio/aider-vterm (&optional command)
-    "Open a vterm running aider in the project root.
-With prefix argument prompt for COMMAND, otherwise use
-`crio/aider-default-command'."
-    (interactive
-     (list (when current-prefix-arg
-             (read-shell-command "Aider command: " crio/aider-default-command))))
-    (let* ((root (or (crio/aider--project-root) default-directory))
-           (default-directory root)
-           (buffer-name (format "*aider:%s*"
-                                (file-name-nondirectory (directory-file-name root))))
-           (cmd (or command crio/aider-default-command)))
-      (vterm buffer-name)
-      (vterm-send-string cmd)
-      (vterm-send-return)))
-  (define-key global-map (kbd "C-c a a") #'crio/aider-vterm)
-  (with-eval-after-load 'projectile
-    (define-key projectile-command-map (kbd "a") #'crio/aider-vterm)))
+  (define-key global-map (kbd "C-c g s") #'superchat)
+  (define-key global-map (kbd "C-c g n") #'superchat-new-chat))
+
+;; ─────────────────────────────────────────────────────────────
+;; Aidermacs (Emacs-native UI for Aider) — no vterm required
+;; ─────────────────────────────────────────────────────────────
+
+(defgroup crio/aider nil
+  "Aidermacs helpers and utilities."
+  :group 'crio/develop
+  :prefix "crio/aider-")
+
+(defcustom crio/aider-config-file ".aider.conf.yml"
+  "Repo-relative aider YAML configuration."
+  :type 'string
+  :group 'crio/aider)
+
+(defcustom crio/aider-ignore-file ".aiderignore"
+  "Repo-relative aider ignore file."
+  :type 'string
+  :group 'crio/aider)
+
+(defun crio/aider--project-root ()
+  "Try to find a project root using Projectile or built-in project.el."
+  (cond
+   ((and (boundp 'projectile-mode) projectile-mode (fboundp 'projectile-project-p)
+         (projectile-project-p))
+    (projectile-project-root))
+   ((fboundp 'project-current)
+    (when-let ((project (project-current)))
+      (project-root project)))
+   (t default-directory)))
+
+(defun crio/aider-template-config ()
+  "Create a sensible .aider.conf.yml if missing, then open it."
+  (interactive)
+  (let* ((root (or (crio/aider--project-root) default-directory))
+         (path (expand-file-name crio/aider-config-file root)))
+    (if (file-exists-p path)
+        (find-file path)
+      (with-temp-buffer
+        (insert
+         (concat
+          "model: openai/gpt-5\n"
+          "weak-model: openai/gpt-5-mini\n"
+          "dark-mode: true\n"
+          "auto-commits: true\n"
+          "commit-prompt: >\n"
+          "  Write a Conventional Commit message (max 1 line, imperative).\n"
+          "  Summarize WHAT changed and WHY, referencing files when useful.\n"
+          "  No trailing period.\n"
+          "map-tokens: 4096\n"
+          "think-tokens: 12000\n"
+          "add-gitignore-files: false\n"))
+        (write-file path))
+      (find-file path))))
+
+(defun crio/aider-template-ignore ()
+  "Create a basic .aiderignore if missing, then open it."
+  (interactive)
+  (let* ((root (or (crio/aider--project-root) default-directory))
+         (path (expand-file-name crio/aider-ignore-file root)))
+    (if (file-exists-p path)
+        (find-file path)
+      (with-temp-buffer
+        (insert "/*\n!lisp/**\n!src/**\n!flake.nix\n!flake.lock\n!README.md\n!LICENSE\n")
+        (write-file path))
+      (find-file path))))
+
+(use-package aidermacs
+  :ensure t
+  :after gptel
+  :bind (("C-c a a" . aidermacs-transient-menu)
+         ("C-c a c" . crio/aider-template-config)
+         ("C-c a i" . crio/aider-template-ignore))
+  :custom
+  (aidermacs-default-chat-mode 'architect)   ;; architect / code / ask
+  (aidermacs-default-model "gpt-5"))
 
 (provide 'crio-synth)
+;;; crio-synth.el ends here
