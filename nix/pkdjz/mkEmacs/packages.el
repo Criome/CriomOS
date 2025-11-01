@@ -390,3 +390,54 @@
  :custom
  (format-all-formatters
   (push '("Emacs Lisp" elisp-autofmt) format-all-default-formatters)))
+
+;; ─────────────────────────────────────────────────────────────
+;; Live evaluation & introspection helpers
+;; ─────────────────────────────────────────────────────────────
+;;
+;; This group makes Emacs Lisp development feel immediate and
+;; "notebook-like" by showing results inline, surfacing rich
+;; documentation, and allowing asynchronous Org-babel blocks.
+
+;; Eros: show evaluation results inline (like Jupyter cells)
+;; ---------------------------------------------------------
+;; When you run C-x C-e (eval-last-sexp) or C-u C-x C-e
+;; in an Emacs-Lisp buffer, eros displays the result briefly
+;; beside the expression instead of only echoing it.
+;; Lightweight: adds one overlay and then removes it.
+(use-package eros
+  :ensure t
+  :hook (emacs-lisp-mode . eros-mode))
+
+;; Helpful: richer describe-commands
+;; ---------------------------------
+;; Replaces vanilla `describe-function`, `describe-variable`,
+;; and `describe-key` with an interactive viewer that shows
+;; source, references, call sites, and links to definitions.
+;; Use:
+;;   M-x describe-function  →  Helpful buffer with docs + code
+(use-package helpful
+  :ensure t
+  :bind (([remap describe-function] . helpful-function)
+         ([remap describe-variable] . helpful-variable)
+         ([remap describe-key]      . helpful-key)))
+
+;; Eldoc-box: hover popups for documentation
+;; -----------------------------------------
+;; Extends Eldoc by showing docstrings and argument lists in
+;; a floating child-frame near point.  Activates automatically
+;; when editing Emacs Lisp so you can see symbol docs as you
+;; type or hover.
+(use-package eldoc-box
+  :ensure t
+  :hook (emacs-lisp-mode . eldoc-box-hover-mode))
+
+;; Org-babel async: run Org source blocks asynchronously
+;; -----------------------------------------------------
+;; Allows Org-mode code blocks (e.g., #+BEGIN_SRC emacs-lisp)
+;; to execute in the background without blocking the UI.
+;; Results are inserted when finished, useful for long-running
+;; snippets or API calls.
+(use-package ob-async
+  :ensure t
+  :after org)
