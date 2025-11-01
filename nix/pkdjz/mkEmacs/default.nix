@@ -31,6 +31,10 @@ let
         inherit src;
       };
 
+    gptel = emacsPackages.gptel.overrideAttrs (attrs: {
+      src = hob.gptel;
+    });
+
     jujutsu =
       let
         src = hob.jujutsu-el;

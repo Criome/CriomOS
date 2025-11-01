@@ -66,6 +66,10 @@
       flake = false;
     };
     flake-utils.url = "github:numtide/flake-utils";
+    gptel = {
+      url = "github:karthink/gptel";
+      flake = false;
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
