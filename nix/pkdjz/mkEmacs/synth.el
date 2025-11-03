@@ -28,9 +28,9 @@ Note: Aidermacs does not use this directly; it manages Aider via its own backend
   :type 'string
   :group 'crio/develop)
 
-(defcustom crio/gptel-default-model 'gpt-5
+(defcustom crio/gptel-default-model "gpt-5"
   "Default model identifier used for GPTel sessions."
-  :type 'symbol
+  :type 'string
   :group 'crio/develop)
 
 (defun crio/gptel--read-api-key ()
@@ -102,7 +102,7 @@ or pass entry 'openai/api-key'. Never use 'openapi/api-key'."
   (let ((backend
          (gptel-make-openai "openai"
            :key #'crio/gptel--read-api-key
-           :models '(gpt-5 gpt-5-mini gpt-5-nano gpt-4o gpt-4o-mini))))
+           :models '("gpt-5" "gpt-5-mini" "gpt-5-nano" "gpt-4o" "gpt-4o-mini"))))
     (setq gptel-backend backend)
     (setq gptel-default-backend backend))
   (defun crio/gptel--ensure-buffer (name)
