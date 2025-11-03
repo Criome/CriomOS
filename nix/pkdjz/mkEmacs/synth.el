@@ -65,7 +65,6 @@ or pass entry 'openai/api-key'. Never use 'openapi/api-key'."
   :init
   ;; Disable completion if the buffer has changed since the last request.
   (setq copilot-disable-predicates '(copilot--buffer-changed-p))
-
   ;; Set a universal fallback indentation to prevent
   ;; “copilot--infer-indentation-offset found no mode-specific offset”
   ;; warnings in modes without an indent variable.
@@ -78,19 +77,15 @@ or pass entry 'openai/api-key'. Never use 'openapi/api-key'."
   ;; Ensure Copilot knows where Node.js lives.
   (setq copilot-node-executable (or (executable-find "node")
                                     copilot-node-executable))
-
   ;; Global quick-accept binding.
   (define-key global-map (kbd "C-c ]") #'copilot-accept-completion)
-
   ;; Unbind <tab> in Company mode so Copilot can use it.
   (with-eval-after-load 'company
     (define-key company-active-map (kbd "<tab>") nil)
     (define-key company-active-map (kbd "TAB") nil))
-
   ;; Bind Copilot toggle under Projectile map.
   (with-eval-after-load 'projectile
     (define-key projectile-command-map (kbd "]") #'copilot-mode)))
-
 
 ;; ─────────────────────────────────────────────────────────────
 ;; GPTel: chat, explain, rewrite — Markdown-first
