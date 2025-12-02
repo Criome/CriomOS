@@ -296,11 +296,6 @@
 
 (use-package magit :config (put 'magit-clean 'disabled nil))
 
-(use-package
-  magit-gh-pulls
-  :after (magit)
-  :hook (magit-mode . turn-on-magit-gh-pulls))
-
 (use-package git-gutter :config (global-git-gutter-mode))
 
 (use-package
