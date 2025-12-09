@@ -101,11 +101,6 @@ let
       lambda = import ./shen/ecl.nix;
     };
 
-    remux = {
-      lambda = import ./remux;
-      src = hob.videocut;
-    };
-
     shenPrelude.lambda = import ./shen/prelude.nix;
 
     slynkPackages = {
@@ -127,14 +122,6 @@ let
         "pkdjz"
       ];
       lambda = import ./obs-ndi;
-    };
-
-    videocut = {
-      lambda = import ./videocut;
-      mods = [
-        "pkgs"
-        "pkdjz"
-      ];
     };
 
     vimPloginz = {

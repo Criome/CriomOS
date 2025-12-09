@@ -114,10 +114,6 @@
       url = "github:jdtsmith/ultra-scroll";
       flake = false;
     };
-    videocut = {
-      url = "github:kanehekili/VideoCut";
-      flake = false;
-    };
     xah-fly-keys = {
       url = "github:xahlee/xah-fly-keys";
       flake = false;
