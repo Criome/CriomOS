@@ -74,6 +74,19 @@
 
 (use-package tera-mode)
 
+(use-package treesit
+  :config
+  (define-derived-mode capnp-ts-mode prog-mode "Capnp-TS"
+    (treesit-parser-create 'capnp)
+    (treesit-major-mode-setup))
+
+  (define-derived-mode proto-ts-mode prog-mode "Proto-TS"
+    (treesit-parser-create 'proto)
+    (treesit-major-mode-setup))
+
+  (add-to-list 'auto-mode-alist '("\\.capnp\\'" . capnp-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.proto\\'" . proto-ts-mode)))
+
 (use-package
   rust-mode
   :custom (rust-mode-treesitter-derive t) (rust-format-on-save t))
