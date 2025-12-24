@@ -512,24 +512,7 @@
       },
       "original": {
         "owner": "criome",
-        "ref": "testing",
         "repo": "lib",
-        "type": "github"
-      }
-    },
-    "lojix": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1732879149,
-        "narHash": "sha256-KpPCUe7ZEbb7My6OoHSFF12TPAIXYyPzj1bYN8fis80=",
-        "owner": "criome",
-        "repo": "lojix",
-        "rev": "da150b530a274dac1b001b08187c5be5406c9497",
-        "type": "github"
-      },
-      "original": {
-        "owner": "criome",
-        "repo": "lojix",
         "type": "github"
       }
     },
@@ -860,7 +843,6 @@
         "jujutsu-el": "jujutsu-el",
         "kibord": "kibord",
         "lib": "lib",
-        "lojix": "lojix",
         "maisiliym": "maisiliym",
         "md-roam": "md-roam",
         "mfgtools": "mfgtools",
@@ -871,8 +853,6 @@
         "rust-overlay": "rust-overlay",
         "seahawk": "seahawk",
         "seahawkWebsite": "seahawkWebsite",
-        "shen": "shen",
-        "shen-mode": "shen-mode",
         "skrips": "skrips",
         "stylix": "stylix",
         "superchat": "superchat",
@@ -930,38 +910,6 @@
       "original": {
         "owner": "AnaSeahawk",
         "repo": "website",
-        "type": "github"
-      }
-    },
-    "shen": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1642569955,
-        "narHash": "sha256-FVFoYeQJQjKIVWND6RdqwV++/F7u84u7KOn1QZeRzTM=",
-        "owner": "criome",
-        "repo": "shen",
-        "rev": "0a5286bb99b27a89664f8944fbb1eb104d812a61",
-        "type": "github"
-      },
-      "original": {
-        "owner": "criome",
-        "repo": "shen",
-        "type": "github"
-      }
-    },
-    "shen-mode": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1669220738,
-        "narHash": "sha256-nsmDhKW8R51nqRqEbrjyC0PLY91GwkiwzG77F6IqIN8=",
-        "owner": "NHALX",
-        "repo": "shen-mode",
-        "rev": "21f785ef8aeb5e24d65cabb995f3841693111856",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NHALX",
-        "repo": "shen-mode",
         "type": "github"
       }
     },
