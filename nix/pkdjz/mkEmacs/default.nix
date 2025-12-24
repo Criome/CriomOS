@@ -74,22 +74,6 @@ let
         ];
       };
 
-    shen-mode =
-      let
-        src = hob.shen-mode;
-      in
-      melpaBuild {
-        pname = "shen-mode";
-        inherit src;
-        commit = src.rev;
-        version = "0.1";
-        recipe = pkgs.writeText "recipe" ''
-          (shen-mode
-           :repo "NHALX/shen-mode"
-           :fetcher github)
-        '';
-      };
-
     superchat =
       let
         src = hob.superchat;

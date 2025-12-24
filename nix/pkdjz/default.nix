@@ -92,17 +92,6 @@ let
       src = hob.nixpkgs;
     };
 
-    shen-bootstrap = {
-      lambda = import ./shen/bootstrap.nix;
-      src = hob.shen;
-    };
-
-    shen-ecl-bootstrap = {
-      lambda = import ./shen/ecl.nix;
-    };
-
-    shenPrelude.lambda = import ./shen/prelude.nix;
-
     slynkPackages = {
       lambda = import ./slynkPackages;
     };
@@ -134,11 +123,7 @@ let
     };
   };
 
-  aliases = {
-    shen = pkdjz.shen-ecl-bootstrap;
-  };
-
   adHoc = (import ./adHoc.nix) hob;
 
 in
-adHoc // pkdjz // aliases
+adHoc // pkdjz

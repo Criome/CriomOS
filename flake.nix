@@ -7,7 +7,7 @@
   inputs = {
     # Nixpkgs & lib
     nixpkgs.url = "github:criome/nixpkgs/next-testing";
-    lib.url = "github:criome/lib/testing";
+    lib.url = "github:criome/lib";
     lib.inputs.nixpkgs.follows = "nixpkgs";
 
     # Nixpkgs overlays
@@ -78,10 +78,6 @@
       url = "github:bennyandresen/jujutsu.el";
       flake = false;
     };
-    lojix = {
-      url = "github:criome/lojix";
-      flake = false;
-    };
     md-roam = {
       url = "github:nobiot/md-roam";
       flake = false;
@@ -96,14 +92,6 @@
     };
     tree-sitter-capnp = {
       url = "github:tree-sitter-grammars/tree-sitter-capnp";
-      flake = false;
-    };
-    shen = {
-      url = "github:criome/shen";
-      flake = false;
-    };
-    shen-mode = {
-      url = "github:NHALX/shen-mode";
       flake = false;
     };
     superchat = {

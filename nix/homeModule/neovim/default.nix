@@ -35,7 +35,6 @@ let
     fzf-vim
     zoxide-vim
     astronauta-nvim
-    vim-shen
   ];
 
   medVimlPlogins = with aolPloginz; [
