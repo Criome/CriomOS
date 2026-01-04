@@ -107,7 +107,7 @@
  with-editor
  :hook (eshell-mode . with-editor-export-editor))
 
-(use-package elisp-autofmt)
+(use-package elisp-autofmt :before format-all)
 
 (use-package ssh-deploy)
 
@@ -399,26 +399,24 @@
 
 (use-package ztree)
 
-(use-package
- format-all
- :commands format-all-mode
- :hook (prog-mode . format-all-mode)
- :config
- (define-format-all-formatter
-  elisp-autofmt
-  (:executable)
-  (:install "M-x package-install elisp-autofmt")
-  (:languages "Emacs Lisp")
-  (:features region)
-  (:format
-   (format-all--buffer-native
-    'elisp-autofmt-mode
-    (if region
-        (lambda () (elisp-autofmt-region (car region) (cdr region)))
-      (lambda () (elisp-autofmt-region (point-min) (point-max)))))))
- :custom
- (format-all-formatters
-  (push '("Emacs Lisp" elisp-autofmt) format-all-default-formatters)))
+(use-package format-all
+  :commands format-all-mode
+  :hook (prog-mode . format-all-mode)
+  :config
+  (define-format-all-formatter elisp-autofmt
+    (:executable)
+    (:install nil)
+    (:languages "Emacs Lisp")
+    (:features region)
+    (:format
+     (format-all--buffer-native
+      'elisp-autofmt-mode
+      (if region
+          (lambda () (elisp-autofmt-region (car region) (cdr region)))
+        (lambda () (elisp-autofmt-buffer))))))
+
+  (setq format-all-formatters
+        (cons '("Emacs Lisp" elisp-autofmt) format-all-formatters)))
 
 ;; ─────────────────────────────────────────────────────────────
 ;; Live evaluation & introspection helpers
