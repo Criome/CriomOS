@@ -94,7 +94,6 @@ let
       brlaser # Drivers for some Brother printers
       brgenml1lpr # Generic drivers for more Brother printers
       brgenml1cupswrapper # ^^^
-      cnijfilter2 # Drivers for some Canon Pixma devices (Proprietary driver)
       epson-escpr2 # Drivers for Epson AirPrint devices
       epson-escpr # Drivers for some other Epson devices
     ]
