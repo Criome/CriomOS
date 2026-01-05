@@ -410,12 +410,10 @@
  :init
  (setq format-all-formatters
        '(("Emacs Lisp" elisp-autofmt)
-         ("Nix" nixfmt)
          ("Shell" (shfmt "-i" "4" "-ci"))
-         ("Rust" rustfmt)
          ("Markdown" (prettier "--parser" "markdown"))
-         ("JSON" prettier)
-         ("YAML" prettier)
+         ("JSON" prettier "--parser" "json")
+         ("YAML" prettier "--parser" "yaml")
          ("Clojure" zprint)))
  :config
  ;; Native Emacs Lisp formatter (no external executable for format-all itself).
