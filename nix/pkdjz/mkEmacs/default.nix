@@ -235,7 +235,17 @@ let
     tree-sitter-capnp
   ];
 
-  allEmacsPackages = usePackages ++ [ defaultElPackage ] ++ treeSitterPackages;
+  autoformatPackages = with pkgs.python3Packages; [
+    mdformat
+    mdformat-gfm
+    mdformat-frontmatter
+    mdformat-footnote
+    mdformat-gfm-alerts
+  ];
+
+  nonElispPackages = treeSitterPackages ++ autoformatPackages;
+
+  allEmacsPackages = usePackages ++ [ defaultElPackage ] ++ nonElispPackages;
 
   emacs = withPackages allEmacsPackages;
 
