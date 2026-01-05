@@ -1,9 +1,8 @@
-;;; crio-synth.el --- CriomOS dev loop helpers: GPTel + Superchat + Aidermacs -*- lexical-binding: t; -*-
+;;; crio-synth.el --- CriomOS dev loop helpers: GPTel + Aidermacs -*- lexical-binding: t; -*-
 
 ;; This file configures:
 ;; - Copilot for inline completions
 ;; - GPTel for ad-hoc chat/refactor flows (Markdown-first)
-;; - Superchat (Markdown chat interface atop GPTel) with lightweight memory
 ;; - Aidermacs (Emacs-native UI for Aider) — no vterm dependency
 
 ;; ─────────────────────────────────────────────────────────────
@@ -157,77 +156,6 @@ or pass entry 'openai/api-key'. Never use 'openapi/api-key'."
  (define-key global-map (kbd "C-c g e") #'crio/gptel-explain-region)
  (define-key global-map (kbd "C-c g b") #'crio/gptel-review-buffer)
  (define-key global-map (kbd "C-c g r") #'crio/gptel-refactor-region))
-
-;; ─────────────────────────────────────────────────────────────
-;; Superchat (Markdown chat interface built on GPTel)
-;; ─────────────────────────────────────────────────────────────
-
-(defcustom crio/superchat-data-directory "~/.emacs.d/superchat/"
-  "Base directory where Superchat stores its sessions and memory files."
-  :type 'directory
-  :group 'crio/develop)
-
-(defcustom crio/superchat-session-directory
-  (expand-file-name "sessions" crio/superchat-data-directory)
-  "Directory where Superchat saves Markdown chat sessions."
-  :type 'directory
-  :group 'crio/develop)
-
-(defcustom crio/superchat-memory-file
-  (expand-file-name "memory.org" crio/superchat-data-directory)
-  "Org file where Superchat stores active memory entries."
-  :type 'file
-  :group 'crio/develop)
-
-(defcustom crio/superchat-memory-archive-file
-  (expand-file-name "memory-archive.org"
-                    crio/superchat-data-directory)
-  "Org file where Superchat archives expired memory entries."
-  :type 'file
-  :group 'crio/develop)
-
-(defcustom crio/superchat-context-message-count 12
-  "Number of recent messages to include in Superchat context for continuity."
-  :type 'integer
-  :group 'crio/develop)
-
-(defcustom crio/superchat-auto-save-sessions t
-  "If non-nil, Superchat automatically saves all sessions to Markdown files."
-  :type 'boolean
-  :group 'crio/develop)
-
-(defcustom crio/superchat-use-memory t
-  "If non-nil, Superchat enables lightweight memory using Org files."
-  :type 'boolean
-  :group 'crio/develop)
-
-(use-package
- superchat
- :after gptel
- :commands (superchat superchat-new-chat)
- :custom
- (superchat-default-mode 'markdown-mode)
- (superchat-data-directory crio/superchat-data-directory)
- (superchat-session-directory crio/superchat-session-directory)
- (superchat-context-message-count
-  crio/superchat-context-message-count)
- (superchat-session-auto-save crio/superchat-auto-save-sessions)
- (superchat-backend gptel-default-backend)
- (superchat-model crio/gptel-default-model)
- (superchat-system-prompt crio/gptel-system-prompt)
- (superchat-memory-auto-capture-enabled crio/superchat-use-memory)
- (superchat-memory-file crio/superchat-memory-file)
- (superchat-memory-archive-file crio/superchat-memory-archive-file)
- :init
- (dolist (dir
-          (list
-           crio/superchat-data-directory
-           crio/superchat-session-directory))
-   (unless (file-directory-p dir)
-     (make-directory dir t)))
- :config
- (define-key global-map (kbd "C-c g s") #'superchat)
- (define-key global-map (kbd "C-c g n") #'superchat-new-chat))
 
 ;; ─────────────────────────────────────────────────────────────
 ;; Aidermacs (Emacs-native UI for Aider) — no vterm required
