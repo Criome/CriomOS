@@ -411,7 +411,6 @@
  (setq format-all-formatters
        '(("Emacs Lisp" elisp-autofmt)
          ("Shell" (shfmt "-i" "4" "-ci"))
-         ;; mdformat formats files, not stdin.
          ("Markdown" mdformat)
          ("JSON" prettier "--parser" "json")
          ("YAML" prettier "--parser" "yaml")
@@ -432,7 +431,7 @@
       (lambda () (elisp-autofmt-buffer))))))
 
  ;; External Markdown formatter: mdformat
- ;; Note: mdformat requires a real file path; region formatting is not supported.
+ ;; Note: mdformat is whole-document formatting; region formatting is not supported here.
  (define-format-all-formatter
   mdformat
   (:executable "mdformat")
@@ -440,10 +439,8 @@
   (:languages "Markdown")
   (:features)
   (:format
-   (format-all--buffer-from-file
-    executable
-    ;; CLI flags override config if present
-    (list "--wrap" "80")))))
+   ;; mdformat reads stdin when given "-" and writes formatted markdown to stdout.
+   (format-all--buffer-easy executable "--wrap" "80" "-"))))
 
 
 ;; ─────────────────────────────────────────────────────────────
