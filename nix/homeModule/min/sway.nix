@@ -1,5 +1,6 @@
 {
   lib,
+  criomos-lib,
   pkgs,
   user,
   config,
@@ -12,6 +13,7 @@ let
     mkIf
     optionalString
     ;
+  inherit (criomos-lib) matchSize mkSizeAtLeast;
   inherit (user.methods)
     sizedAtLeast
     useColemak
@@ -22,26 +24,6 @@ let
   inherit (profile) dark;
   inherit (pkgs) writeText;
   inherit (horizon.node.machine) model;
-
-  mkSizeAtLeast = size: {
-    min = size >= 1;
-    med = size >= 2;
-    max = size == 3;
-  };
-
-  matchSize =
-    size: ifNon: ifMin: ifMed: ifMax:
-    let
-      sizedAtLeast = mkSizeAtLeast size;
-    in
-    if sizedAtLeast.max then
-      ifMax
-    else if sizedAtLeast.med then
-      ifMed
-    else if sizedAtLeast.min then
-      ifMin
-    else
-      ifNon;
 
   shellLaunch = command: "${shell} -c '${command}'";
   homeDir = config.home.homeDirectory;

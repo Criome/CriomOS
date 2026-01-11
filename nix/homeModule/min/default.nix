@@ -1,13 +1,13 @@
 {
   lib,
   pkgs,
+  criomos-lib,
   pkdjz,
   user,
   horizon,
   config,
   profile,
   world,
-  hob,
   ...
 }:
 let
@@ -38,7 +38,7 @@ let
 
   terminalFontFamily = if sizedAtLeast.med then "FiraMono Nerd Font" else "DejaVu Sans Mono";
 
-  colemakZedKeys = lib.importJSON ./zed_colemak_keybindings.json;
+  colemakZedKeys = criomos-lib.importJSON ./zed_colemak_keybindings.json;
 
   fzfColemakBinds = import ./fzfColemak.nix;
 

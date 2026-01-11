@@ -2,6 +2,14 @@ with builtins;
 
 rec {
 
+  callWith =
+    lambda: closure:
+    let
+      requiredInputs = functionArgs lambda;
+      inputs = intersectAttrs requiredInputs closure;
+    in
+    lambda inputs;
+
   highestOf = list: tail (sort lessThan list);
 
   importJSON = path: fromJSON (readFile path);

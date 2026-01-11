@@ -2,7 +2,7 @@
 {
   description = "CriomOS";
 
-  outputs = inputs: import ./default.nix { inherit inputs; };
+  outputs = inputs: import ./default.nix inputs;
 
   inputs = {
     # Nixpkgs & lib

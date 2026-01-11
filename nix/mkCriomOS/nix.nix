@@ -1,5 +1,6 @@
 {
   lib,
+  criomos-lib,
   pkdjz,
   pkgs,
   hob,
@@ -13,7 +14,6 @@ let
   inherit (lib)
     boolToString
     mapAttrsToList
-    importJSON
     optionals
     optional
     optionalAttrs
@@ -53,7 +53,8 @@ let
       owner = "criome";
       repo = "nixpkgs";
       inherit (hob.nixpkgs) rev;
-    } // optionalNixpkgsRef;
+    }
+    // optionalNixpkgsRef;
 
     nixpkgs-master = {
       owner = "NixOS";
@@ -85,7 +86,7 @@ let
 
   nixOSFlakeEntries =
     let
-      nixOSFlakeRegistry = importJSON world.pkdjz.flake-registry;
+      nixOSFlakeRegistry = criomos-lib.importJSON world.pkdjz.flake-registry;
     in
     nixOSFlakeRegistry.flakes;
 
@@ -132,7 +133,8 @@ in
       trusted-users = [
         "root"
         "@nixdev"
-      ] ++ optional isBuilder "nixBuilder";
+      ]
+      ++ optional isBuilder "nixBuilder";
 
       allowed-users = [
         "@users"
@@ -176,16 +178,15 @@ in
   };
 
   users = {
-    groups =
-      {
-        nixdev = { };
-      }
-      // (optionalAttrs isBuilder { nixBuilder = { }; })
-      // (optionalAttrs isNixCache {
-        nix-serve = {
-          gid = 199;
-        };
-      });
+    groups = {
+      nixdev = { };
+    }
+    // (optionalAttrs isBuilder { nixBuilder = { }; })
+    // (optionalAttrs isNixCache {
+      nix-serve = {
+        gid = 199;
+      };
+    });
 
     users =
       (optionalAttrs isNixCache {

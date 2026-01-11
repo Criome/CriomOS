@@ -1,17 +1,20 @@
-{
-  inputs ? (import ./mkInputs.nix),
-}:
 let
-  inherit (inputs) nixpkgs;
+  npins = import ./npins;
+  flake-inputs = import npins.flake-inputs;
+  fallbackInputs = flake-inputs { root = ./.; };
+in
 
-  # TODO: re-design - Broken upstream
-  lib = inputs.lib // (import ./libExtension.nix);
+{
+  nixpkgs ? fallbackInputs.nixpkgs,
+  lib ? fallbackInputs.lib,
+  criomos-lib ? (import ./criomos-lib.nix),
+  ...
+}@inputs:
 
+let
   mkCriomOS = import ./nix/mkCriomOS;
 
-  importInput = name: value: import value;
-
-  local = mapAttrs importInput {
+  local = mapAttrs (_: import) {
     mkPkgs = ./nix/mkPkgs;
     mkWorld = ./nix/mkWorld;
     mkCrioSphere = ./nix/mkCrioSphere;

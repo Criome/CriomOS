@@ -1,31 +1,26 @@
 {
   src,
-  mkLambda,
+  criomos-lib,
   pkgs,
   buildNvimPlogin,
 }:
 let
 
-  ovyridynPkgs = pkgs // {
+  overriddenPkgs = pkgs // {
     buildVimPluginFrom2Nix = buildNvimPlogin;
   };
 
   overridesLambda = import (src + /pkgs/misc/vim-plugins/overrides.nix);
 
-  overrides = mkLambda {
-    lambda = overridesLambda;
-    closure = ovyridynPkgs;
-  };
+  overrides = criomos-lib.callWith overridesLambda overriddenPkgs;
 
   lambda = import (src + /pkgs/misc/vim-plugins/generated.nix);
 
-  closure = ovyridynPkgs // {
+  closure = overriddenPkgs // {
     inherit overrides;
   };
 
-  plugins = mkLambda {
-    inherit lambda closure;
-  };
+  plugins = criomos-lib.callWith lambda closure;
 
   brokenPlugins = [ "minimap-vim" ];
 

@@ -1,5 +1,6 @@
 {
   lib,
+  criomos-lib,
   config,
   clustersSpecies,
   Clusters,
@@ -20,6 +21,9 @@ let
     optionalString
     unique
     ;
+
+  inherit (criomos-lib) lowestOf mkSizeAtLeast;
+
   inherit (config) clusterName nodeName species;
   inherit (clustersSpecies) clusterNames nodeSpecies;
 
@@ -44,15 +48,7 @@ let
     avr = "avr-none";
   };
 
-  # Hack begins - scope doesnt find libExtensions
-  mkSizeAtLeast = size: {
-    min = size >= 1;
-    med = size >= 2;
-    max = size == 3;
-  };
-  lowestOf = list: lib.head (lib.sort lib.lessThan list);
   mkTrust = list: lowestOf (list ++ [ metaTrust ]);
-  # HACK ends
 
   nodeCriomeDomainName = concatStringsSep "." [
     clusterName
@@ -334,35 +330,34 @@ let
 
       hasPreCriome = hasAttr node.name user.preCriomes;
 
-      methods =
-        {
-          inherit hasPreCriome;
+      methods = {
+        inherit hasPreCriome;
 
-          sizedAtLeast = mkSizeAtLeast user.size;
+        sizedAtLeast = mkSizeAtLeast user.size;
 
-          emailAddress = "${user.name}@${cluster.name}.criome.net";
-          matrixID = "@${user.name}:${cluster.name}.criome.net";
+        emailAddress = "${user.name}@${cluster.name}.criome.net";
+        matrixID = "@${user.name}:${cluster.name}.criome.net";
 
-          gitSigningKey = if hasPreCriome then ("&" + user.preCriomes.${node.name}.keygrip) else null;
+        gitSigningKey = if hasPreCriome then ("&" + user.preCriomes.${node.name}.keygrip) else null;
 
-          useColemak = user.keyboard == "colemak";
+        useColemak = user.keyboard == "colemak";
 
-          isMultimediaDev = elem user.species [
-            "multimedia"
-            "unlimited"
-          ];
+        isMultimediaDev = elem user.species [
+          "multimedia"
+          "unlimited"
+        ];
 
-          isCodeDev = elem user.species [
-            "code"
-            "unlimited"
-          ];
+        isCodeDev = elem user.species [
+          "code"
+          "unlimited"
+        ];
 
-          sshCriomes = lib.mapAttrsToList (n: pk: mkSshString pk.ssh) user.preCriomes;
+        sshCriomes = lib.mapAttrsToList (n: pk: mkSshString pk.ssh) user.preCriomes;
 
-        }
-        // (lib.optionalAttrs hasPreCriome {
-          ssh = mkSshString user.preCriomes.${node.name}.ssh;
-        });
+      }
+      // (lib.optionalAttrs hasPreCriome {
+        ssh = mkSshString user.preCriomes.${node.name}.ssh;
+      });
 
     in
     user // { inherit methods; };

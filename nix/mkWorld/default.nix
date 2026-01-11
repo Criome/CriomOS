@@ -1,20 +1,14 @@
 {
   lib,
+  criomos-lib,
   pkgs,
   hob,
   system,
 }:
 let
   l = lib // builtins;
+  inherit (criomos-lib) callWith;
   inherit (world) pkdjz mkZolaWebsite;
-
-  mkLambda =
-    { closure, lambda }:
-    let
-      requiredInputs = l.functionArgs lambda;
-      inputs = l.intersectAttrs requiredInputs closure;
-    in
-    lambda inputs;
 
   mkSubWorld =
     {
@@ -49,12 +43,12 @@ let
             lib
             system
             src
-            mkLambda
+            criomos-lib
             ;
         };
 
     in
-    mkLambda { inherit closure lambda; };
+    callWith lambda closure;
 
   makeSpoke =
     spokName:
