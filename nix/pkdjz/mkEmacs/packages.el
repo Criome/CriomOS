@@ -410,13 +410,14 @@
  :init
  (setq format-all-formatters
        '(("Emacs Lisp" elisp-autofmt)
+         ("Python" ruff)
          ("Shell" (shfmt "-i" "4" "-ci"))
          ("Markdown" mdformat)
          ("JSON" prettier "--parser" "json")
          ("YAML" prettier "--parser" "yaml")
          ("Clojure" zprint)))
  :config
- ;; Native Emacs Lisp formatter (no external executable for format-all itself).
+ ;; Native Emacs Lisp formatter
  (define-format-all-formatter
   elisp-autofmt
   (:executable)
@@ -429,6 +430,18 @@
     (if region
         (lambda () (elisp-autofmt-region (car region) (cdr region)))
       (lambda () (elisp-autofmt-buffer))))))
+
+ ;; Python formatter: Ruff (Black-compatible)
+ ;; Ruff formatter is whole-buffer only; no region support.
+ (define-format-all-formatter
+  ruff
+  (:executable "ruff")
+  (:install nil)
+  (:languages "Python")
+  (:features)
+  (:format
+   ;; ruff format reads stdin with "-" and writes to stdout
+   (format-all--buffer-easy executable "format" "-")))
 
  ;; External Markdown formatter: mdformat
  ;; Note: mdformat is whole-document formatting; region formatting is not supported here.

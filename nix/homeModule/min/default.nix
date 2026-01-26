@@ -189,6 +189,8 @@ let
     cljfmt
     # lisp
     zprint
+    # Python
+    ruff
     # Flashing
     avrdude
     # Shell

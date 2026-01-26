@@ -23,13 +23,11 @@ let
 
   customPackages = {
     elisp-autofmt = pkgs.emacsPackages.elisp-autofmt.overrideAttrs (old: {
-      postPatch =
-        (old.postPatch or "")
-        + ''
-          substituteInPlace elisp-autofmt.el \
-            --replace 'defcustom elisp-autofmt-python-bin nil' \
-                      "defcustom elisp-autofmt-python-bin \"${pkgs.python3}/bin/python3\""
-        '';
+      postPatch = (old.postPatch or "") + ''
+        substituteInPlace elisp-autofmt.el \
+          --replace 'defcustom elisp-autofmt-python-bin nil' \
+                    "defcustom elisp-autofmt-python-bin \"${pkgs.python3}/bin/python3\""
+      '';
     });
 
     base16-theme =
