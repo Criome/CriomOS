@@ -92,6 +92,9 @@ in
       fuse
       ifmetric
       pulseaudioFull
+
+      # Needed for user to setup ikev2 VPN
+      networkmanager_strongswan
     ];
 
     interactiveShellInit = optionalString useColemak "stty -ixon";
@@ -131,6 +134,9 @@ in
       pulse.enable = true;
       wireplumber.enable = true;
     };
+
+    # IKEv2 support
+    strongswan.enable = true;
 
     udev = {
       extraRules = ''
