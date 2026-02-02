@@ -2,6 +2,7 @@
   horizon,
   world,
   homeModules,
+  criomos-lib,
   ...
 }:
 let
@@ -22,7 +23,14 @@ in
 {
   home-manager = {
     backupFileExtension = "backup";
-    extraSpecialArgs = { inherit pkdjz world horizon; };
+    extraSpecialArgs = {
+      inherit
+        pkdjz
+        world
+        horizon
+        criomos-lib
+        ;
+    };
     sharedModules = homeModules;
     useGlobalPkgs = true;
     users = mapAttrs mkUserConfig horizon.users;

@@ -52,6 +52,7 @@ let
           lib
           pkgs
           system
+          criomos-lib
           hob
           ;
       };
@@ -100,6 +101,7 @@ let
               modules = homeModules;
               extraSpecialArgs = {
                 inherit
+                  criomos-lib
                   pkdjz
                   world
                   horizon
@@ -126,6 +128,7 @@ let
       commonArgs = {
         inherit
           lib
+          criomos-lib
           world
           horizon
           hob
@@ -185,7 +188,7 @@ let
   perSystemAllOutputs = inputs.flake-utils.lib.eachDefaultSystem mkNixApiOutputsPerSystem;
 
   proposedCrioSphere = local.mkCrioSphere { inherit uncheckedCrioSphereProposal lib; };
-  proposedCrioZones = local.mkCrioZones { inherit lib proposedCrioSphere; };
+  proposedCrioZones = local.mkCrioZones { inherit lib criomos-lib proposedCrioSphere; };
 
 in
 perSystemAllOutputs

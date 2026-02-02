@@ -13,7 +13,7 @@ let
     mkIf
     optionalString
     ;
-  inherit (criomos-lib) matchSize mkSizeAtLeast;
+  inherit (criomos-lib) matchSize;
   inherit (user.methods)
     sizedAtLeast
     useColemak

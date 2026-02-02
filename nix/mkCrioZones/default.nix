@@ -1,5 +1,6 @@
 {
   lib,
+  criomos-lib,
   proposedCrioSphere,
 }:
 let
@@ -18,7 +19,7 @@ let
         config = {
           inherit nodeName clusterName;
           _module.args = {
-            inherit lib;
+            inherit lib criomos-lib;
             Clusters = clusters.datom;
             clustersSpecies = clusters.species;
           };

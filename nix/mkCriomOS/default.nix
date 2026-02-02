@@ -1,5 +1,6 @@
 {
   lib,
+  criomos-lib,
   world,
   horizon,
   hob, # TODO: deprecate for `inputs`
@@ -54,6 +55,7 @@ let
     inherit
       constants
       lib
+      criomos-lib
       world
       pkdjz
       horizon
