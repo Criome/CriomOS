@@ -177,7 +177,7 @@ let
 
     in
     {
-      packages = world // {
+      packages = world.pkdjz // {
         inherit pkgs;
         hob = hobOutputs;
         fullHob = allMeinHobOutputs;
