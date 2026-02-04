@@ -10,15 +10,6 @@ let
       ];
     };
 
-    home-manager = {
-      lambda = import ./home-manager;
-      mods = [
-        "lib"
-        "pkgs"
-        "hob"
-      ];
-    };
-
     evalNixos = {
       lambda = import ./evalNixos;
       mods = [
