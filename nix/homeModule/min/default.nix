@@ -447,7 +447,7 @@ mkIf sizedAtLeast.min {
 
     # TODO broken
     zed-editor = {
-      enable = false;
+      enable = isCodeDev;
       package = pkgs.zed-editor;
       extraPackages = with pkgs; [ ];
       userKeymaps = optionalAttrs useColemak colemakZedKeys;
