@@ -15,7 +15,7 @@
 - `nix develop` to enter a dev shell, if one is defined for the output you are working on.
 
 ## Coding Style & Naming Conventions
-- Follow the Sema object rules in `GUIDELINES.md`: objects are `PascalCase`, flows are `snake_case`, and meaning should not be duplicated across layers.
+- Adhere to the Nix-specific Sema object style defined in `NIX_GUIDELINES.md`. The universal principles, with their original Rust examples, are in `GUIDELINES.md` for context.
 - Nix files use 2-space indentation and prefer the existing formatting in the file.
 - Formatting tools seen in this repo include `nixpkgs-fmt` and `nixfmt-rfc-style`; use the one already used in the area you touch.
 

@@ -1,0 +1,24 @@
+# Gemini Project Configuration for CriomOS
+
+## Project Overview
+- **Name:** CriomOS
+- **Description:** An evolved version of NixOS aiming to be a 'correct' runtime platform. The project is heavily based on the Nix language and framework.
+- **Primary Language:** Nix
+
+## Agent Guidelines
+- **Nix Style Guide:** This is a Nix project. All code MUST adhere to the principles in `docs/NIX_GUIDELINES.md`.
+- **Agent Rules:** Before any modification, consult the authority and durability rules in `docs/AGENT_RULES.md`.
+- **Project Conventions:** Refer to `docs/AGENTS.md` for project structure, common commands, and commit conventions.
+- **General Philosophy:** The original language-agnostic principles are in `docs/GUIDELINES.md`.
+
+## Key Files
+- `flake.nix`: The primary entry point for the Nix flake.
+- `default.nix`: Legacy Nix entry point.
+- `nix/mkCriomOS/`: Core system modules.
+- `nix/homeModule/`: Home Manager profiles.
+- `nix/pkdjz/`: Package overlays and custom packages.
+
+## Common Commands
+- `nix flake show`: Discover available outputs.
+- `nix flake check`: Run tests and checks.
+- `nix build .#<output>`: Build a specific output.
