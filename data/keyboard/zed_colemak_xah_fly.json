@@ -1,83 +1,62 @@
 [
   {
-    "context": "Editor",
+    "context": "Editor && vim_mode == 'normal'",
     "bindings": {
-      "escape": ["workspace::SwitchMode", "Normal"]
-    }
-  },
-  {
-    "context": "Editor && mode == 'Insert'",
-    "bindings": {
-      "escape": ["workspace::SwitchMode", "Normal"]
-    }
-  },
-  {
-    "context": "Editor && mode == 'Normal'",
-    "bindings": {
-      "k": ["workspace::SwitchMode", "Insert"],
+      "j": "vim::Undo",
+      "t": ["workspace::SwitchMode", "Insert"],
+
       "u": "editor::MoveUp",
       "e": "editor::MoveDown",
       "n": "editor::MoveLeft",
       "i": "editor::MoveRight",
-      "t": "editor::Undo",
-      "a": "workspace::NewCommandPalette",
-      "r": "editor::MoveToEndOfLine",
+      "l": "editor::MoveToPreviousWordStart",
+      "y": "editor::MoveToNextWordStart",
+
       "s": "editor::MoveToBeginningOfLine",
+      "r": "editor::MoveToEndOfLine",
+      "p": "editor::DeleteBlock",
       "c": "editor::CopyLine",
       "v": "editor::Paste",
+      "a": "workspace::NewCommandPalette",
+      "d": "editor::SelectNext",
+      "m": "editor::GoToMatchingBracket",
+
       "q": "editor::CutLine",
-      "l": "editor::MoveToPreviousWordStart",
-      "g": "editor::MoveToNextWordStart",
-      "j": "editor::DeleteBackward",
       "f": "editor::DeletePreviousWord",
       ";": "editor::DeleteNextWord",
+      "h": "editor::DeleteBackward",
       "o": "editor::ToggleComments",
-      "y": "editor::InsertNewline",
       "x": "project_search::Deploy",
-      "d": "editor::SelectNext",
-      "z": "editor::GoToMatchingBracket",
       "b": "editor::GoToNextBracket",
-      "m": "workspace::ActivateNextPane",
-      "'": "editor::Format",
-      "space": ["workspace::ToggleSubMode", "Leader"],
-      "backspace": ["workspace::ToggleSubMode", "Leader"]
+      "g": "workspace::ActivateNextPane",
+
+      "space": ["workspace::ToggleSubMode", "Leader"]
     }
   },
   {
-    "context": "Editor && mode == 'Normal' && sub_mode == 'Leader'",
+    "context": "Editor && vim_mode == 'normal' && sub_mode == 'Leader'",
     "bindings": {
       "space": ["workspace::SwitchMode", "Insert"],
-      "r": "workspace::Save",
+      "a": "editor::SelectAll",
       "s": "editor::MoveToBeginningOfDocument",
       "x": "editor::MoveToEndOfDocument",
       "l": "workspace::CloseActiveItem",
-      "a": "editor::SelectAll",
-      "h": "editor::Recenter",
       "k": "workspace::NewBufferFinder",
-      "t": "editor::FindNext",
-      "y": "project_search::Deploy",
-      "c": "editor::SelectAll",
-      "q": "editor::SelectAll",
-      "v": "editor::ShowClipboard",
-      "m": "project_panel::ToggleFocus",
-      "j": ["workspace::ToggleSubMode", "MultiCursor"],
-      "u": ["workspace::ToggleSubMode", "NavigateFS"]
+      "o": "recenter-top-bottom",
+      "g": "project_panel::ToggleFocus",
+      "r": "workspace::Save",
+      "e": ["workspace::ToggleSubMode", "NavigateFS"],
+      "j": ["workspace::ToggleSubMode", "MultiCursor"]
     }
   },
   {
-    "context": "Editor && mode == 'Normal' && sub_mode == 'MultiCursor'",
+    "context": "Editor && vim_mode == 'insert'",
     "bindings": {
-      "s": "editor::SelectAllMatches",
-      "n": "editor::SelectPreviousMatch",
-      "u": "editor::SelectPreviousMatch",
-      "e": "editor::SelectNextMatch",
-      "i": "editor::SelectNextMatch",
-      "l": "editor::FindPrevious",
-      "g": "editor::FindNext"
+      "escape": "vim::NormalBefore"
     }
   },
   {
-    "context": "Editor && mode == 'Normal' && sub_mode == 'NavigateFS'",
+    "context": "Editor && vim_mode == 'normal' && sub_mode == 'NavigateFS'",
     "bindings": {
       "s": "project_search::Deploy",
       "n": "workspace::NewBufferFinder",
@@ -85,6 +64,18 @@
       "u": "project_panel::ToggleFocus",
       "i": "git::OpenGitFiles",
       "r": "workspace::NewFileFinder"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == 'normal' && sub_mode == 'MultiCursor'",
+    "bindings": {
+      "s": "editor::SelectAllMatches",
+      "n": "editor::SelectPreviousMatch",
+      "u": "editor::SelectPreviousMatch",
+      "e": "editor::SelectNextMatch",
+      "i": "editor::SelectNextMatch",
+      "l": "editor::FindPrevious",
+      "y": "editor::FindNext"
     }
   }
 ]
