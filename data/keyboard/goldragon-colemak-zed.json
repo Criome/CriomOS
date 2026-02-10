@@ -1,0 +1,119 @@
+[
+  {
+    "context": "Editor && vim_mode == 'normal'",
+    "bindings": {
+      "n": "vim::Left",
+      "e": "vim::Down",
+      "u": "vim::Up",
+      "i": "vim::Right",
+      "l": "vim::MoveToPreviousWordStart",
+      "y": "vim::MoveToNextWordStart",
+      "shift-l": "vim::MoveToPreviousWordStart",
+      "shift-y": "vim::MoveToNextWordEnd",
+      "s": "vim::StartOfLine",
+      "r": "vim::EndOfLine",
+      "g": "vim::EndOfDocument",
+      "shift-g": "vim::EndOfDocument",
+      "shift-s": "vim::StartOfDocument",
+      "h": "vim::DeleteLeft",
+      "o": "vim::InsertLineBelow",
+      "shift-o": "vim::InsertLineAbove",
+      "k": "vim::InsertBefore",
+      "shift-k": "vim::InsertAfter",
+      "shift-a": "vim::InsertEndOfLine",
+      "ctrl-a": "editor::SelectAll",
+      "f": "vim::FindChar",
+      "shift-f": "vim::FindCharBackwards",
+      "t": "vim::Undo",
+      "shift-t": "vim::Redo",
+      "c": "vim::Yank",
+      "v": "vim::Paste",
+      "m": "vim::ToggleVisual",
+      "shift-m": "vim::ToggleVisualLine",
+      "q": "vim::Delete",
+      "j": "vim::JoinLines",
+      "x": "buffer_search::Deploy",
+      "shift-x": "vim::DeleteRight",
+      "a": "command_palette::Toggle",
+      "d": "editor::SelectNext",
+      "shift-d": "vim::DeleteLine",
+      "space n": "vim::NextMatch",
+      "space shift-n": "vim::PreviousMatch",
+      "space f": "file_finder::Toggle",
+      "space w": "workspace::Save",
+      "space s": "buffer_search::Deploy",
+      "space shift-s": "project_search::Deploy",
+      "space q": "pane::CloseActiveItem",
+      "space b": "tab_switcher::Toggle",
+      "space r": "editor::Rename",
+      "space g": "editor::GoToDefinition",
+      "space c": "editor::ToggleComments",
+      "space =": "editor::Format",
+      "z": "editor::GoToMatchingBracket",
+      "ctrl-w n": ["workspace::ActivatePane", "Left"],
+      "ctrl-w e": ["workspace::ActivatePane", "Down"],
+      "ctrl-w u": ["workspace::ActivatePane", "Up"],
+      "ctrl-w i": ["workspace::ActivatePane", "Right"]
+    }
+  },
+  {
+    "context": "Editor && vim_mode == 'visual'",
+    "bindings": {
+      "n": "vim::Left",
+      "e": "vim::Down",
+      "u": "vim::Up",
+      "i": "vim::Right",
+      "l": "vim::MoveToPreviousWordStart",
+      "y": "vim::MoveToNextWordStart",
+      "s": "vim::StartOfLine",
+      "r": "vim::EndOfLine",
+      "d": "vim::Delete",
+      "c": "vim::Yank",
+      "v": "vim::Paste",
+      "space c": "editor::ToggleComments"
+    }
+  },
+  {
+    "context": "Dock",
+    "bindings": {
+      "ctrl-w n": ["workspace::ActivatePane", "Left"],
+      "ctrl-w e": ["workspace::ActivatePane", "Down"],
+      "ctrl-w u": ["workspace::ActivatePane", "Up"],
+      "ctrl-w i": ["workspace::ActivatePane", "Right"]
+    }
+  },
+  {
+    "context": "Editor && vim_mode == 'insert'",
+    "bindings": {
+      "ctrl-space": "vim::NormalBefore",
+      "ctrl-c": "vim::NormalBefore"
+    }
+  },
+  {
+    "bindings": {
+      "ctrl-shift-n": "workspace::NewWindow",
+      "ctrl-shift-p": "command_palette::Toggle",
+      "ctrl-p": "file_finder::Toggle",
+      "alt-x": "command_palette::Toggle"
+    }
+  },
+  {
+      "context": "ProjectPanel",
+      "bindings": {
+          "n": "project_panel::CollapseSelectedEntry",
+          "i": "project_panel::ExpandSelectedEntry",
+          "u": "menu::SelectPrevious",
+          "e": "menu::SelectNext",
+          "enter": "project_panel::Open",
+          "space": "project_panel::Open"
+      }
+  },
+  {
+      "context": "BufferSearchBar",
+      "bindings": {
+          "escape": "buffer_search::Dismiss",
+          "enter": "search::SelectNextMatch",
+          "shift-enter": "search::SelectPreviousMatch"
+      }
+  }
+]
