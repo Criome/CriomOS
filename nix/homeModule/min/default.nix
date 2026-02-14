@@ -209,6 +209,12 @@ let
 
   unixDeveloperPackages = unixUtilities ++ programmingTools;
 
+  AIPackages = with pkgs; [
+    gemini-cli
+    claude-code
+    codex
+  ];
+
   nixpkgsPackages =
     with pkgs;
     [
@@ -508,7 +514,7 @@ mkIf sizedAtLeast.min {
   };
 
   home = {
-    packages = fontPackages ++ nixpkgsPackages ++ worldPackages;
+    packages = fontPackages ++ nixpkgsPackages ++ worldPackages ++ AIPackages;
 
     pointerCursor = {
       package = pkgs.vanilla-dmz;
