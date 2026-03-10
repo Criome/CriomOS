@@ -24,6 +24,8 @@ let
     computerIs
     ;
 
+  centerIgnoresSuspend = typeIs.center;
+
   enableWaydroid = sizedAtLeast.max && behavesAs.edge;
 
   # TODO
@@ -278,7 +280,7 @@ in
     };
 
     logind.settings.Login = {
-      HandleLidSwitch = if typeIs.center then "ignore" else "suspend";
+      HandleLidSwitch = if centerIgnoresSuspend then "ignore" else "suspend";
       HandleLidSwitchExternalPower = if behavesAs.lowPower then "suspend" else "ignore";
     };
 
