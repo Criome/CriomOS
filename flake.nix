@@ -30,7 +30,7 @@
     };
 
     # Horizon
-    maisiliym.url = "github:LiGoldragon/maisiliym/testing";
+    maisiliym.url = "github:LiGoldragon/maisiliym/prometheus-node";
     goldragon.url = "github:LiGoldragon/goldragon";
     seahawk.url = "github:criome/seahawk";
 
