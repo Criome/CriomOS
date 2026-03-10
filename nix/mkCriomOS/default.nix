@@ -5,6 +5,7 @@
   horizon,
   hob, # TODO: deprecate for `inputs`
   homeModules,
+  inputs,
   _withUsers ? true,
 }:
 let

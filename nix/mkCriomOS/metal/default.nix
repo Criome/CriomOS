@@ -109,6 +109,7 @@ let
   gpuUsesMediaDriver = builtins.elem model [
     "ThinkPadT14Gen5Intel"
     "ThinkPadT14Intel"
+    "GMKtec EVO-X2"
   ];
 
   gpuUsesVaapi = builtins.elem model [
