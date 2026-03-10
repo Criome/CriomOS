@@ -183,12 +183,13 @@ let
 
         in
         rec {
+          centerLike = typeIs.center || typeIs.largeAI;
           isFullyTrusted = trust == 3;
           sizedAtLeast = mkSizeAtLeast size;
           isBuilder =
-            !typeIs.edge && isFullyTrusted && (sizedAtLeast.med || typeIs.center) && hasBasePrecriads;
-          isDispatcher = !typeIs.center && isFullyTrusted && sizedAtLeast.min;
-          isNixCache = typeIs.center && sizedAtLeast.min && hasBasePrecriads;
+            !typeIs.edge && isFullyTrusted && (sizedAtLeast.med || centerLike) && hasBasePrecriads;
+          isDispatcher = !centerLike && isFullyTrusted && sizedAtLeast.min;
+          isNixCache = centerLike && sizedAtLeast.min && hasBasePrecriads;
           hasNixPreCriad = node.nixPreCriome != null && node.nixPreCriome != "";
           hasYggPrecriad = yggAddress != null && yggAddress != "";
           hasSshPrecriad = hasAttr "ssh" inputNode.preCriomes;

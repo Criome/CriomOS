@@ -27,6 +27,7 @@ enum NodeSpecies {
   mediaBroadcast @4;
   router @5;
   routerTesting @6;
+  largeAI @7;
 }
 
 enum UserSpecies {
@@ -224,6 +225,7 @@ struct NodeTypeFlags {
   mediaBroadcast @4 :Bool;
   router @5 :Bool;
   routerTesting @6 :Bool;
+  largeAI @7 :Bool;
 }
 
 struct HorizonNodeMethods {

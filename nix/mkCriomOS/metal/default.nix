@@ -24,7 +24,7 @@ let
     computerIs
     ;
 
-  centerIgnoresSuspend = typeIs.center;
+  centerIgnoresSuspend = typeIs.center || typeIs.largeAI;
 
   enableWaydroid = sizedAtLeast.max && behavesAs.edge;
 
