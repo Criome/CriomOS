@@ -106,11 +106,20 @@ let
 
   unknownIntelGpuError = throw "Model ${model} missing in Intel GPU drivers lists";
 
-  gpuUsesMediaDriver = builtins.elem model [
+  intelMediaDriverModels = [
     "ThinkPadT14Gen5Intel"
     "ThinkPadT14Intel"
+  ];
+
+  gpuUsesMediaDriver = builtins.elem model intelMediaDriverModels;
+
+  amdGpuModels = [
     "GMKtec EVO-X2"
   ];
+
+  gpuUsesAmdGpu = builtins.elem model amdGpuModels;
+
+  treatAsIntel = chipIsIntel && !gpuUsesAmdGpu;
 
   gpuUsesVaapi = builtins.elem model [
     "ThinkPadX230"
@@ -129,8 +138,10 @@ let
       [ pkgs.intel-vaapi-driver ]
     else if gpuUsesMediaDriver then
       intelMediaDrivers
+    else if treatAsIntel then
+      unknownIntelGpuError
     else
-      unknownIntelGpuError;
+      [ ];
 
 in
 {
@@ -144,7 +155,7 @@ in
 
     ledger.enable = behavesAs.edge;
 
-    graphics.extraPackages = optionals chipIsIntel intelGpuDrivers;
+    graphics.extraPackages = optionals treatAsIntel intelGpuDrivers;
   };
 
   location.provider = if sizedAtLeast.min then "geoclue2" else "manual";
@@ -162,7 +173,7 @@ in
       ];
     };
 
-    kernelModules = [ "coretemp" ] ++ modelSpecificKernelModules;
+    kernelModules = [ "coretemp" ] ++ modelSpecificKernelModules ++ (optional gpuUsesAmdGpu "amdgpu");
 
     extraModprobeConfig = (
       optionalString sizedAtLeast.max ''
