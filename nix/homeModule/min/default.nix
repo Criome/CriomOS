@@ -222,7 +222,7 @@ let
       ${piAgentGatewayProvider} = {
         baseUrl = "http://127.0.0.1:11435/v1";
         api = "openai-completions";
-        apiKey = "";
+        authRequired = false;
         models = builtins.map (alias:
           let
             isMain = alias == "main";
