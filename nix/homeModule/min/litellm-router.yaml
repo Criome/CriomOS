@@ -4,13 +4,13 @@ model_list:
     litellm_params:
       model: ollama_chat/deepseek-r1:latest
       custom_llm_provider: ollama
-      api_base: http://maisiliym.prometheus.tailnet:11434
+      api_base: http://127.0.0.1:21434
     order: 1
   - model_name: prometheus-qwen
     litellm_params:
       model: ollama_chat/qwen2.5-coder:7b
       custom_llm_provider: ollama
-      api_base: http://maisiliym.prometheus.tailnet:11434
+      api_base: http://127.0.0.1:21434
     order: 2
   - model_name: cloud-reasoning
     litellm_params:

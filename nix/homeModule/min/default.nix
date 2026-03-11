@@ -8,6 +8,7 @@
   config,
   profile,
   world,
+  litellmProxy,
   # Todo(data)
   ...
 }:
@@ -209,7 +210,8 @@ let
 
   unixDeveloperPackages = unixUtilities ++ programmingTools;
 
-  litellmProxy = pkgs.callPackage ../../../../nix/litellm-proxy.nix { };
+  prometheusOllamaTunnelPort = 21434;
+  prometheusOllamaSshTarget = "li@192.168.0.17";
 
   piAgentGatewayProvider = "ouranos-lite-gateway";
   piAgentModelAliases = [ "main" "subagent" "fast" ];
@@ -253,8 +255,8 @@ let
     compaction = { enabled = false; };
   };
 
-  piAgentModelsJson = lib.toJSON piAgentModels;
-  piAgentSettingsJson = lib.toJSON piAgentSettings;
+  piAgentModelsJson = toJSON piAgentModels;
+  piAgentSettingsJson = toJSON piAgentSettings;
 
   AIPackages = with pkgs; [
     gemini-cli
@@ -606,11 +608,39 @@ mkIf sizedAtLeast.min {
 
   systemd = {
     user.services = {
+      prometheus-ollama-tunnel = {
+        Unit = {
+          Description = "Ouranos tunnel to Prometheus Ollama";
+          Wants = [ "network-online.target" ];
+          After = [ "network-online.target" ];
+        };
+        Service = {
+          Environment = [ "SSH_AUTH_SOCK=%t/gnupg/S.gpg-agent.ssh" ];
+          ExecStart = ''
+            ${pkgs.openssh}/bin/ssh -N \
+              -o BatchMode=yes \
+              -o ExitOnForwardFailure=yes \
+              -o ServerAliveInterval=30 \
+              -o ServerAliveCountMax=3 \
+              -o StrictHostKeyChecking=accept-new \
+              -L 127.0.0.1:${toString prometheusOllamaTunnelPort}:127.0.0.1:11434 \
+              ${prometheusOllamaSshTarget}
+          '';
+          Restart = "on-failure";
+          RestartSec = 5;
+        };
+        Install = {
+          WantedBy = [ "default.target" ];
+        };
+      };
+
       litellm-gateway = {
-        description = "Ouranos LiteLLM gateway";
-        wants = [ "network-online.target" ];
-        after = [ "network-online.target" ];
-        serviceConfig = {
+        Unit = {
+          Description = "Ouranos LiteLLM gateway";
+          Wants = [ "network-online.target" "prometheus-ollama-tunnel.service" ];
+          After = [ "network-online.target" "prometheus-ollama-tunnel.service" ];
+        };
+        Service = {
           ExecStart = ''
             ${litellmProxy}/bin/litellm --config ${homeDir}/.config/litellm-router.yaml --host 127.0.0.1 --port 11435
           '';
@@ -618,7 +648,9 @@ mkIf sizedAtLeast.min {
           RestartSec = 5;
           PrivateTmp = true;
         };
-        install.wantedBy = [ "default.target" ];
+        Install = {
+          WantedBy = [ "default.target" ];
+        };
       };
     };
   };

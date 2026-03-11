@@ -80,6 +80,7 @@ let
       pkgsAndWorld = mkPkgsAndWorldFromSystem system;
       inherit (pkgsAndWorld) pkgs world;
       horizon = crioZone;
+      litellmProxy = pkgs.callPackage ./nix/litellm-proxy.nix { };
 
       userProfiles = {
         light = {
@@ -107,6 +108,7 @@ let
                   horizon
                   user
                   profile
+                  litellmProxy
                   ;
               };
               evalHomeManager = inputs.home-manager.lib.homeManagerConfiguration;
