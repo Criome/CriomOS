@@ -2,12 +2,14 @@
 model_list:
   - model_name: prometheus-deepseek
     litellm_params:
-      model: deepseek-r1:latest
+      model: ollama_chat/deepseek-r1:latest
+      custom_llm_provider: ollama
       api_base: http://maisiliym.prometheus.tailnet:11434
     order: 1
   - model_name: prometheus-qwen
     litellm_params:
-      model: qwen2.5-coder:7b
+      model: ollama_chat/qwen2.5-coder:7b
+      custom_llm_provider: ollama
       api_base: http://maisiliym.prometheus.tailnet:11434
     order: 2
   - model_name: cloud-reasoning
@@ -35,17 +37,14 @@ router_settings:
     subagent: prometheus-qwen
     fast: cloud-fast
   fallbacks:
-    - primary_model: main
-      fallback_models:
-        - cloud-reasoning
-        - cloud-coder
-    - primary_model: subagent
-      fallback_models:
-        - cloud-coder
-        - cloud-fast
-    - primary_model: fast
-      fallback_models:
-        - cloud-fast
+    - main:
+      - cloud-reasoning
+      - cloud-coder
+    - subagent:
+      - cloud-coder
+      - cloud-fast
+    - fast:
+      - cloud-fast
 litellm_settings:
   default_fallbacks:
     - fast

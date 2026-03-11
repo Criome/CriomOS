@@ -211,6 +211,51 @@ let
 
   litellmProxy = pkgs.callPackage ../../../../nix/litellm-proxy.nix { };
 
+  piAgentGatewayProvider = "ouranos-lite-gateway";
+  piAgentModelAliases = [ "main" "subagent" "fast" ];
+  piAgentEnabledModels = builtins.map (alias: "${piAgentGatewayProvider}/${alias}") piAgentModelAliases;
+
+  piAgentModels = {
+    providers = {
+      ${piAgentGatewayProvider} = {
+        baseUrl = "http://127.0.0.1:11435/v1";
+        api = "openai-completions";
+        apiKey = "";
+        models = builtins.map (alias:
+          let
+            isMain = alias == "main";
+          in
+          {
+            id = alias;
+            name = "ouranos-${alias}";
+            reasoning = isMain;
+            input = [ "text" ];
+            contextWindow = 128000;
+            maxTokens = 32768;
+            cost = {
+              input = 0;
+              output = 0;
+              cacheRead = 0;
+              cacheWrite = 0;
+            };
+          }
+        ) piAgentModelAliases;
+      };
+    };
+  };
+
+  piAgentSettings = {
+    defaultProvider = piAgentGatewayProvider;
+    defaultModel = "main";
+    enabledModels = piAgentEnabledModels;
+    hideThinkingBlock = false;
+    defaultThinkingLevel = "medium";
+    compaction = { enabled = false; };
+  };
+
+  piAgentModelsJson = lib.toJSON piAgentModels;
+  piAgentSettingsJson = lib.toJSON piAgentSettings;
+
   AIPackages = with pkgs; [
     gemini-cli
     claude-code
@@ -553,6 +598,8 @@ mkIf sizedAtLeast.min {
       ".config/broot/conf.toml".text = brootConfig;
 
       ".config/litellm-router.yaml".source = ./litellm-router.yaml;
+      ".pi/agent/models.json".text = piAgentModelsJson;
+      ".pi/agent/settings.json".text = piAgentSettingsJson;
 
     };
   };
