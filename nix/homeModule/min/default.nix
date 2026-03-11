@@ -209,11 +209,14 @@ let
 
   unixDeveloperPackages = unixUtilities ++ programmingTools;
 
+  litellmProxy = pkgs.callPackage ../../../../nix/litellm-proxy.nix { };
+
   AIPackages = with pkgs; [
     gemini-cli
     claude-code
     codex
     opencode
+    litellmProxy
   ];
 
   nixpkgsPackages =
@@ -548,6 +551,8 @@ mkIf sizedAtLeast.min {
       '';
 
       ".config/broot/conf.toml".text = brootConfig;
+
+      ".config/litellm-router.yaml".source = ./litellm-router.yaml;
 
     };
   };

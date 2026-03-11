@@ -1,0 +1,54 @@
+---
+model_list:
+  - model_name: prometheus-deepseek
+    litellm_params:
+      model: deepseek-r1:latest
+      api_base: http://maisiliym.prometheus.tailnet:11434
+    order: 1
+  - model_name: prometheus-qwen
+    litellm_params:
+      model: qwen2.5-coder:7b
+      api_base: http://maisiliym.prometheus.tailnet:11434
+    order: 2
+  - model_name: cloud-reasoning
+    litellm_params:
+      model: openai/gpt-4o
+      api_base: https://api.openai.com/v1
+      api_key: os.environ/OPENAI_API_KEY
+    order: 10
+  - model_name: cloud-coder
+    litellm_params:
+      model: openai/gpt-4o-mini
+      api_base: https://api.openai.com/v1
+      api_key: os.environ/OPENAI_API_KEY
+    order: 11
+  - model_name: cloud-fast
+    litellm_params:
+      model: openai/gpt-4o-mini
+      api_base: https://api.openai.com/v1
+      api_key: os.environ/OPENAI_API_KEY
+    order: 12
+router_settings:
+  enable_pre_call_checks: true
+  model_group_alias:
+    main: prometheus-deepseek
+    subagent: prometheus-qwen
+    fast: cloud-fast
+  fallbacks:
+    - primary_model: main
+      fallback_models:
+        - cloud-reasoning
+        - cloud-coder
+    - primary_model: subagent
+      fallback_models:
+        - cloud-coder
+        - cloud-fast
+    - primary_model: fast
+      fallback_models:
+        - cloud-fast
+litellm_settings:
+  default_fallbacks:
+    - fast
+    - cloud-fast
+  logging:
+    level: info
