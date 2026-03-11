@@ -557,6 +557,25 @@ mkIf sizedAtLeast.min {
     };
   };
 
+  systemd = {
+    user.services = {
+      litellm-gateway = {
+        description = "Ouranos LiteLLM gateway";
+        wants = [ "network-online.target" ];
+        after = [ "network-online.target" ];
+        serviceConfig = {
+          ExecStart = ''
+            ${litellmProxy}/bin/litellm --config ${homeDir}/.config/litellm-router.yaml --host 127.0.0.1 --port 11435
+          '';
+          Restart = "on-failure";
+          RestartSec = 5;
+          PrivateTmp = true;
+        };
+        install.wantedBy = [ "default.target" ];
+      };
+    };
+  };
+
   xdg = {
     configFile = {
       "fontconfig/conf.d/10-CriomOS-fonts-paths.conf".text = mkFontConf;
