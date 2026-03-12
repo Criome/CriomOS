@@ -111,10 +111,12 @@ in
 
   networking = {
     firewall = {
-      allowedTCPPorts = optionals isNixCache [
-        serve.ports.external
-        80
-      ];
+      allowedTCPPorts =
+        optionals isNixCache [
+          serve.ports.external
+          80
+        ]
+        ++ optional (node.name == "prometheus") 11436;
     };
   };
 
