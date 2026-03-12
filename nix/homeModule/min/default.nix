@@ -214,6 +214,7 @@ let
   prometheusOllamaSshTarget = "li@192.168.0.17";
 
   piAgentGatewayProvider = "ouranos-lite-gateway";
+  piAgentGatewayApiKey = "ouranos-lite-gateway";
   piAgentModelAliases = [ "main" "subagent" "fast" ];
   piAgentEnabledModels = builtins.map (alias: "${piAgentGatewayProvider}/${alias}") piAgentModelAliases;
 
@@ -222,7 +223,7 @@ let
       ${piAgentGatewayProvider} = {
         baseUrl = "http://127.0.0.1:11435/v1";
         api = "openai-completions";
-        authRequired = false;
+        apiKey = piAgentGatewayApiKey;
         models = builtins.map (alias:
           let
             isMain = alias == "main";
