@@ -41,13 +41,23 @@ let
   isPrometheusNode = node.name == "prometheus";
   isOuranosNode = node.name == "ouranos";
 
+  # Prefer a directly-routable IP for cross-node calls (Ouranos → Prometheus).
+  # The criome domain name is not guaranteed to resolve in the current environment.
   prometheusCriomeHost =
     let
       prometheusNode = horizon.exNodes.prometheus or null;
+      prometheusNodeIp =
+        if prometheusNode != null && builtins.hasAttr "nodeIp" prometheusNode
+        then prometheusNode.nodeIp
+        else null;
+      prometheusDomainName =
+        if prometheusNode != null
+        then prometheusNode.criomeDomainName
+        else "prometheus.${horizon.cluster.name}.criome";
     in
-    if prometheusNode != null
-    then prometheusNode.criomeDomainName
-    else "prometheus.${horizon.cluster.name}.criome";
+    if prometheusNodeIp != null && prometheusNodeIp != ""
+    then prometheusNodeIp
+    else prometheusDomainName;
 
   terminalFontFamily = if sizedAtLeast.med then "FiraMono Nerd Font" else "DejaVu Sans Mono";
 
@@ -223,8 +233,80 @@ let
 
   prometheusLlamaPort = 11436;
   prometheusLlamaApiKey = "sk-no-key-required";
-  prometheusLlamaModelDir = "${homeDir}/.local/share/prometheus-llama/models"; # Directory currently empty in this workspace; download the canonical GGUF assets before relying on the server.
+
+  # Runtime model assets live in the user's home. Do not hard-code presets to
+  # non-existent files; generate the preset at service start from the canonical
+  # filenames that actually exist on disk.
+  prometheusLlamaModelDir = "${homeDir}/.local/share/prometheus-llama/models";
   prometheusLlamaPreset = "${homeDir}/.config/prometheus-llama/models.ini";
+
+  prometheusLlamaCanonicalModels = [
+    {
+      section = "prometheus-main-deepseek";
+      file = "DeepSeek-R1-Distill-Llama-70B-Q8_0.gguf";
+      alias = "prometheus-deepseek-r1-distill-llama-70b";
+    }
+    {
+      section = "prometheus-subagent-qwen25";
+      file = "Qwen-2.5-72B-Instruct.gguf";
+      alias = "prometheus-qwen-2.5-72b-instruct";
+    }
+    {
+      section = "prometheus-fast-llama33";
+      file = "Llama-3.3-70B-Instruct.gguf";
+      alias = "prometheus-llama-3.3-70b-instruct";
+    }
+  ];
+
+  prometheusLlamaGeneratePreset =
+    pkgs.writeShellScript "prometheus-llama-generate-models-ini" (
+      let
+        mkAdd = m: "add_model ${lib.escapeShellArg m.section} ${lib.escapeShellArg m.file} ${lib.escapeShellArg m.alias}";
+        addLines = builtins.concatStringsSep "\n" (builtins.map mkAdd prometheusLlamaCanonicalModels);
+      in
+      ''
+        set -euo pipefail
+
+        preset=${lib.escapeShellArg prometheusLlamaPreset}
+        models_dir=${lib.escapeShellArg prometheusLlamaModelDir}
+
+        mkdir -p "$(dirname "$preset")"
+
+        {
+          echo "version = 1"
+          echo ""
+          echo "[*]"
+          echo "models-dir = $models_dir"
+          echo "load-on-startup = false"
+          echo ""
+        } > "$preset"
+
+        wrote_any=0
+
+        add_model() {
+          local section="$1"
+          local filename="$2"
+          local alias="$3"
+          local path="$models_dir/$filename"
+
+          if [[ -f "$path" ]]; then
+            {
+              echo "[$section]"
+              echo "model = $path"
+              echo "alias = $alias"
+              echo ""
+            } >> "$preset"
+            wrote_any=1
+          fi
+        }
+
+        ${addLines}
+
+        if [[ "$wrote_any" -eq 0 ]]; then
+          echo "# No canonical GGUF assets found under $models_dir; add at least one *.gguf." >> "$preset"
+        fi
+      ''
+    );
 
   litellmRouterYaml = ''
     ---
@@ -754,27 +836,7 @@ mkIf sizedAtLeast.min {
         ".pi/agent/settings.json".text = piAgentSettingsJson;
       })
       // (optionalAttrs isPrometheusNode {
-        ".config/prometheus-llama/models.ini".text = ''
-          version = 1
-
-          [*]
-          models-dir = ${prometheusLlamaModelDir}
-          load-on-startup = false
-          # The directory above is empty in this workspace; download the GGUF artifacts into it before the server can respond to requests.
-
-          [prometheus-main-deepseek]
-          model = ${prometheusLlamaModelDir}/DeepSeek-R1-Distill-Llama-70B-Q8_0.gguf
-          alias = prometheus-deepseek-r1-distill-llama-70b
-
-          [prometheus-subagent-qwen25]
-          model = ${prometheusLlamaModelDir}/Qwen-2.5-72B-Instruct.gguf
-          alias = prometheus-qwen-2.5-72b-instruct
-
-          [prometheus-fast-llama33]
-          model = ${prometheusLlamaModelDir}/Llama-3.3-70B-Instruct.gguf
-          alias = prometheus-llama-3.3-70b-instruct
-        '';
-
+        ".config/prometheus-llama/.keep".text = "";
         ".local/share/prometheus-llama/.keep".text = "";
       });
   };
@@ -789,6 +851,7 @@ mkIf sizedAtLeast.min {
             After = [ "network-online.target" ];
           };
           Service = {
+            ExecStartPre = [ "${prometheusLlamaGeneratePreset}" ];
             ExecStart = ''
               ${pkgs.llama-cpp}/bin/llama-server \
                 --models-preset ${prometheusLlamaPreset} \
