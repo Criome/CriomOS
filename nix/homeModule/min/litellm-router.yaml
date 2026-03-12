@@ -2,13 +2,13 @@
 model_list:
   - model_name: prometheus-deepseek
     litellm_params:
-      model: ollama_chat/deepseek-r1:latest
+      model: deepseek-r1:latest
       custom_llm_provider: ollama
       api_base: http://127.0.0.1:21434
     order: 1
   - model_name: prometheus-qwen
     litellm_params:
-      model: ollama_chat/qwen2.5-coder:7b
+      model: qwen2.5-coder:7b
       custom_llm_provider: ollama
       api_base: http://127.0.0.1:21434
     order: 2
@@ -49,5 +49,7 @@ litellm_settings:
   default_fallbacks:
     - fast
     - cloud-fast
+  drop_params: true
+  modify_params: true
   logging:
     level: info
