@@ -38,6 +38,17 @@ let
 
   homeDir = config.home.homeDirectory;
 
+  isPrometheusNode = node.name == "prometheus";
+  isOuranosNode = node.name == "ouranos";
+
+  prometheusCriomeHost =
+    let
+      prometheusNode = horizon.exNodes.prometheus or null;
+    in
+    if prometheusNode != null
+    then prometheusNode.criomeDomainName
+    else "prometheus.${horizon.cluster.name}.criome";
+
   terminalFontFamily = if sizedAtLeast.med then "FiraMono Nerd Font" else "DejaVu Sans Mono";
 
   # Todo(Those data files should be in a top arg called data)
@@ -214,6 +225,70 @@ let
   prometheusLlamaApiKey = "sk-no-key-required";
   prometheusLlamaModelDir = "${homeDir}/.local/share/prometheus-llama/models"; # Directory currently empty in this workspace; download the canonical GGUF assets before relying on the server.
   prometheusLlamaPreset = "${homeDir}/.config/prometheus-llama/models.ini";
+
+  litellmRouterYaml = ''
+    ---
+    model_list:
+      - model_name: prometheus-deepseek-r1-distill-llama-70b
+        litellm_params:
+          model: prometheus-deepseek-r1-distill-llama-70b
+          api_base: http://${prometheusCriomeHost}:${toString prometheusLlamaPort}/v1
+          api_key: ${prometheusLlamaApiKey}
+        order: 1
+      - model_name: prometheus-qwen-2.5-72b-instruct
+        litellm_params:
+          model: prometheus-qwen-2.5-72b-instruct
+          api_base: http://${prometheusCriomeHost}:${toString prometheusLlamaPort}/v1
+          api_key: ${prometheusLlamaApiKey}
+        order: 2
+      - model_name: prometheus-llama-3.3-70b-instruct
+        litellm_params:
+          model: prometheus-llama-3.3-70b-instruct
+          api_base: http://${prometheusCriomeHost}:${toString prometheusLlamaPort}/v1
+          api_key: ${prometheusLlamaApiKey}
+        order: 3
+      - model_name: cloud-reasoning
+        litellm_params:
+          model: openai/gpt-4o
+          api_base: https://api.openai.com/v1
+          api_key: os.environ/OPENAI_API_KEY
+        order: 10
+      - model_name: cloud-coder
+        litellm_params:
+          model: openai/gpt-4o-mini
+          api_base: https://api.openai.com/v1
+          api_key: os.environ/OPENAI_API_KEY
+        order: 11
+      - model_name: cloud-fast
+        litellm_params:
+          model: openai/gpt-4o-mini
+          api_base: https://api.openai.com/v1
+          api_key: os.environ/OPENAI_API_KEY
+        order: 12
+    router_settings:
+      enable_pre_call_checks: true
+      model_group_alias:
+        main-deepseek: prometheus-deepseek-r1-distill-llama-70b
+        subagent-qwen25: prometheus-qwen-2.5-72b-instruct
+        fast-llama33: prometheus-llama-3.3-70b-instruct
+      fallbacks:
+        - main-deepseek:
+            - cloud-reasoning
+            - cloud-coder
+        - subagent-qwen25:
+            - cloud-coder
+            - cloud-fast
+        - fast-llama33:
+            - cloud-fast
+    litellm_settings:
+      default_fallbacks:
+        - fast-llama33
+        - cloud-fast
+      drop_params: true
+      modify_params: true
+      logging:
+        level: info
+  '';
 
   prometheusModelCatalogPath = ../../../data/config/pi/prometheus-model-catalog.json;
   prometheusModelCatalog = builtins.fromJSON (builtins.readFile prometheusModelCatalogPath);
@@ -645,64 +720,68 @@ mkIf sizedAtLeast.min {
       name = "Vanilla-DMZ";
     };
 
-    file = {
-      ".config/gtk-3.0/settings.ini".text = ''
-        [Settings]
-        gtk-application-prefer-dark-theme=${if dark then "1" else "0"}
-      '';
+    file =
+      {
+        ".config/gtk-3.0/settings.ini".text = ''
+          [Settings]
+          gtk-application-prefer-dark-theme=${if dark then "1" else "0"}
+        '';
 
-      ".config/IJHack/QtPass.conf".text = ''
-        [General]
-        autoclearSeconds=20
-        passwordLength=32
-        useTrayIcon=false
-        hideContent=false
-        hidePassword=true
-        clipBoardType=1
-        hideOnClose=false
-        passExecutable=${waylandPass}/bin/pass
-        passTemplate=login\nurl
-        pwgenExecutable=${pkgs.pwgen}bin/pwgen
-        startMinimized=false
-        templateAllFields=false
-        useAutoclear=true
-        useTrayIcon=false
-        version=${pkgs.qtpass.version}
-      '';
+        ".config/IJHack/QtPass.conf".text = ''
+          [General]
+          autoclearSeconds=20
+          passwordLength=32
+          useTrayIcon=false
+          hideContent=false
+          hidePassword=true
+          clipBoardType=1
+          hideOnClose=false
+          passExecutable=${waylandPass}/bin/pass
+          passTemplate=login\nurl
+          pwgenExecutable=${pkgs.pwgen}bin/pwgen
+          startMinimized=false
+          templateAllFields=false
+          useAutoclear=true
+          useTrayIcon=false
+          version=${pkgs.qtpass.version}
+        '';
 
-      ".config/broot/conf.toml".text = brootConfig;
+        ".config/broot/conf.toml".text = brootConfig;
+      }
+      // (optionalAttrs isOuranosNode {
+        ".config/litellm-router.yaml".text = litellmRouterYaml;
+        ".pi/agent/models.json".text = piAgentModelsJson;
+        ".pi/agent/settings.json".text = piAgentSettingsJson;
+      })
+      // (optionalAttrs isPrometheusNode {
+        ".config/prometheus-llama/models.ini".text = ''
+          version = 1
 
-      ".config/litellm-router.yaml".source = ./litellm-router.yaml;
-      ".config/prometheus-llama/models.ini".text = ''
-        version = 1
+          [*]
+          models-dir = ${prometheusLlamaModelDir}
+          load-on-startup = false
+          # The directory above is empty in this workspace; download the GGUF artifacts into it before the server can respond to requests.
 
-        [*]
-        models-dir = ${prometheusLlamaModelDir}
-        load-on-startup = false
-        # The directory above is empty in this workspace; download the GGUF artifacts into it before the server can respond to requests.
+          [prometheus-main-deepseek]
+          model = ${prometheusLlamaModelDir}/DeepSeek-R1-Distill-Llama-70B-Q8_0.gguf
+          alias = prometheus-deepseek-r1-distill-llama-70b
 
-        [prometheus-main-deepseek]
-        model = ${prometheusLlamaModelDir}/DeepSeek-R1-Distill-Llama-70B-Q8_0.gguf
-        alias = prometheus-deepseek-r1-distill-llama-70b
+          [prometheus-subagent-qwen25]
+          model = ${prometheusLlamaModelDir}/Qwen-2.5-72B-Instruct.gguf
+          alias = prometheus-qwen-2.5-72b-instruct
 
-        [prometheus-subagent-qwen25]
-        model = ${prometheusLlamaModelDir}/Qwen-2.5-72B-Instruct.gguf
-        alias = prometheus-qwen-2.5-72b-instruct
+          [prometheus-fast-llama33]
+          model = ${prometheusLlamaModelDir}/Llama-3.3-70B-Instruct.gguf
+          alias = prometheus-llama-3.3-70b-instruct
+        '';
 
-        [prometheus-fast-llama33]
-        model = ${prometheusLlamaModelDir}/Llama-3.3-70B-Instruct.gguf
-        alias = prometheus-llama-3.3-70b-instruct
-      '';
-      ".local/share/prometheus-llama/.keep".text = "";
-      ".pi/agent/models.json".text = piAgentModelsJson;
-      ".pi/agent/settings.json".text = piAgentSettingsJson;
-
-    };
+        ".local/share/prometheus-llama/.keep".text = "";
+      });
   };
 
   systemd = {
     user.services =
-      {
+      (optionalAttrs isPrometheusNode {
         prometheus-llama-server = {
           Unit = {
             Description = "Local llama.cpp server for Prometheus";
@@ -733,7 +812,8 @@ mkIf sizedAtLeast.min {
             WantedBy = [ "default.target" ];
           };
         };
-
+      })
+      // (optionalAttrs isOuranosNode {
         litellm-gateway = {
           Unit = {
             Description = "Ouranos LiteLLM gateway";
@@ -752,7 +832,7 @@ mkIf sizedAtLeast.min {
             WantedBy = [ "default.target" ];
           };
         };
-      };
+      });
   };
 
   xdg = {
