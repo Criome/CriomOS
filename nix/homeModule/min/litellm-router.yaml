@@ -1,60 +1,17 @@
 ---
 model_list:
-  - model_name: prometheus-deepseek-r1-distill-llama-70b
+  - model_name: deepseek-r1-distill-llama-70b
     litellm_params:
-      model: prometheus-deepseek-r1-distill-llama-70b
+      model: openai/prometheus-main-deepseek
       api_base: http://127.0.0.1:11436/v1
       api_key: sk-no-key-required
     order: 1
-  - model_name: prometheus-qwen-2.5-72b-instruct
-    litellm_params:
-      model: prometheus-qwen-2.5-72b-instruct
-      api_base: http://127.0.0.1:11436/v1
-      api_key: sk-no-key-required
-    order: 2
-  - model_name: prometheus-llama-3.3-70b-instruct
-    litellm_params:
-      model: prometheus-llama-3.3-70b-instruct
-      api_base: http://127.0.0.1:11436/v1
-      api_key: sk-no-key-required
-    order: 3
-  - model_name: cloud-reasoning
-    litellm_params:
-      model: openai/gpt-4o
-      api_base: https://api.openai.com/v1
-      api_key: os.environ/OPENAI_API_KEY
-    order: 10
-  - model_name: cloud-coder
-    litellm_params:
-      model: openai/gpt-4o-mini
-      api_base: https://api.openai.com/v1
-      api_key: os.environ/OPENAI_API_KEY
-    order: 11
-  - model_name: cloud-fast
-    litellm_params:
-      model: openai/gpt-4o-mini
-      api_base: https://api.openai.com/v1
-      api_key: os.environ/OPENAI_API_KEY
-    order: 12
 router_settings:
   enable_pre_call_checks: true
   model_group_alias:
-    main-deepseek: prometheus-deepseek-r1-distill-llama-70b
-    subagent-qwen25: prometheus-qwen-2.5-72b-instruct
-    fast-llama33: prometheus-llama-3.3-70b-instruct
-  fallbacks:
-    - main-deepseek:
-        - cloud-reasoning
-        - cloud-coder
-    - subagent-qwen25:
-        - cloud-coder
-        - cloud-fast
-    - fast-llama33:
-        - cloud-fast
+    main-deepseek: deepseek-r1-distill-llama-70b
+    deepseek-r1-distill-llama-70b: deepseek-r1-distill-llama-70b
 litellm_settings:
-  default_fallbacks:
-    - fast-llama33
-    - cloud-fast
   drop_params: true
   modify_params: true
   logging:

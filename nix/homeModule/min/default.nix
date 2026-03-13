@@ -63,6 +63,9 @@ let
   # System MagicDNS integration is not yet authoritative for user-space consumers.
   prometheusOverlayHost = if isOuranosNode then "100.64.0.1" else prometheusCriomeHost;
 
+  # Prometheus runs the llama.cpp server locally; other nodes should route to the Prometheus overlay.
+  prometheusLlamaUpstreamHost = if isPrometheusNode then "127.0.0.1" else prometheusOverlayHost;
+
   terminalFontFamily = if sizedAtLeast.med then "FiraMono Nerd Font" else "DejaVu Sans Mono";
 
   # Todo(Those data files should be in a top arg called data)
@@ -248,92 +251,25 @@ let
     {
       section = "prometheus-main-deepseek";
       file = "DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf";
-      alias = "prometheus-deepseek-r1-distill-llama-70b";
-    }
-    {
-      section = "prometheus-subagent-qwen25";
-      file = "Qwen-2.5-72B-Instruct.gguf";
-      alias = "prometheus-qwen-2.5-72b-instruct";
-    }
-    {
-      section = "prometheus-fast-llama33";
-      file = "Llama-3.3-70B-Instruct.gguf";
-      alias = "prometheus-llama-3.3-70b-instruct";
+      alias = "deepseek-r1-distill-llama-70b";
     }
   ];
-
-  # Use explicit service for model stability instead of router mode.
-  prometheus-deepseek-70b-service = {
-    Unit = {
-      Description = "DeepSeek R1 Distill Llama 70B Service";
-      After = [ "network-online.target" ];
-    };
-    Service = {
-      ExecStart = "${pkgs.llama-cpp-rocm}/bin/llama-server --host 0.0.0.0 --port 11436 --model /home/li/.local/share/prometheus-llama/models/DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf --n-gpu-layers 99 --alias prometheus-main-deepseek --api-key sk-no-key-required --no-webui";
-      Restart = "always";
-    };
-    Install = { WantedBy = [ "default.target" ]; };
-  };
 
   litellmRouterYaml = ''
     ---
     model_list:
-      - model_name: prometheus-deepseek-r1-distill-llama-70b
+      - model_name: deepseek-r1-distill-llama-70b
         litellm_params:
           model: openai/prometheus-main-deepseek
-          api_base: http://${prometheusOverlayHost}:${toString prometheusLlamaPort}/v1
+          api_base: http://${prometheusLlamaUpstreamHost}:${toString prometheusLlamaPort}/v1
           api_key: ${prometheusLlamaApiKey}
         order: 1
-      - model_name: prometheus-qwen-2.5-72b-instruct
-        litellm_params:
-          model: openai/prometheus-subagent-qwen25
-          api_base: http://${prometheusOverlayHost}:${toString prometheusLlamaPort}/v1
-          api_key: ${prometheusLlamaApiKey}
-        order: 2
-      - model_name: prometheus-llama-3.3-70b-instruct
-        litellm_params:
-          model: openai/prometheus-fast-llama33
-          api_base: http://${prometheusOverlayHost}:${toString prometheusLlamaPort}/v1
-          api_key: ${prometheusLlamaApiKey}
-        order: 3
-      - model_name: cloud-reasoning
-        litellm_params:
-          model: openai/gpt-4o
-          api_base: https://api.openai.com/v1
-          api_key: os.environ/OPENAI_API_KEY
-        order: 10
-      - model_name: cloud-coder
-        litellm_params:
-          model: openai/gpt-4o-mini
-          api_base: https://api.openai.com/v1
-          api_key: os.environ/OPENAI_API_KEY
-        order: 11
-      - model_name: cloud-fast
-        litellm_params:
-          model: openai/gpt-4o-mini
-          api_base: https://api.openai.com/v1
-          api_key: os.environ/OPENAI_API_KEY
-        order: 12
     router_settings:
       enable_pre_call_checks: true
       model_group_alias:
-        main-deepseek: prometheus-deepseek-r1-distill-llama-70b
-        deepseek-r1-distill-llama-70b: prometheus-deepseek-r1-distill-llama-70b
-        subagent-qwen25: prometheus-qwen-2.5-72b-instruct
-        fast-llama33: prometheus-llama-3.3-70b-instruct
-      fallbacks:
-        - main-deepseek:
-            - cloud-reasoning
-            - cloud-coder
-        - subagent-qwen25:
-            - cloud-coder
-            - cloud-fast
-        - fast-llama33:
-            - cloud-fast
+        main-deepseek: deepseek-r1-distill-llama-70b
+        deepseek-r1-distill-llama-70b: deepseek-r1-distill-llama-70b
     litellm_settings:
-      default_fallbacks:
-        - fast-llama33
-        - cloud-fast
       drop_params: true
       modify_params: true
       logging:
@@ -804,6 +740,7 @@ mkIf sizedAtLeast.min {
         ".pi/agent/settings.json".text = piAgentSettingsJson;
       })
       // (optionalAttrs isPrometheusNode {
+        ".config/litellm-router.yaml".text = litellmRouterYaml;
         ".config/prometheus-llama/.keep".text = "";
         ".local/share/prometheus-llama/.keep".text = "";
       });
@@ -811,28 +748,7 @@ mkIf sizedAtLeast.min {
 
   systemd = {
     user.services =
-      (optionalAttrs isPrometheusNode {
-        prometheus-deepseek-70b = {
-          Unit = {
-            Description = "DeepSeek R1 Distill Llama 70B Service";
-            Wants = [ "network-online.target" ];
-            After = [ "network-online.target" ];
-          };
-          Service = {
-            ExecStart = "${pkgs.llama-cpp-rocm}/bin/llama-server --host 0.0.0.0 --port 11436 --model /home/li/.local/share/prometheus-llama/models/DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf --n-gpu-layers 99 --alias prometheus-main-deepseek --api-key sk-no-key-required --no-webui";
-            Restart = "on-failure";
-            RestartSec = 5;
-            PrivateTmp = true;
-            WorkingDirectory = homeDir;
-            StandardOutput = "journal";
-            StandardError = "journal";
-          };
-          Install = {
-            WantedBy = [ "default.target" ];
-          };
-        };
-      })
-      // (optionalAttrs isOuranosNode {
+      (optionalAttrs isOuranosNode {
         litellm-gateway = {
           Unit = {
             Description = "Ouranos LiteLLM gateway";

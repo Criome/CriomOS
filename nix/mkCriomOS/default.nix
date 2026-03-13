@@ -12,7 +12,10 @@ let
   inherit (lib) optional optionals;
   inherit (world) pkdjz home-manager;
   inherit (pkdjz) evalNixos;
+  inherit (horizon) node;
   inherit (horizon.node.methods) behavesAs;
+
+  isPrometheusNode = node.name == "prometheus";
 
   constants = import ./constants.nix;
   usersModule = import ./users.nix;
@@ -20,6 +23,7 @@ let
   normalizeModule = import ./normalize.nix;
   networkModule = import ./network;
   edgeModule = import ./edge;
+  llmModule = import ./llm.nix;
 
   disksModule =
     if behavesAs.virtualMachine then
@@ -49,6 +53,7 @@ let
     ++ (optional behavesAs.edge edgeModule)
     ++ (optional behavesAs.router ./router)
     ++ (optional behavesAs.bareMetal metalModule)
+    ++ (optional isPrometheusNode llmModule)
     ++ (optionals _withUsers usersModules);
 
   nixosArgs = {

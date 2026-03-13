@@ -157,7 +157,10 @@ let
         yggAddress = yggdrasil.address;
         yggSubnet = yggdrasil.subnet;
 
-        inherit (inputNode.preCriomes) nixPreCriome;
+        nixPreCriome =
+          if inputNode.preCriomes.nixPreCriome != null && inputNode.preCriomes.nixPreCriome != ""
+          then inputNode.preCriomes.nixPreCriome
+          else inputNode.preCriomes.nixSigningPublicKey;
 
         criomeDomainName = concatStringsSep "." [
           nodeName

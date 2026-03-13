@@ -52,6 +52,13 @@ let
         type = nullOr str;
         default = null;
       };
+
+      # Compatibility: maisiliym now emits this field name.
+      # Semantics are identical to nixPreCriome (raw signing key material).
+      nixSigningPublicKey = mkOption {
+        type = nullOr str;
+        default = null;
+      };
     };
   };
 

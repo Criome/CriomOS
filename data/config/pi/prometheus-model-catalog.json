@@ -2,6 +2,10 @@
   "defaultProvider": "prometheus",
   "defaultModel": "main-deepseek",
   "provider": "prometheus",
+  "serviceEndpoints": {
+    "canonical": "http://prometheus.maisiliym.criome:11434/v1",
+    "backup": "http://prometheus.maisiliym.criome:11436/v1"
+  },
   "models": [
     {
       "id": "deepseek-r1-distill-llama-70b",
@@ -10,32 +14,12 @@
       "contextWindow": 128000,
       "maxTokens": 32768,
       "reasoning": true
-    },
-    {
-      "id": "qwen-2.5-72b-instruct",
-      "descriptor": "Qwen 2.5 72B Instruct",
-      "alias": "prometheus/subagent-qwen25",
-      "contextWindow": 128000,
-      "maxTokens": 32768,
-      "reasoning": false
-    },
-    {
-      "id": "llama-3.3-70b-instruct",
-      "descriptor": "Llama 3.3 70B Instruct",
-      "alias": "prometheus/fast-llama33",
-      "contextWindow": 128000,
-      "maxTokens": 32768,
-      "reasoning": false
     }
   ],
   "aliasTargets": {
-    "main-deepseek": "deepseek-r1-distill-llama-70b",
-    "subagent-qwen25": "qwen-2.5-72b-instruct",
-    "fast-llama33": "llama-3.3-70b-instruct"
+    "main-deepseek": "deepseek-r1-distill-llama-70b"
   },
   "enabledAliases": [
-    "prometheus/main-deepseek",
-    "prometheus/subagent-qwen25",
-    "prometheus/fast-llama33"
+    "prometheus/main-deepseek"
   ]
 }
