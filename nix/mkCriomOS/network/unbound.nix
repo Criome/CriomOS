@@ -66,7 +66,7 @@ let
       let
         cleaned = head (split "/" ip);
       in
-        if cleaned == "" then null else cleaned;
+        if cleaned == "" || match ".*%.*" cleaned != null then null else cleaned;
 
   recordTypeForIp = ip:
     if match ".*:.*" ip != null then "AAAA" else "A";
