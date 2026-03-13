@@ -31,6 +31,7 @@ let
     certFile=${lib.escapeShellArg tlsCertPath}
     keyFile=${lib.escapeShellArg tlsKeyPath}
     fqdn=${lib.escapeShellArg ouranosFqdn}
+    primaryIpv4="$(${lib.getExe pkgs.iproute2} route get 1.1.1.1 | ${lib.getExe pkgs.gawk} '/src/ {for (i = 1; i <= NF; i++) if ($i == "src") { print $(i+1); exit }}')"
 
     umask 077
     mkdir -p "$certDir"
@@ -44,6 +45,11 @@ let
       exit 0
     fi
 
+    sanList="DNS:$fqdn,DNS:localhost,IP:127.0.0.1"
+    if [ -n "$primaryIpv4" ]; then
+      sanList="$sanList,IP:$primaryIpv4"
+    fi
+
     # Self-signed cert for Phase 1; will be replaced with real PKI later.
     ${lib.getExe pkgs.openssl} req \
       -x509 -newkey rsa:4096 -nodes \
@@ -51,7 +57,7 @@ let
       -out "$certFile" \
       -sha256 -days 3650 \
       -subj "/CN=$fqdn" \
-      -addext "subjectAltName=DNS:$fqdn"
+      -addext "subjectAltName=$sanList"
 
     chown root:"$hsGroup" "$certFile" "$keyFile"
     chmod 0644 "$certFile"
@@ -93,7 +99,7 @@ in
       };
 
       # Ensure required binaries are in PATH for the script.
-      path = [ pkgs.coreutils pkgs.openssl ];
+      path = [ pkgs.coreutils pkgs.openssl pkgs.iproute2 pkgs.gawk ];
 
       script = mkCertScript;
     };
