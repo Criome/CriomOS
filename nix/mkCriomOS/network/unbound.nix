@@ -13,7 +13,11 @@ let
     attrNames
     ;
   inherit (lib) mapAttrsToList concatMapStringsSep lowPrio;
+  inherit (horizon) node cluster;
   inherit (horizon.node) typeIs criomeDomainName;
+
+  tailnetBaseDomain = "tailnet.${cluster.name}.criome";
+  isTailnetNode = builtins.elem node.name [ "ouranos" "prometheus" ];
 
   listenIPs = [
     "::1"
@@ -56,13 +60,22 @@ in
         do-not-query-localhost = false;
         tls-cert-bundle = "/etc/ssl/certs/ca-certificates.crt";
       };
-      forward-zone = [
-        {
-          name = ".";
-          forward-tls-upstream = true;
-          forward-addr = forwardServerUrls;
-        }
-      ];
+      forward-zone =
+        (lib.optionals isTailnetNode [
+          {
+            # Split-DNS for our headscale tailnet base domain.
+            # This lets us keep `tailscale up --accept-dns=false` later.
+            name = "${tailnetBaseDomain}.";
+            forward-addr = [ "100.100.100.100" ];
+          }
+        ])
+        ++ [
+          {
+            name = ".";
+            forward-tls-upstream = true;
+            forward-addr = forwardServerUrls;
+          }
+        ];
     };
   };
 

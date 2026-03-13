@@ -35,6 +35,8 @@ in
   imports = [
     ./unbound.nix
     ./yggdrasil.nix
+    ./tailscale.nix
+    ./headscale.nix
   ];
 
   networking = {
