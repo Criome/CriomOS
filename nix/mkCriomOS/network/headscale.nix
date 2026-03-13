@@ -84,6 +84,7 @@ in
         dns = {
           magic_dns = true;
           base_domain = tailnetBaseDomain;
+          override_local_dns = false;
         };
       };
     };
