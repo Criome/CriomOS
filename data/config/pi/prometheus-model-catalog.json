@@ -19,7 +19,7 @@
       "id": "qwen3.5-35b-a3b",
       "descriptor": "Qwen 3.5 35B A3B Q8_0 (Prometheus reasoning lane)",
       "alias": "prometheus/main-reasoning",
-      "contextWindow": 32768,
+      "contextWindow": 196608,
       "maxTokens": 4096,
       "reasoning": true
     }

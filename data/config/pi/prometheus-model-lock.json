@@ -33,9 +33,9 @@
         "filename": "Qwen3.5-35B-A3B-Q8_0.gguf"
       },
       "reasoning": true,
-      "contextWindow": 32768,
+      "contextWindow": 196608,
       "maxTokens": 4096,
-      "ctxSize": 32768,
+      "ctxSize": 196608,
       "port": 11437
     }
   ]
