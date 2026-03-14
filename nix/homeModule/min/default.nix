@@ -249,26 +249,26 @@ let
 
   prometheusLlamaCanonicalModels = [
     {
-      section = "prometheus-main-deepseek";
-      file = "DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf";
-      alias = "deepseek-r1-distill-llama-70b";
+      section = "prometheus-main-sanity";
+      file = "llama-3.2-1b-instruct-q4_k_m.gguf";
+      alias = "llama-3.2-1b-instruct";
     }
   ];
 
   litellmRouterYaml = ''
     ---
     model_list:
-      - model_name: deepseek-r1-distill-llama-70b
+      - model_name: llama-3.2-1b-instruct
         litellm_params:
-          model: openai/prometheus-main-deepseek
+          model: openai/prometheus-main-sanity
           api_base: http://${prometheusLlamaUpstreamHost}:${toString prometheusLlamaPort}/v1
           api_key: ${prometheusLlamaApiKey}
         order: 1
     router_settings:
       enable_pre_call_checks: true
       model_group_alias:
-        main-deepseek: deepseek-r1-distill-llama-70b
-        deepseek-r1-distill-llama-70b: deepseek-r1-distill-llama-70b
+        main-sanity: llama-3.2-1b-instruct
+        llama-3.2-1b-instruct: llama-3.2-1b-instruct
     litellm_settings:
       drop_params: true
       modify_params: true

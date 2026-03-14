@@ -1,6 +1,6 @@
 {
   "defaultProvider": "prometheus",
-  "defaultModel": "main-deepseek",
+  "defaultModel": "main-sanity",
   "provider": "prometheus",
   "serviceEndpoints": {
     "canonical": "http://[202:68bc:1221:1b13:5397:2a56:4aea:d4a9]:11434/v1",
@@ -8,18 +8,18 @@
   },
   "models": [
     {
-      "id": "deepseek-r1-distill-llama-70b",
-      "descriptor": "DeepSeek-R1 Distill Llama 70B",
-      "alias": "prometheus/main-deepseek",
-      "contextWindow": 128000,
-      "maxTokens": 32768,
-      "reasoning": true
+      "id": "llama-3.2-1b-instruct",
+      "descriptor": "Llama 3.2 1B Instruct (Prometheus sanity lane)",
+      "alias": "prometheus/main-sanity",
+      "contextWindow": 4096,
+      "maxTokens": 2048,
+      "reasoning": false
     }
   ],
   "aliasTargets": {
-    "main-deepseek": "deepseek-r1-distill-llama-70b"
+    "main-sanity": "llama-3.2-1b-instruct"
   },
   "enabledAliases": [
-    "prometheus/main-deepseek"
+    "prometheus/main-sanity"
   ]
 }

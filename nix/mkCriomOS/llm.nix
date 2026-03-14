@@ -12,10 +12,18 @@ let
   prometheusLitellmPort = 11434;
   prometheusLlamaBackupPort = 11436;
 
-  # First pass: keep the current on-host model layout.
+  # First pass: keep the current on-host model layout unless a lock file
+  # indicates a lighter sanity model that should be fetched from the store.
   liHome = "/home/li";
-  prometheusModelPath = "${liHome}/.local/share/prometheus-llama/models/DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf";
+  prometheusLockPath = ../../data/config/pi/prometheus-model-lock.json;
+  prometheusHasLock = builtins.pathExists prometheusLockPath;
+  prometheusLock = if prometheusHasLock then builtins.fromJSON (builtins.readFile prometheusLockPath) else null;
+  prometheusFetchedModel = if prometheusHasLock then pkgs.fetchurl { url = prometheusLock.artifact.url; sha256 = prometheusLock.artifact.sha256; } else null;
+  prometheusModelPath = if prometheusHasLock then prometheusFetchedModel else "${liHome}/.local/share/prometheus-llama/models/DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf";
   prometheusApiKey = "sk-no-key-required";
+  prometheusAlias = if prometheusHasLock then prometheusLock.alias else "prometheus-main-deepseek";
+  prometheusCtxSize = if prometheusHasLock && builtins.hasAttr "ctxSize" prometheusLock then prometheusLock.ctxSize else 8192;
+
   # The OS-level gateway should not depend on Home Manager being deployed.
   litellmRouterConfigPath = "/etc/litellm-router.yaml";
 
@@ -50,10 +58,10 @@ in
         + " --port ${toString prometheusLlamaBackupPort}"
         + " --model ${prometheusModelPath}"
         + " --n-gpu-layers 99"
-        + " --alias prometheus-main-deepseek"
+        + " --alias ${prometheusAlias}"
         + " --api-key ${prometheusApiKey}"
         + " --parallel 1"
-        + " --ctx-size 8192"
+        + " --ctx-size ${toString prometheusCtxSize}"
         + " --no-warmup"
         + " --no-mmap"
         + " --no-webui";

@@ -1,0 +1,16 @@
+{
+  "modelId": "llama-3.2-1b-instruct",
+  "canonicalId": "llama-3.2-1b-instruct",
+  "alias": "prometheus-main-sanity",
+  "primaryAlias": "main-sanity",
+  "descriptor": "Llama 3.2 1B Instruct (Prometheus sanity lane)",
+  "artifact": {
+    "url": "https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/main/llama-3.2-1b-instruct-q4_k_m.gguf",
+    "sha256": "1qrc2p1749qgbxybr5ja6i44rs834w9gskyg7kvsw4jfxhcr83hx",
+    "filename": "llama-3.2-1b-instruct-q4_k_m.gguf"
+  },
+  "reasoning": false,
+  "contextWindow": 4096,
+  "maxTokens": 2048,
+  "ctxSize": 4096
+}
