@@ -264,11 +264,19 @@ let
           api_base: http://${prometheusLlamaUpstreamHost}:${toString prometheusLlamaPort}/v1
           api_key: ${prometheusLlamaApiKey}
         order: 1
+      - model_name: qwen3.5-35b-a3b
+        litellm_params:
+          model: openai/prometheus-main-reasoning
+          api_base: http://${prometheusLlamaUpstreamHost}:11437/v1
+          api_key: ${prometheusLlamaApiKey}
+        order: 2
     router_settings:
       enable_pre_call_checks: true
       model_group_alias:
         main-sanity: llama-3.2-1b-instruct
         llama-3.2-1b-instruct: llama-3.2-1b-instruct
+        main-reasoning: qwen3.5-35b-a3b
+        qwen3.5-35b-a3b: qwen3.5-35b-a3b
     litellm_settings:
       drop_params: true
       modify_params: true
@@ -752,6 +760,10 @@ mkIf sizedAtLeast.min {
       // (optionalAttrs isOuranosNode {
         ".pi/agent/models.json".text = piAgentModelsJson;
         ".pi/agent/settings.json".text = piAgentSettingsJson;
+        ".pi/settings.json" = {
+          text = piAgentSettingsJson;
+          force = true;
+        };
       })
       // (optionalAttrs isPrometheusNode {
         ".config/litellm-router.yaml".text = litellmRouterYaml;
