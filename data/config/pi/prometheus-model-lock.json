@@ -29,7 +29,7 @@
       "source": {
         "kind": "fetchurl",
         "url": "https://huggingface.co/unsloth/Qwen3.5-35B-A3B-GGUF/resolve/main/Qwen3.5-35B-A3B-Q8_0.gguf",
-        "sha256": "sha256-3808866c016ab02b4adb26b873f7008a2cdd2c0704a39704050119ab0631db46",
+        "sha256": "sha256-OAiGbAFqsCtK2ya4c/cAiizdLAcEo5cEBQEZqwYx20Y=",
         "filename": "Qwen3.5-35B-A3B-Q8_0.gguf"
       },
       "reasoning": true,
