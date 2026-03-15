@@ -89,6 +89,16 @@ let
           url = source.url;
           sha256 = source.sha256;
         }
+        else if source.kind == "local-file"
+        then pkgs.runCommand "local-file-${source.filename}"
+          {
+            nativeBuildInputs = [ pkgs.coreutils ];
+            allowSubstitutes = true;
+            preferLocalBuild = true;
+          }
+          ''
+            cp ${source.path} $out
+          ''
         else source.path;
       # For multi-shard models, just use the first shard (llama-server loads all)
       modelPathStr =
