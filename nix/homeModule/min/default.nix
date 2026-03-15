@@ -762,7 +762,7 @@ mkIf sizedAtLeast.min {
 
         ".config/broot/conf.toml".text = brootConfig;
       }
-      // (optionalAttrs isOuranosNode {
+      // (optionalAttrs (isOuranosNode || isPrometheusNode) {
         ".pi/agent/models.json".text = piAgentModelsJson;
         ".pi/agent/settings.json".text = piAgentSettingsJson;
         ".pi/settings.json" = {
