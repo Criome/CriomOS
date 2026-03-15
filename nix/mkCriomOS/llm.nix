@@ -190,6 +190,7 @@ let
         ;
       order = index + 1;
       serviceName = "prometheus-llama-${serviceSuffix}";
+      source = source;
     };
 
   runtimeModels = genList (index: mkRuntimeModel index (elemAt servedModelSpecs index)) (length servedModelSpecs);
@@ -241,11 +242,17 @@ let
           "HSA_OVERRIDE_GFX_VERSION=11.5.1"
         ];
 
+        ExecStartPre =
+          # Copy local-file models to state directory if needed
+          if source.kind == "local-file"
+          then "${pkgs.coreutils}/bin/cp -f ${source.path} ${runtimeHome}/models/" + source.filename
+          else "/bin/true";
+
         ExecStart =
           "${llamaCppPackage}/bin/llama-server"
           + " --host ::"
           + " --port ${toString model.port}"
-          + " --model ${model.modelPathStr}"
+          + " --model ${runtimeHome}/models/${source.filename}"
           + " --n-gpu-layers 99"
           + " --alias ${model.alias}"
           + " --api-key ${prometheusApiKey}"
@@ -298,8 +305,6 @@ in
     # while the unit is active). Ensure models subdir exists persistently.
     "d /var/lib/llama 0755 llama llama - -"
     "d /var/lib/llama/models 0755 llama llama - -"
-    # Fix permissions on DeepSeek model file for llama user access
-    "L+ /home/li/.local/share/prometheus-llama/models/DeepSeek-R1-Distill-Llama-70B-Merged.gguf - - llama users - -"
   ];
 
   # Inject StateDirectory = "llama" into generated per-model services so
