@@ -207,10 +207,9 @@ let
       enable_pre_call_checks = true;
       model_group_alias = foldl' (
         acc: model:
-        acc // {
-          ${model.primaryAlias} = model.canonicalId;
-          ${model.canonicalId} = model.canonicalId;
-        }
+        if model.primaryAlias == model.canonicalId
+        then acc // { ${model.canonicalId} = model.canonicalId; }
+        else acc // { ${model.primaryAlias} = model.canonicalId; ${model.canonicalId} = model.canonicalId; }
       ) { } runtimeModels;
     };
     litellm_settings = {
