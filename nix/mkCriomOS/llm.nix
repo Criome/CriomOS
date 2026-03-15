@@ -97,31 +97,19 @@ let
   servedModelSpecs = if hasAttr "servedModels" prometheusLock then prometheusLock.servedModels else legacyModel;
 
   # Create a multi-shard model derivation
-  # Uses existing files from Nix store if available
-  # Falls back to fetchurl if not
+  # Fetches all shards and merges them into a single FOD
+  # Uses fetchurl which will use cached downloads if hashes match
   mkMultiShardModel = shards:
     let
-      # Hardcoded store paths for known files (content-addressed by hash)
-      # These paths are computed from the SHA256 hashes
-      knownShardPaths = {
-        "DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf" =
-          /nix/store/0lcmh5j1b246ylb9j34vifja2znvv0hl-DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf;
-        "DeepSeek-R1-Distill-Llama-70B-Q8_0-00002-of-00002.gguf" =
-          /nix/store/b3wimrs32qmbwz0jlwrl1iagbd98gqlb-DeepSeek-R1-Distill-Llama-70B-Q8_0-00002-of-00002.gguf;
-      };
-
-      # Create a mapping from filename to store path
+      # Create a mapping from filename to fetchurl derivation
+      # Nix will reuse existing store paths if hashes match
       shardMap = listToAttrs (
         builtins.map (shard: {
           name = shard.filename;
-          # Use hardcoded path if known, otherwise fetchurl
-          value =
-            if builtins.hasAttr shard.filename knownShardPaths
-            then knownShardPaths.${shard.filename}
-            else pkgs.fetchurl {
-              url = shard.url;
-              sha256 = shard.sha256;
-            };
+          value = pkgs.fetchurl {
+            url = shard.url;
+            sha256 = shard.sha256;
+          };
         })
         shards
       );
