@@ -100,17 +100,25 @@ let
   # Fetches all shards and merges them into a single FOD
   mkMultiShardModel = shards:
     let
-      # Fetch each shard as a FOD
-      fetchedShards = builtins.map (shard:
-        pkgs.fetchurl {
-          url = shard.url;
-          sha256 = shard.sha256;
-        }
-      ) shards;
+      # Create a mapping from filename to derivation for sorting
+      shardMap = listToAttrs (
+        builtins.map (shard: {
+          name = shard.filename;
+          value = pkgs.fetchurl {
+            url = shard.url;
+            sha256 = shard.sha256;
+          };
+        })
+        shards
+      );
 
       # Get the filename from the first shard in the list
       firstShard = builtins.head shards;
       firstShardFilename = firstShard.filename;
+
+      # Sort filenames and get derivations in sorted order
+      sortedFilenames = builtins.sort (<) (builtins.attrNames shardMap);
+      sortedShards = builtins.map (filename: shardMap.${filename}) sortedFilenames;
 
       # Merge all shards
       merged = pkgs.runCommand "merged-model-${firstShardFilename}"
@@ -120,10 +128,6 @@ let
           preferLocalBuild = true;
         }
         (
-          let
-            # Sort shards by filename for consistent merge order
-            sortedShards = builtins.sort (a: b: a < b) fetchedShards;
-          in
           builtins.concatStringsSep "\n" (
             builtins.map (shardPath:
               ''
