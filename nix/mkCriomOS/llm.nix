@@ -298,6 +298,8 @@ in
     # while the unit is active). Ensure models subdir exists persistently.
     "d /var/lib/llama 0755 llama llama - -"
     "d /var/lib/llama/models 0755 llama llama - -"
+    # Fix permissions on DeepSeek model file for llama user access
+    "L+ /home/li/.local/share/prometheus-llama/models/DeepSeek-R1-Distill-Llama-70B-Merged.gguf - - llama users - -"
   ];
 
   # Inject StateDirectory = "llama" into generated per-model services so
