@@ -207,7 +207,7 @@ let
       }
     ) runtimeModels;
     router_settings = {
-      enable_pre_call_checks = true;
+      enable_pre_call_checks = false;
       model_group_alias = foldl' (
         acc: model:
         if model.primaryAlias == model.canonicalId
