@@ -50,12 +50,12 @@
         "shards": [
           {
             "url": "https://huggingface.co/bartowski/DeepSeek-R1-Distill-Llama-70B-GGUF/resolve/main/DeepSeek-R1-Distill-Llama-70B-Q8_0/DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf",
-            "sha256": "sha256-ottx53votururf4sth7r4skuo7abzd45somj7xltdh546iiv4raq====",
+            "sha256": "sha256-0hg42lhwzyqrfgfrz64kkn7irh3pai4ixzwrjablh8wxmvp7xrvl",
             "filename": "DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf"
           },
           {
             "url": "https://huggingface.co/bartowski/DeepSeek-R1-Distill-Llama-70B-GGUF/resolve/main/DeepSeek-R1-Distill-Llama-70B-Q8_0/DeepSeek-R1-Distill-Llama-70B-Q8_0-00002-of-00002.gguf",
-            "sha256": "sha256-os2wprk7xdm3t24vrodr65pvlyqnqghfdf2pwjkaz7btajoa5v5a====",
+            "sha256": "sha256-0ypdq0jk1hyg80jznx0rwlcdh82yymsiz1wbjpmvkndqbz2ngdbl",
             "filename": "DeepSeek-R1-Distill-Llama-70B-Q8_0-00002-of-00002.gguf"
           }
         ]
