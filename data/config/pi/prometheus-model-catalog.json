@@ -1,6 +1,6 @@
 {
   "defaultProvider": "prometheus",
-  "defaultModel": "deepseek-r1-distill-llama-70b",
+  "defaultModel": "bartowski/deepseek-r1-distill-llama-70b",
   "provider": "prometheus",
   "serviceEndpoints": {
     "canonical": "http://[202:68bc:1221:1b13:5397:2a56:4aea:d4a9]:11434/v1",
@@ -24,9 +24,17 @@
       "reasoning": true
     },
     {
-      "id": "deepseek-r1-distill-llama-70b",
-      "descriptor": "DeepSeek R1 Distill Llama 70B (Prometheus main reasoning)",
-      "alias": "prometheus/deepseek-r1-distill-llama-70b",
+      "id": "bartowski/deepseek-r1-distill-llama-70b",
+      "descriptor": "DeepSeek R1 Distill Llama 70B bartowski Q8_0 (Prometheus main reasoning - bartowski)",
+      "alias": "prometheus/bartowski-deepseek-r1-distill-llama-70b",
+      "contextWindow": 131072,
+      "maxTokens": 16384,
+      "reasoning": true
+    },
+    {
+      "id": "unsloth/deepseek-r1-distill-llama-70b",
+      "descriptor": "DeepSeek R1 Distill Llama 70B unsloth Q8_0 (Prometheus main reasoning - unsloth)",
+      "alias": "prometheus/unsloth-deepseek-r1-distill-llama-70b",
       "contextWindow": 131072,
       "maxTokens": 16384,
       "reasoning": true
@@ -36,7 +44,8 @@
   "enabledAliases": [
     "prometheus/llama-3.2-1b-instruct",
     "prometheus/qwen3.5-35b-a3b",
-    "prometheus/deepseek-r1-distill-llama-70b"
+    "prometheus/bartowski-deepseek-r1-distill-llama-70b",
+    "prometheus/unsloth-deepseek-r1-distill-llama-70b"
   ],
   "declaredModelMenu": [
     {
@@ -52,8 +61,14 @@
       "reasoning": true
     },
     {
-      "id": "deepseek-r1-distill-llama-70b",
-      "descriptor": "DeepSeek R1 Distill Llama 70B",
+      "id": "bartowski/deepseek-r1-distill-llama-70b",
+      "descriptor": "DeepSeek R1 Distill Llama 70B bartowski",
+      "sizeClass": "128gb-vram-class",
+      "reasoning": true
+    },
+    {
+      "id": "unsloth/deepseek-r1-distill-llama-70b",
+      "descriptor": "DeepSeek R1 Distill Llama 70B unsloth",
       "sizeClass": "128gb-vram-class",
       "reasoning": true
     }
