@@ -46,10 +46,19 @@
       "serviceSuffix": "deepseek-r1-distill-llama-70b",
       "descriptor": "DeepSeek R1 Distill Llama 70B (Prometheus main reasoning)",
       "source": {
-        "kind": "fetchurl",
-        "url": "https://huggingface.co/bartowski/DeepSeek-R1-Distill-Llama-70B-GGUF/resolve/main/DeepSeek-R1-Distill-Llama-70B-Q8_0/DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf",
-        "sha256": "sha256-dOd+7q6dI0iXkpn/HklUd8Acj52TmJ/dcxn7zyEV5EE=",
-        "filename": "DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf"
+        "kind": "multi-shard",
+        "shards": [
+          {
+            "url": "https://huggingface.co/bartowski/DeepSeek-R1-Distill-Llama-70B-GGUF/resolve/main/DeepSeek-R1-Distill-Llama-70B-Q8_0/DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf",
+            "sha256": "sha256-dOd+7q6dI0iXkpn/HklUd8Acj52TmJ/dcxn7zyEV5EE=",
+            "filename": "DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf"
+          },
+          {
+            "url": "https://huggingface.co/bartowski/DeepSeek-R1-Distill-Llama-70B-GGUF/resolve/main/DeepSeek-R1-Distill-Llama-70B-Q8_0/DeepSeek-R1-Distill-Llama-70B-Q8_0-00002-of-00002.gguf",
+            "sha256": "sha256-dLVnxV+42bnrlYuHH3X1XiDYGOUZdPslQM/DMCXA7Xo=",
+            "filename": "DeepSeek-R1-Distill-Llama-70B-Q8_0-00002-of-00002.gguf"
+          }
+        ]
       },
       "reasoning": true,
       "contextWindow": 131072,
