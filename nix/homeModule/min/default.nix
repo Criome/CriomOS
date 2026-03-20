@@ -472,6 +472,35 @@ let
       ]
     ));
 
+  nordvpnSeed = pkgs.writeScriptBin "nordvpn-seed" ''
+    #!${pkgs.mksh}/bin/mksh
+    GOPASS_PATH="nordaccount.com/API-Key"
+    KEY_FILE="/etc/nordvpn/privateKey"
+    API="https://api.nordvpn.com/v1/users/services/credentials"
+
+    if [ $# -ge 1 ]; then
+      TOKEN="$1"
+    else
+      TOKEN=$(${pkgs.gopass}/bin/gopass show -o "$GOPASS_PATH" 2>/dev/null)
+      if [ -z "$TOKEN" ]; then
+        print -u2 "no token at gopass path: $GOPASS_PATH"
+        exit 1
+      fi
+    fi
+
+    KEY=$(${pkgs.curl}/bin/curl -sf -u "token:''${TOKEN}" "$API" \
+      | ${pkgs.jq}/bin/jq -r .nordlynx_private_key)
+
+    if [ -z "$KEY" ] || [ "$KEY" = "null" ]; then
+      print -u2 "failed to derive WireGuard private key from API"
+      exit 1
+    fi
+
+    print "$KEY" > "$KEY_FILE"
+    chmod 600 "$KEY_FILE"
+    print "seeded $KEY_FILE"
+  '';
+
   worldPackages = with world; [
     skrips.user
   ];
@@ -717,7 +746,9 @@ mkIf sizedAtLeast.min {
   };
 
   home = {
-    packages = fontPackages ++ nixpkgsPackages ++ worldPackages ++ AIPackages;
+    packages = fontPackages ++ nixpkgsPackages ++ worldPackages ++ AIPackages ++ [
+      nordvpnSeed
+    ];
 
     activation = optionalAttrs isOuranosNode {
       removeLegacyLitellmGateway = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
