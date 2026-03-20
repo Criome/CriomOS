@@ -98,7 +98,8 @@ in
 
       # Needed for user to setup ikev2 VPN
       networkmanager_strongswan
-    ];
+    ]
+    ++ (optional sizedAtLeast.min claude-code);
 
     interactiveShellInit = optionalString useColemak "stty -ixon";
     sessionVariables = (

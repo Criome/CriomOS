@@ -13,7 +13,7 @@ let
   inherit (world) pkdjz home-manager;
   inherit (pkdjz) evalNixos;
   inherit (horizon) node;
-  inherit (horizon.node.methods) behavesAs;
+  inherit (horizon.node.methods) behavesAs sizedAtLeast;
 
   isPrometheusNode = node.name == "prometheus";
 
@@ -48,12 +48,18 @@ let
     networkModule
   ];
 
+  claudeDesktopModule = {
+    imports = [ inputs.claude-for-linux.nixosModules.default ];
+    programs.claude-desktop.enable = true;
+  };
+
   nixosModules =
     baseModules
     ++ (optional behavesAs.edge edgeModule)
     ++ (optional behavesAs.router ./router)
     ++ (optional behavesAs.bareMetal metalModule)
     ++ (optional isPrometheusNode llmModule)
+    ++ (optional sizedAtLeast.min claudeDesktopModule)
     ++ (optionals _withUsers usersModules);
 
   nixosArgs = {

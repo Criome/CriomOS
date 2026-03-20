@@ -48,6 +48,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Desktop agents
+    claude-for-linux.url = "github:Criome/claude-for-linux/fix-vm-start-regex";
+
     # System
     kibord.url = "github:LiGoldragon/kibord/testing";
     skrips.url = "github:criome/skrips/testing";

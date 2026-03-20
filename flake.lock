@@ -155,6 +155,26 @@
         "type": "github"
       }
     },
+    "claude-for-linux": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1774024779,
+        "narHash": "sha256-AFsm4AllO5dKVWQLhrDuoS3X61G1H1qGwnOAlou/V8c=",
+        "owner": "Criome",
+        "repo": "claude-for-linux",
+        "rev": "d63a6742828f6b7abd66ac34dadf2bfd875b9c78",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Criome",
+        "ref": "fix-vm-start-regex",
+        "repo": "claude-for-linux",
+        "type": "github"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1751562746,
@@ -284,6 +304,24 @@
     "flake-utils": {
       "inputs": {
         "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_2": {
+      "inputs": {
+        "systems": "systems_2"
       },
       "locked": {
         "lastModified": 1731533236,
@@ -531,11 +569,11 @@
     },
     "maisiliym": {
       "locked": {
-        "lastModified": 1773408349,
-        "narHash": "sha256-ZyavMKvBX8u5Nd4Z8cu3xr0FPrp9otz9XbQZuKA2rWs=",
+        "lastModified": 1774019689,
+        "narHash": "sha256-llSklz2T6Zp8ydUKzAR68/o7ZDe7IV4JFI/1YELlF3w=",
         "owner": "LiGoldragon",
         "repo": "maisiliym",
-        "rev": "ecf6f05342555ab94c6c6c3e0576c8e04d1873ac",
+        "rev": "a78ccd87663455346ca896cf10ed25b4ea68c48a",
         "type": "github"
       },
       "original": {
@@ -753,6 +791,22 @@
     },
     "nixpkgs_2": {
       "locked": {
+        "lastModified": 1769461804,
+        "narHash": "sha256-msG8SU5WsBUfVVa/9RPLaymvi5bI8edTavbIq3vRlhI=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "bfc1b8a4574108ceef22f02bafcf6611380c100d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
         "lastModified": 1767379071,
         "narHash": "sha256-EgE0pxsrW9jp9YFMkHL9JMXxcqi/OoumPJYwf+Okucw=",
         "owner": "NixOS",
@@ -830,9 +884,10 @@
         "attic": "attic",
         "base16-styles": "base16-styles",
         "base16-theme": "base16-theme",
+        "claude-for-linux": "claude-for-linux",
         "emacs-overlay": "emacs-overlay",
         "flake-registry": "flake-registry",
-        "flake-utils": "flake-utils",
+        "flake-utils": "flake-utils_2",
         "goldragon": "goldragon",
         "goldragonWebsite": "goldragonWebsite",
         "gptel": "gptel",
@@ -846,7 +901,7 @@
         "mkZolaWebsite": "mkZolaWebsite",
         "ndi": "ndi",
         "niri-flake": "niri-flake",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs_3",
         "rust-overlay": "rust-overlay",
         "seahawk": "seahawk",
         "seahawkWebsite": "seahawkWebsite",
@@ -939,7 +994,7 @@
           "nixpkgs"
         ],
         "nur": "nur",
-        "systems": "systems_2",
+        "systems": "systems_3",
         "tinted-foot": "tinted-foot",
         "tinted-kitty": "tinted-kitty",
         "tinted-schemes": "tinted-schemes",
@@ -992,6 +1047,21 @@
       }
     },
     "systems_2": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_3": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
