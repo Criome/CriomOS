@@ -508,10 +508,12 @@ mkIf sizedAtLeast.min {
 
     gammastep = {
       enable = true;
-      provider = "geoclue2";
+      provider = "manual";
+      latitude = 36.7;
+      longitude = -4.4;
       temperature = {
-        day = 3500;
-        night = 2700;
+        day = 6500;
+        night = 3500;
       };
     };
 
