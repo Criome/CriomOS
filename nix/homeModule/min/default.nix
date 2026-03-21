@@ -580,9 +580,9 @@ mkIf sizedAtLeast.min {
       extraConfig = ''
         local function scheme_for_appearance(appearance)
           if appearance:find "Dark" then
-            return "Gruvbox dark, hard (base16)"
+            return "Equilibrium Dark"
           else
-            return "Gruvbox light, hard (base16)"
+            return "Equilibrium Light"
           end
         end
 
@@ -596,6 +596,28 @@ mkIf sizedAtLeast.min {
           enable_kitty_keyboard = true,
         }
       '';
+      colorSchemes = {
+        "Equilibrium Dark" = {
+          ansi = [ "#0c1118" "#f04339" "#7f8b00" "#bb8801" "#008dd1" "#6a7fd2" "#00948b" "#afaba2" ];
+          brights = [ "#7b776e" "#df5923" "#949088" "#22262d" "#cac6bd" "#e3488e" "#181c22" "#e7e2d9" ];
+          background = "#0c1118";
+          foreground = "#afaba2";
+          cursor_bg = "#afaba2";
+          cursor_fg = "#0c1118";
+          selection_bg = "#22262d";
+          selection_fg = "#afaba2";
+        };
+        "Equilibrium Light" = {
+          ansi = [ "#f5f0e7" "#d02023" "#637200" "#9d6f00" "#0073b5" "#4e66b6" "#007a72" "#43474e" ];
+          brights = [ "#73777f" "#bf3e05" "#5a5f66" "#d8d4cb" "#2c3138" "#c42775" "#e7e2d9" "#181c22" ];
+          background = "#f5f0e7";
+          foreground = "#43474e";
+          cursor_bg = "#43474e";
+          cursor_fg = "#f5f0e7";
+          selection_bg = "#d8d4cb";
+          selection_fg = "#43474e";
+        };
+      };
     };
 
     fzf = {

@@ -5,8 +5,8 @@
   ...
 }:
 let
-  darkScheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
-  lightScheme = "${pkgs.base16-schemes}/share/themes/gruvbox-material-light-hard.yaml";
+  darkScheme = "${pkgs.base16-schemes}/share/themes/equilibrium-dark.yaml";
+  lightScheme = "${pkgs.base16-schemes}/share/themes/equilibrium-light.yaml";
 
   parseScheme = scheme:
     (lib.importJSON (pkgs.runCommand "base16-to-json" {
@@ -108,7 +108,7 @@ let
     Writes real config files and reloads every app that doesn't
     follow the XDG portal natively.
   */
-  mkApplyScript = { mode, scheme, waybarCss, gtkSettings, ghosttyTheme }:
+  mkApplyScript = { mode, scheme, waybarCss, gtkSettings }:
     let
       c = parseScheme scheme;
       oscSeq = mkOscSequence c;
@@ -133,7 +133,6 @@ font-family = FiraMono Nerd Font
 font-size = 14
 window-decoration = false
 gtk-titlebar = false
-theme = ${ghosttyTheme}
 background = ${c.base00}
 foreground = ${c.base05}
 GHOSTTY
@@ -171,12 +170,10 @@ GHOSTTY
   applyDark = mkApplyScript {
     mode = "dark"; scheme = darkScheme;
     waybarCss = darkWaybarCss; gtkSettings = darkGtkSettings;
-    ghosttyTheme = "Gruvbox";
   };
   applyLight = mkApplyScript {
     mode = "light"; scheme = lightScheme;
     waybarCss = lightWaybarCss; gtkSettings = lightGtkSettings;
-    ghosttyTheme = "Gruvbox Material Light";
   };
 
   /*
