@@ -1,6 +1,6 @@
 { pkgs, config, ... }:
 let
-  terminal = "${pkgs.ghostty}/bin/ghostty";
+  terminal = "${pkgs.wezterm}/bin/wezterm";
   keyboardLauncher = "wofi --show drun";
   lockScreen = "swaylock";
   turnOffScreens = "hyrctl dispatch dpms off";

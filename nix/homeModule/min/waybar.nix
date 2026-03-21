@@ -19,7 +19,7 @@ let
   # TODO - module for packages
   sysMonitor = "btm";
   launcher = "rofi -show drun";
-  displaySystemInfo = "hyprctl dispatch exec '[float; center; size 950 650] ${pkgs.ghostty}/bin/ghostty -e ${sysMonitor}'";
+  displaySystemInfo = "hyprctl dispatch exec '[float; center; size 950 650] ${pkgs.wezterm}/bin/wezterm start -- ${sysMonitor}'";
   launchVolumeControl = "pwvucontrol";
 
 in
