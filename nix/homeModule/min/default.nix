@@ -570,11 +570,26 @@ mkIf sizedAtLeast.min {
       nix-direnv.enable = isCodeDev;
     };
 
-    foot.enable = true;
-
-    ghostty = {
+    wezterm = {
       enable = true;
-      installVimSyntax = true;
+      extraConfig = ''
+        local function scheme_for_appearance(appearance)
+          if appearance:find "Dark" then
+            return "Gruvbox dark, hard (base16)"
+          else
+            return "Gruvbox light, hard (base16)"
+          end
+        end
+
+        return {
+          font = wezterm.font("FiraMono Nerd Font"),
+          font_size = 14.0,
+          color_scheme = scheme_for_appearance(wezterm.gui.get_appearance()),
+          window_decorations = "NONE",
+          hide_tab_bar_if_only_one_tab = true,
+          enable_wayland = true,
+        }
+      '';
     };
 
     fzf = {
