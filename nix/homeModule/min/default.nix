@@ -574,12 +574,7 @@ mkIf sizedAtLeast.min {
 
     ghostty = {
       enable = true;
-      settings = {
-        font-family = "FiraMono Nerd Font";
-        font-size = 14;
-        window-decoration = false;
-        gtk-titlebar = false;
-      };
+      installVimSyntax = true;
     };
 
     fzf = {
