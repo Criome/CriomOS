@@ -50,15 +50,19 @@ let
     6. emacs — load new theme in running daemon
     New terminal windows also get correct colors via the zsh hook below.
   */
-  mkSwitchScript = { mode, scheme }:
+  /*
+    mkApplyScript: called by darkman scripts (no darkman set — avoids loop).
+    Applies theme to all running apps that don't follow the XDG portal.
+  */
+  mkApplyScript = { mode, scheme }:
     let
       c = parseScheme scheme;
       oscSeq = mkOscSequence c;
       dconfMode = if mode == "dark" then "prefer-dark" else "prefer-light";
       emacsTheme = if mode == "dark" then "modus-vivendi" else "modus-operandi";
     in
-    pkgs.writeShellScript "theme-${mode}" ''
-      # Portal + GTK
+    pkgs.writeShellScript "apply-${mode}" ''
+      # GTK via dconf
       ${pkgs.dconf}/bin/dconf write /org/gnome/desktop/interface/color-scheme "'${dconfMode}'"
 
       # Terminals (OSC escape sequences to all PTYs)
@@ -71,7 +75,7 @@ let
       ${pkgs.hyprland}/bin/hyprctl keyword general:col.active_border "rgb(${strip c.base0E}) rgb(${strip c.base0D}) 45deg" 2>/dev/null || true
       ${pkgs.hyprland}/bin/hyprctl keyword general:col.inactive_border "rgb(${strip c.base01})" 2>/dev/null || true
 
-      # Waybar (GTK app — restart to pick up new dconf theme)
+      # Waybar
       ${pkgs.procps}/bin/pkill -9 waybar 2>/dev/null || true
       sleep 0.5
       ${pkgs.procps}/bin/pgrep -x waybar >/dev/null || { waybar & disown; }
@@ -84,8 +88,8 @@ let
       echo "${mode}" > "''${XDG_STATE_HOME:-$HOME/.local/state}/darkman/current-mode"
     '';
 
-  switchDark = mkSwitchScript { mode = "dark"; scheme = darkScheme; };
-  switchLight = mkSwitchScript { mode = "light"; scheme = lightScheme; };
+  applyDark = mkApplyScript { mode = "dark"; scheme = darkScheme; };
+  applyLight = mkApplyScript { mode = "light"; scheme = lightScheme; };
 
   /*
     Shell hook: new terminals query the current darkman mode and apply
@@ -114,8 +118,8 @@ in
       # TODO
       stateVersion = "25.05";
       packages = [
-        (pkgs.writeShellScriptBin "theme-dark" ''exec ${switchDark}'')
-        (pkgs.writeShellScriptBin "theme-light" ''exec ${switchLight}'')
+        (pkgs.writeShellScriptBin "theme-dark" ''${pkgs.darkman}/bin/darkman set dark'')
+        (pkgs.writeShellScriptBin "theme-light" ''${pkgs.darkman}/bin/darkman set light'')
       ];
     };
 
@@ -129,8 +133,8 @@ in
         dbusserver = true;
         portal = true;
       };
-      darkModeScripts.switch = ''${switchDark}'';
-      lightModeScripts.switch = ''${switchLight}'';
+      darkModeScripts.switch = ''${applyDark}'';
+      lightModeScripts.switch = ''${applyLight}'';
     };
 
     stylix = {
