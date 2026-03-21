@@ -55,10 +55,10 @@ The `execute deploy-manifest` command is not yet implemented. Deployment is manu
    ssh root@<ygg-address> <store-path>/bin/switch-to-configuration switch
    ```
 
-4. **Home profile activation** (as the target user):
+4. **Home profile activation** (run as root, `su` to the target user):
    ```
-   nix copy --to "ssh://root@[<ygg-address>]" <hom-store-path>
-   ssh root@<ygg-address> 'sudo -u <user> <hom-store-path>/activate'
+   nix copy --to "ssh://root@[<ygg-address>]" <home-store-path>
+   ssh root@<ygg-address> su -l <user> -c '<home-store-path>/activate'
    ```
 
 ### Known node addresses (Yggdrasil)
