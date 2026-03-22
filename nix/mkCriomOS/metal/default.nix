@@ -210,15 +210,8 @@ in
       pmBase = {
         powertop.enable = true;
       };
-      intelPowerCommands = optionalAttrs chipIsIntel {
-        # Linux path expects firmware configured with a small fixed UMA (UMA_SPECIFIED), a modest framebuffer (≈1G/512MiB), and Linux-side GTT/TTM tuning.
-        powerUpCommands = ''
-          echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo
-        '';
-      };
     in pmBase
-      // (optionalAttrs hasModelSpecificPowerTweaks modelSpecificPowerTweaks."${model}")
-      // intelPowerCommands;
+      // (optionalAttrs hasModelSpecificPowerTweaks modelSpecificPowerTweaks."${model}");
 
   programs = { };
 
@@ -231,11 +224,7 @@ in
       ++ optionals chipIsIntel intelUtils
       ++ optionals sizedAtLeast.max [ v4l-utils ]
       ++ optionals enableWaydroid waydroidPackages
-      ++ optionals (typeIs.largeAI || typeIs."largeAI-router") [
-        curl
-        jq
-        htop
-      ];
+      ;
 
   };
 

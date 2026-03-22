@@ -12,6 +12,7 @@ let
     mapAttrsToList
     mkOverride
     optional
+    optionals
     mkIf
     optionalString
     optionalAttrs
@@ -105,7 +106,15 @@ in
       pulseaudioFull
       networkmanager_strongswan
     ])
-    ++ (optional (sizedAtLeast.min && !behavesAs.iso) claude-code);
+    ++ (optionals (sizedAtLeast.min && !behavesAs.iso) [
+      git
+      curl
+      jq
+      htop
+      pciutils
+      usbutils
+      claude-code
+    ]);
 
     interactiveShellInit = optionalString useColemak "stty -ixon";
     sessionVariables = (
