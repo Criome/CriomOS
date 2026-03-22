@@ -512,26 +512,6 @@
         "type": "github"
       }
     },
-    "lib": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1748763185,
-        "narHash": "sha256-JUE0cpsD7cBSk9VpuNhN/ezcVjjxjpwUxSWPRW3MbkA=",
-        "owner": "criome",
-        "repo": "lib",
-        "rev": "aa1ef7cd4a2ade7e48df130be79ce76c48980238",
-        "type": "github"
-      },
-      "original": {
-        "owner": "criome",
-        "repo": "lib",
-        "type": "github"
-      }
-    },
     "lufa": {
       "flake": false,
       "locked": {
@@ -875,7 +855,6 @@
         "home-manager": "home-manager",
         "jujutsu-el": "jujutsu-el",
         "kibord": "kibord",
-        "lib": "lib",
         "maisiliym": "maisiliym",
         "md-roam": "md-roam",
         "mfgtools": "mfgtools",
@@ -891,6 +870,7 @@
         "superchat": "superchat",
         "tera-mode": "tera-mode",
         "tree-sitter-capnp": "tree-sitter-capnp",
+        "tree-sitter-cozo": "tree-sitter-cozo",
         "ultra-scroll": "ultra-scroll",
         "xah-fly-keys": "xah-fly-keys"
       }
@@ -1152,6 +1132,22 @@
       "original": {
         "owner": "tree-sitter-grammars",
         "repo": "tree-sitter-capnp",
+        "type": "github"
+      }
+    },
+    "tree-sitter-cozo": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774265877,
+        "narHash": "sha256-I+lzKSVV/9HyQMMfeS3YjkrTnwXCzWlREsz7+rDFXXc=",
+        "owner": "Criome",
+        "repo": "tree-sitter-cozo",
+        "rev": "7e0e74d7eed55ae2ba147e3891b123c8190dfa73",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Criome",
+        "repo": "tree-sitter-cozo",
         "type": "github"
       }
     },

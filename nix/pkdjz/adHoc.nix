@@ -345,6 +345,41 @@ in
       };
   };
 
+  tree-sitter-cozo = {
+    mods = [ "pkgs" ];
+    src = hob.tree-sitter-cozo;
+
+    lambda =
+      {
+        src,
+        stdenv,
+        tree-sitter,
+      }:
+
+      stdenv.mkDerivation {
+        pname = "tree-sitter-cozo";
+        inherit src;
+        version = src.shortRev;
+
+        nativeBuildInputs = [ tree-sitter ];
+
+        buildPhase = ''
+          runHook preBuild
+          $CC -fPIC -c -I. -O2 src/parser.c -o parser.o
+          $CC -shared -o libtree-sitter-cozo.so parser.o
+          runHook postBuild
+        '';
+
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out/lib $out/queries
+          cp -v libtree-sitter-cozo.so $out/lib/
+          cp -rv queries/* $out/queries/
+          runHook postInstall
+        '';
+      };
+  };
+
   videomass.lambda =
     {
       python3,

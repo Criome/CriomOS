@@ -5,8 +5,8 @@
   ...
 }:
 let
-  darkScheme = "${pkgs.base16-schemes}/share/themes/equilibrium-dark.yaml";
-  lightScheme = "${pkgs.base16-schemes}/share/themes/equilibrium-light.yaml";
+  darkScheme = ./ignis.yaml;
+  lightScheme = ./ignis-light.yaml;
 
   parseScheme = scheme:
     (lib.importJSON (pkgs.runCommand "base16-to-json" {
@@ -17,6 +17,74 @@ let
 
   dark = parseScheme darkScheme;
   light = parseScheme lightScheme;
+
+  /*
+    Generate a base16 Emacs theme from a palette.
+    Produces a -theme.el file that can be loaded with (load-theme 'ignis-dark t).
+  */
+  mkEmacsBase16Theme = { name, c }: pkgs.writeText "${name}-theme.el" ''
+    (deftheme ${name} "Base16 ${name} theme.")
+    (let ((class '((class color) (min-colors 89))))
+      (custom-theme-set-faces
+       '${name}
+       `(default ((,class (:foreground "${c.base05}" :background "${c.base00}"))))
+       `(cursor ((,class (:background "${c.base05}"))))
+       `(region ((,class (:background "${c.base02}"))))
+       `(highlight ((,class (:background "${c.base01}"))))
+       `(hl-line ((,class (:background "${c.base01}"))))
+       `(fringe ((,class (:background "${c.base01}"))))
+       `(vertical-border ((,class (:foreground "${c.base02}"))))
+       `(mode-line ((,class (:foreground "${c.base04}" :background "${c.base01}"))))
+       `(mode-line-inactive ((,class (:foreground "${c.base03}" :background "${c.base01}"))))
+       `(minibuffer-prompt ((,class (:foreground "${c.base0D}"))))
+       `(font-lock-builtin-face ((,class (:foreground "${c.base0C}"))))
+       `(font-lock-comment-face ((,class (:foreground "${c.base03}"))))
+       `(font-lock-comment-delimiter-face ((,class (:foreground "${c.base03}"))))
+       `(font-lock-constant-face ((,class (:foreground "${c.base09}"))))
+       `(font-lock-doc-face ((,class (:foreground "${c.base03}"))))
+       `(font-lock-function-name-face ((,class (:foreground "${c.base0D}"))))
+       `(font-lock-keyword-face ((,class (:foreground "${c.base0E}"))))
+       `(font-lock-negation-char-face ((,class (:foreground "${c.base08}"))))
+       `(font-lock-preprocessor-face ((,class (:foreground "${c.base0A}"))))
+       `(font-lock-string-face ((,class (:foreground "${c.base0B}"))))
+       `(font-lock-type-face ((,class (:foreground "${c.base0A}"))))
+       `(font-lock-variable-name-face ((,class (:foreground "${c.base08}"))))
+       `(font-lock-warning-face ((,class (:foreground "${c.base08}"))))
+       `(isearch ((,class (:foreground "${c.base00}" :background "${c.base0A}"))))
+       `(lazy-highlight ((,class (:foreground "${c.base00}" :background "${c.base0C}"))))
+       `(link ((,class (:foreground "${c.base0D}" :underline t))))
+       `(link-visited ((,class (:foreground "${c.base0E}" :underline t))))
+       `(button ((,class (:foreground "${c.base0D}" :underline t))))
+       `(header-line ((,class (:foreground "${c.base05}" :background "${c.base01}"))))
+       `(shadow ((,class (:foreground "${c.base03}"))))
+       `(success ((,class (:foreground "${c.base0B}"))))
+       `(warning ((,class (:foreground "${c.base0A}"))))
+       `(error ((,class (:foreground "${c.base08}"))))
+       `(outline-1 ((,class (:foreground "${c.base0D}"))))
+       `(outline-2 ((,class (:foreground "${c.base0B}"))))
+       `(outline-3 ((,class (:foreground "${c.base0C}"))))
+       `(outline-4 ((,class (:foreground "${c.base0E}"))))
+       `(outline-5 ((,class (:foreground "${c.base09}"))))
+       `(outline-6 ((,class (:foreground "${c.base0A}"))))
+       `(org-level-1 ((,class (:foreground "${c.base0D}"))))
+       `(org-level-2 ((,class (:foreground "${c.base0B}"))))
+       `(org-level-3 ((,class (:foreground "${c.base0C}"))))
+       `(org-level-4 ((,class (:foreground "${c.base0E}"))))
+       `(line-number ((,class (:foreground "${c.base03}" :background "${c.base01}"))))
+       `(line-number-current-line ((,class (:foreground "${c.base05}" :background "${c.base01}"))))
+       `(show-paren-match ((,class (:foreground "${c.base00}" :background "${c.base0D}"))))
+       `(show-paren-mismatch ((,class (:foreground "${c.base00}" :background "${c.base08}"))))))
+    (provide-theme '${name})
+  '';
+
+  ignisDarkEmacsTheme = mkEmacsBase16Theme { name = "ignis-dark"; c = dark; };
+  ignisLightEmacsTheme = mkEmacsBase16Theme { name = "ignis-light"; c = light; };
+
+  emacsThemeDir = pkgs.runCommand "ignis-emacs-themes" {} ''
+    mkdir -p $out
+    cp ${ignisDarkEmacsTheme} $out/ignis-dark-theme.el
+    cp ${ignisLightEmacsTheme} $out/ignis-light-theme.el
+  '';
 
   /*
     Generate waybar CSS with base16 @define-color variables.
@@ -113,7 +181,7 @@ let
       c = parseScheme scheme;
       oscSeq = mkOscSequence c;
       dconfMode = if mode == "dark" then "prefer-dark" else "prefer-light";
-      emacsTheme = if mode == "dark" then "modus-vivendi" else "modus-operandi";
+      emacsTheme = if mode == "dark" then "ignis-dark" else "ignis-light";
       fzfColors = mkFzfColors c;
     in
     pkgs.writeShellScript "apply-${mode}" ''
@@ -156,7 +224,7 @@ GHOSTTY
       ${pkgs.hyprland}/bin/hyprctl keyword general:col.inactive_border "rgb(${strip c.base01})" 2>/dev/null || true
 
       # --- Emacs ---
-      ${pkgs.emacs-pgtk}/bin/emacsclient --eval "(load-theme '${emacsTheme} t)" 2>/dev/null || true
+      ${pkgs.emacs-pgtk}/bin/emacsclient --eval "(progn (add-to-list 'custom-theme-load-path \"${emacsThemeDir}\") (mapc #'disable-theme custom-enabled-themes) (load-theme '${emacsTheme} t))" 2>/dev/null || true
 
       # --- fzf colors (sourced by new shells) ---
       mkdir -p "''${XDG_STATE_HOME:-$HOME/.local/state}/darkman"
@@ -228,6 +296,7 @@ in
       base16Scheme = darkScheme;
       targets = {
         # Darkman manages these at runtime
+        emacs.enable = false;
         ghostty.enable = false;
         wezterm.enable = false;
         waybar.enable = false;

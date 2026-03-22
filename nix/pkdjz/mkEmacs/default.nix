@@ -4,6 +4,7 @@
   pkgs,
   hob,
   tree-sitter-capnp,
+  tree-sitter-cozo,
 }:
 with builtins;
 let
@@ -227,6 +228,7 @@ let
   treeSitterPackages = [
     (emacsPackages.treesit-grammars.with-all-grammars)
     tree-sitter-capnp
+    tree-sitter-cozo
   ];
 
   autoformatPackages = with pkgs.python3Packages; [

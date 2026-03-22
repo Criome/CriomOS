@@ -102,6 +102,10 @@
       url = "github:tree-sitter-grammars/tree-sitter-capnp";
       flake = false;
     };
+    tree-sitter-cozo = {
+      url = "github:Criome/tree-sitter-cozo";
+      flake = false;
+    };
     superchat = {
       url = "github:yibie/superchat";
       flake = false;
