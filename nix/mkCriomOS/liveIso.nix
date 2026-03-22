@@ -13,6 +13,8 @@ let
 
 in
 {
+  users.users.root.initialPassword = "r";
+
   boot = {
     supportedFilesystems = mkOverride 10 [
       "ext2"
@@ -35,5 +37,4 @@ in
     makeUsbBootable = true;
     makeEfiBootable = true;
   };
-
 }

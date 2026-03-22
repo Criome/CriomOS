@@ -49,7 +49,7 @@
     };
 
     # Desktop agents
-    claude-for-linux.url = "github:Criome/claude-for-linux/fix-vm-start-regex";
+    claude-for-linux.url = "github:Criome/claude-for-linux/update-v1.1.7714";
 
     # System
     kibord.url = "github:LiGoldragon/kibord/testing";

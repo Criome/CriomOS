@@ -167,10 +167,14 @@ let
           ;
       };
 
+      criosBuild = mkCriomOS ({ _withUsers = false; } // commonArgs);
+      criosBuildFull = mkCriomOS ({ _withUsers = true; } // commonArgs);
+
     in
     {
-      os = mkCriomOS ({ _withUsers = false; } // commonArgs);
-      fullOs = mkCriomOS ({ _withUsers = true; } // commonArgs);
+      os = criosBuild.os;
+      fullOs = criosBuildFull.os;
+      vm = criosBuild.vm;
       home = mapAttrs mkUserHome users;
       emacs = mapAttrs mkUserEmacs users;
       deployManifest = mkDeployManifest horizon.cluster.name horizon.node.name horizon.node;

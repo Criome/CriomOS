@@ -28,8 +28,8 @@ let
     ;
 
   # TODO
-  hasAudioOutput = true;
-  hasVideoOutput = true;
+  hasAudioOutput = !behavesAs.iso;
+  hasVideoOutput = !behavesAs.iso;
 
   jsonHorizonFail = exportJSON "horizon.json" horizon;
 
@@ -70,8 +70,8 @@ in
   };
 
   documentation = {
-    enable = !config.boot.isContainer;
-    nixos.enable = !config.boot.isContainer;
+    enable = !config.boot.isContainer && !behavesAs.iso;
+    nixos.enable = !config.boot.isContainer && !behavesAs.iso;
   };
 
   environment = {
@@ -87,19 +87,26 @@ in
     };
 
     systemPackages = with pkgs; [
-      world.skrips.root
-      tcpdump
-      librist
       openssh
       ntfs3g
       fuse
+    ]
+    ++ (if behavesAs.iso then [
+      btrfs-progs
+      dosfstools
+      parted
+      nmap
+      vim
+      htop
+    ] else [
+      world.skrips.root
+      tcpdump
+      librist
       ifmetric
       pulseaudioFull
-
-      # Needed for user to setup ikev2 VPN
       networkmanager_strongswan
-    ]
-    ++ (optional sizedAtLeast.min claude-code);
+    ])
+    ++ (optional (sizedAtLeast.min && !behavesAs.iso) claude-code);
 
     interactiveShellInit = optionalString useColemak "stty -ixon";
     sessionVariables = (
@@ -114,18 +121,17 @@ in
   nixpkgs.overlays = mkOverride 0 [ ];
 
   networking.networkmanager = {
-    enable = sizedAtLeast.min && !behavesAs.router;
+    enable = sizedAtLeast.min && !behavesAs.router && !behavesAs.iso;
   };
 
   programs = {
     zsh.enable = true;
-    adb.enable = sizedAtLeast.med;
-    light.enable = hasVideoOutput;
   };
 
   services = {
     openssh = {
       enable = true;
+      # Keys only — no password auth, ever. Keys come from the criosphere.
       settings.PasswordAuthentication = false;
       ports = [ 22 ];
     };
@@ -140,7 +146,7 @@ in
     };
 
     # IKEv2 support
-    strongswan.enable = true;
+    strongswan.enable = !behavesAs.iso;
 
     udev = {
       extraRules = ''

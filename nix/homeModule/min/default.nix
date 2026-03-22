@@ -242,18 +242,11 @@ let
           api_base: http://${prometheusLlamaUpstreamHost}:11437/v1
           api_key: ${prometheusLlamaApiKey}
         order: 2
-      - model_name: deepseek-r1-distill-llama-70b
-        litellm_params:
-          model: openai/prometheus-deepseek-r1-distill-llama-70b
-          api_base: http://${prometheusLlamaUpstreamHost}:11438/v1
-          api_key: ${prometheusLlamaApiKey}
-        order: 3
     router_settings:
       enable_pre_call_checks: false
       model_group_alias:
         llama-3.2-1b-instruct: llama-3.2-1b-instruct
         qwen3.5-35b-a3b: qwen3.5-35b-a3b
-        deepseek-r1-distill-llama-70b: deepseek-r1-distill-llama-70b
     litellm_settings:
       drop_params: true
       modify_params: true
@@ -371,7 +364,7 @@ let
     defaultModel =
       if builtins.hasAttr "defaultModel" prometheusModelCatalog
       then prometheusModelCatalog.defaultModel
-      else (if builtins.length piAgentModelAliases > 0 then builtins.head piAgentModelAliases else "deepseek-r1-distill-llama-70b");
+      else (if builtins.length piAgentModelAliases > 0 then builtins.head piAgentModelAliases else "qwen3.5-35b-a3b");
     enabledModels = piAgentEnabledModels;
     hideThinkingBlock = false;
     defaultThinkingLevel = "medium";
@@ -473,6 +466,25 @@ let
     print "seeded $KEY_FILE"
   '';
 
+  busctlBin = "${pkgs.systemd}/bin/busctl";
+  gammaRelayBus = "rs.wl-gammarelay / rs.wl.gammarelay";
+
+  nightshift = pkgs.writeShellScriptBin "nightshift" ''
+    case "''${1:-on}" in
+      on)  ${busctlBin} --user set-property ${gammaRelayBus} Temperature q "''${2:-3500}" ;;
+      off) ${busctlBin} --user set-property ${gammaRelayBus} Temperature q 6500 ;;
+      *)   ${busctlBin} --user set-property ${gammaRelayBus} Temperature q "$1" ;;
+    esac
+  '';
+
+  brightness = pkgs.writeShellScriptBin "brightness" ''
+    if [ -z "$1" ]; then
+      ${busctlBin} --user get-property ${gammaRelayBus} Brightness
+    else
+      ${busctlBin} --user set-property ${gammaRelayBus} Brightness d "$1"
+    fi
+  '';
+
   worldPackages = with world; [
     skrips.user
   ];
@@ -507,19 +519,7 @@ mkIf sizedAtLeast.min {
     };
 
     hyprsunset = {
-      enable = true;
-      settings = {
-        profile = [
-          {
-            time = "7:00";
-            temperature = 6500;
-          }
-          {
-            time = "20:00";
-            temperature = 3500;
-          }
-        ];
-      };
+      enable = false;
     };
 
     gpg-agent = {
@@ -585,6 +585,15 @@ mkIf sizedAtLeast.min {
             return "Equilibrium Light"
           end
         end
+
+        wezterm.on("window-config-reloaded", function(window, pane)
+          local overrides = window:get_config_overrides() or {}
+          local scheme = scheme_for_appearance(window:get_appearance())
+          if overrides.color_scheme ~= scheme then
+            overrides.color_scheme = scheme
+            window:set_config_overrides(overrides)
+          end
+        end)
 
         return {
           font = wezterm.font("FiraMono Nerd Font"),
@@ -754,6 +763,9 @@ mkIf sizedAtLeast.min {
   home = {
     packages = fontPackages ++ nixpkgsPackages ++ worldPackages ++ AIPackages ++ [
       nordvpnSeed
+      pkgs.wl-gammarelay-rs
+      nightshift
+      brightness
     ];
 
     activation = { };
@@ -797,7 +809,56 @@ mkIf sizedAtLeast.min {
   };
 
   systemd = {
-    user.services = { };
+    user.services = {
+      wl-gammarelay-rs = {
+        Unit = {
+          Description = "DBus interface for display temperature, brightness and gamma control";
+          PartOf = [ "graphical-session.target" ];
+          After = [ "graphical-session.target" ];
+        };
+        Service = {
+          ExecStart = "${pkgs.wl-gammarelay-rs}/bin/wl-gammarelay-rs";
+          Restart = "on-failure";
+        };
+        Install.WantedBy = [ "graphical-session.target" ];
+      };
+
+      nightshift-on = {
+        Unit.Description = "Set warm color temperature at night";
+        Service = {
+          Type = "oneshot";
+          ExecStart = "${pkgs.bash}/bin/bash -c '${busctlBin} --user set-property ${gammaRelayBus} Temperature q 3500'";
+        };
+      };
+
+      nightshift-off = {
+        Unit.Description = "Set neutral color temperature during day";
+        Service = {
+          Type = "oneshot";
+          ExecStart = "${pkgs.bash}/bin/bash -c '${busctlBin} --user set-property ${gammaRelayBus} Temperature q 6500'";
+        };
+      };
+    };
+
+    user.timers = {
+      nightshift-on = {
+        Unit.Description = "Warm color temperature at 20:00";
+        Timer = {
+          OnCalendar = "*-*-* 20:00:00";
+          Persistent = true;
+        };
+        Install.WantedBy = [ "timers.target" ];
+      };
+
+      nightshift-off = {
+        Unit.Description = "Neutral color temperature at 07:00";
+        Timer = {
+          OnCalendar = "*-*-* 07:00:00";
+          Persistent = true;
+        };
+        Install.WantedBy = [ "timers.target" ];
+      };
+    };
   };
 
   xdg = {

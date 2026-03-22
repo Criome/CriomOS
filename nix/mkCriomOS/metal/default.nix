@@ -28,6 +28,8 @@ let
 
   enableWaydroid = sizedAtLeast.max && behavesAs.edge;
 
+  brightnessCtl = pkgs.callPackage ../../brightness-ctl.nix { };
+
   # TODO
   hasTouchpad = true;
 
@@ -50,7 +52,7 @@ let
     };
   };
 
-  hasModelSpecificPowerTweaks = builtins.hasAttr model modelSpecificPowerTweaks;
+  hasModelSpecificPowerTweaks = model != null && builtins.hasAttr model modelSpecificPowerTweaks;
 
   modelKernelModulesIndex = {
     ThinkPadE15Gen2Intel = [
@@ -106,24 +108,26 @@ let
     i7z
   ];
 
-  unknownIntelGpuError = throw "Model ${model} missing in Intel GPU drivers lists";
+  isGenericModel = model == "all-x86-64";
+
+  unknownIntelGpuError = if isGenericModel then [] else throw "Model ${model} missing in Intel GPU drivers lists";
 
   intelMediaDriverModels = [
     "ThinkPadT14Gen5Intel"
     "ThinkPadT14Intel"
   ];
 
-  gpuUsesMediaDriver = builtins.elem model intelMediaDriverModels;
+  gpuUsesMediaDriver = isGenericModel || builtins.elem model intelMediaDriverModels;
 
   amdGpuModels = [
     "GMKtec EVO-X2"
   ];
 
-  gpuUsesAmdGpu = builtins.elem model amdGpuModels;
+  gpuUsesAmdGpu = isGenericModel || builtins.elem model amdGpuModels;
 
   treatAsIntel = chipIsIntel && !gpuUsesAmdGpu;
 
-  gpuUsesVaapi = builtins.elem model [
+  gpuUsesVaapi = isGenericModel || builtins.elem model [
     "ThinkPadX230"
     "ThinkPadX240"
     "ThinkPadX250"
@@ -351,16 +355,15 @@ in
           '';
           event = "button/f20";
         };
-        # TODO - increase interval rise
         brightnessup = {
           action = ''
-            ${pkgs.light}/bin/light -A 1
+            ${brightnessCtl}/bin/brightness-ctl up
           '';
           event = "video/brightnessup";
         };
         brightnessdown = {
           action = ''
-            ${pkgs.light}/bin/light -U 1
+            ${brightnessCtl}/bin/brightness-ctl down
           '';
           event = "video/brightnessdown";
         };

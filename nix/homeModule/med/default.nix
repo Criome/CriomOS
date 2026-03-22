@@ -87,7 +87,6 @@ let
     ++ (with nodePackages; [
       stylelint
       postcss
-      node2nix
       prettier
     ]);
 

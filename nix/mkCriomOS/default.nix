@@ -55,11 +55,11 @@ let
 
   nixosModules =
     baseModules
-    ++ (optional behavesAs.edge edgeModule)
-    ++ (optional behavesAs.router ./router)
-    ++ (optional behavesAs.bareMetal metalModule)
+    ++ (optional (behavesAs.edge && !behavesAs.iso) edgeModule)
+    ++ (optional (behavesAs.router && !behavesAs.iso) ./router)
+    ++ (optional (behavesAs.bareMetal && !behavesAs.iso) metalModule)
     ++ (optional isPrometheusNode llmModule)
-    ++ (optional sizedAtLeast.min claudeDesktopModule)
+    ++ (optional (sizedAtLeast.min && !behavesAs.iso) claudeDesktopModule)
     ++ (optionals _withUsers usersModules);
 
   nixosArgs = {
@@ -75,14 +75,30 @@ let
       ;
   };
 
+  # VM uses the same modules but without the disk/ISO-specific module
+  vmModules =
+    [ usersModule nixModule normalizeModule networkModule ]
+    ++ (optional (behavesAs.edge && !behavesAs.iso) edgeModule)
+    ++ (optional (behavesAs.router && !behavesAs.iso) ./router)
+    ++ (optional (behavesAs.bareMetal && !behavesAs.iso) metalModule)
+    ++ (optional isPrometheusNode llmModule)
+    ++ (optional (sizedAtLeast.min && !behavesAs.iso) claudeDesktopModule)
+    ++ (optionals _withUsers usersModules);
+
   evaluation = evalNixos {
     useIsoModule = behavesAs.iso;
     moduleArgs = nixosArgs;
     modules = nixosModules;
   };
 
-  buildNixOSIso = evaluation.config.system.build.isoImage;
-  buildNixOS = evaluation.config.system.build.toplevel;
+  vmEvaluation = evalNixos {
+    useQemuVmModule = true;
+    moduleArgs = nixosArgs;
+    modules = vmModules;
+  };
 
 in
-if behavesAs.iso then buildNixOSIso else buildNixOS
+{
+  os = if behavesAs.iso then evaluation.config.system.build.isoImage else evaluation.config.system.build.toplevel;
+  vm = vmEvaluation.config.system.build.vm;
+}
