@@ -199,11 +199,8 @@ in
         # largeAI GPU tuning — gttsize/ttm/iommu params removed;
         # deprecated since kernel 6.16.9+, kernel handles unified memory.
         # amd_iommu=off was breaking r8169 NIC on kernel 6.19.
-        (if model == "GMKtec EVO-X2" then [
-          # Disable AMGPU CWSR on the Strix Halo (GMKtec EVO-X2) to work
-          # around KFD/ROCm instability observed on that specific model.
-          "amdgpu.cwsr_enable=0"
-        ] else [])
+        # amdgpu.cwsr_enable=0 removed — was crashing amdgpu driver on
+        # kernel 6.19, taking down PCIe bus including r8169 NIC.
       ];
 
   };
