@@ -196,11 +196,9 @@ in
           "console=tty0"
           "dtparam=audio=on"
         ] else [])
-        # largeAI GPU tuning — gttsize/ttm params removed as deprecated
-        # since kernel 6.16.9+; the kernel handles unified memory automatically.
-        (if typeIs.largeAI then [
-          "amd_iommu=off"
-        ] else [])
+        # largeAI GPU tuning — gttsize/ttm/iommu params removed;
+        # deprecated since kernel 6.16.9+, kernel handles unified memory.
+        # amd_iommu=off was breaking r8169 NIC on kernel 6.19.
         (if model == "GMKtec EVO-X2" then [
           # Disable AMGPU CWSR on the Strix Halo (GMKtec EVO-X2) to work
           # around KFD/ROCm instability observed on that specific model.
