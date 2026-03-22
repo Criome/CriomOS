@@ -121,7 +121,7 @@ in
   nixpkgs.overlays = mkOverride 0 [ ];
 
   networking.networkmanager = {
-    enable = sizedAtLeast.min && !behavesAs.router && !behavesAs.iso;
+    enable = sizedAtLeast.min && !behavesAs.router && !behavesAs.iso && !node.methods.centerLike;
   };
 
   programs = {

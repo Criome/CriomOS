@@ -38,6 +38,7 @@ in
     ./tailscale.nix
     ./headscale.nix
     ./nordvpn.nix
+    ./networkd.nix
   ];
 
   networking = {
