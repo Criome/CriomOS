@@ -196,14 +196,10 @@ in
           "console=tty0"
           "dtparam=audio=on"
         ] else [])
-        # Apply broad largeAI tuning where relevant (keeps previous defaults
-        # for largeAI machines). The targeted amdgpu.cwsr_enable=0 experiment
-        # is intentionally restricted to the GMKtec EVO-X2 model only.
+        # largeAI GPU tuning — gttsize/ttm params removed as deprecated
+        # since kernel 6.16.9+; the kernel handles unified memory automatically.
         (if typeIs.largeAI then [
           "amd_iommu=off"
-          "amdgpu.gttsize=131072"
-          "ttm.pages_limit=33554432"
-          "ttm.page_pool_size=33554432"
         ] else [])
         (if model == "GMKtec EVO-X2" then [
           # Disable AMGPU CWSR on the Strix Halo (GMKtec EVO-X2) to work
