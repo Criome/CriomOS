@@ -576,7 +576,7 @@ mkIf sizedAtLeast.min {
     };
 
     wezterm = {
-      enable = true;
+      enable = false;
       extraConfig = ''
         local function scheme_for_appearance(appearance)
           if appearance:find "Dark" then
