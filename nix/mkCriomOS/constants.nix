@@ -31,6 +31,20 @@ in
     nordvpn = {
       privateKeyFile = "/etc/nordvpn/privateKey";
     };
+
+    complex = {
+      dir = "/etc/criomOS/complex";
+      keyFile = "/etc/criomOS/complex/key.pem";
+      sshPubFile = "/etc/criomOS/complex/ssh.pub";
+    };
+
+    wifiPki = {
+      caCertFile = "/etc/criomOS/wifi-pki/ca.pem";
+      certsDir = "/etc/criomOS/wifi-pki";
+      serverDir = "/etc/criomOS/wifi-server";
+      serverCertFile = "/etc/criomOS/wifi-server/server.pem";
+      serverKeyFile = "/etc/criomOS/wifi-server/server.key";
+    };
   };
 
   network = {

@@ -33,6 +33,7 @@ let
     else
       import ./preInstalled.nix;
 
+  complexModule = import ./complex.nix;
   metalModule = import ./metal;
 
   usersModules = [
@@ -45,6 +46,7 @@ let
     disksModule
     nixModule
     normalizeModule
+    complexModule
     networkModule
   ];
 
@@ -77,7 +79,7 @@ let
 
   # VM uses the same modules but without the disk/ISO-specific module
   vmModules =
-    [ usersModule nixModule normalizeModule networkModule ]
+    [ usersModule nixModule normalizeModule complexModule networkModule ]
     ++ (optional (behavesAs.edge && !behavesAs.iso) edgeModule)
     ++ (optional (behavesAs.router && !behavesAs.iso) ./router)
     ++ (optional (behavesAs.bareMetal && !behavesAs.iso) metalModule)

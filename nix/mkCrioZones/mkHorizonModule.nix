@@ -130,6 +130,7 @@ let
       nodeIp = inputNode.nodeIp or null;
       wireguardPreCriome = inputNode.wireguardPreCriome or null;
       nordvpn = inputNode.nordvpn or false;
+      wifiCert = inputNode.wifiCert or false;
 
       mkTypeIsFromTypeName =
         name:
@@ -142,7 +143,7 @@ let
         inherit size species;
 
         name = nodeName;
-        inherit machine wireguardPreCriome nordvpn nodeIp;
+        inherit machine wireguardPreCriome nordvpn wifiCert nodeIp;
 
         linkLocalIps =
           if (hasAttr "linkLocalIps" inputNode) then (map mkLinkLocalIP inputNode.linkLocalIps) else [ ];
@@ -199,6 +200,7 @@ let
           hasSshPrecriad = hasAttr "ssh" inputNode.preCriomes;
           hasWireguardPrecriad = wireguardPreCriome != null;
           hasNordvpnPrecriad = node.nordvpn;
+          hasWifiCertPrecriad = node.wifiCert;
 
           hasBasePrecriads = hasNixPreCriad && hasYggPrecriad && hasSshPrecriad;
 

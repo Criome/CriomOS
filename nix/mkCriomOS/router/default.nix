@@ -1,12 +1,15 @@
 {
   lib,
+  pkgs,
   horizon,
   config,
+  constants,
   ...
 }:
 let
   inherit (horizon.node) typeIs;
   inherit (horizon.node.machine) model;
+  inherit (constants.fileSystem.wifiPki) caCertFile serverCertFile serverKeyFile;
 
   # Per-model interface mapping
   interfaceMap = {
@@ -18,13 +21,15 @@ let
       wlanChannel = 1;
       wlanStandard = "wifi4";
     };
-    # Prometheus (GMKtec EVO-X2, WiFi 7)
+    # Prometheus (GMKtec EVO-X2, WiFi 7 hardware)
+    # 6GHz AP mode fails ACS — firmware/regulatory limitation.
+    # Fall back to 2.4GHz for maximum client compatibility.
     "GMKtec EVO-X2" = {
       wan = "eno1";
       wlan = "wlp195s0";
-      wlanBand = "6g";
-      wlanChannel = 0;
-      wlanStandard = "wifi7";
+      wlanBand = "2g";
+      wlanChannel = 6;
+      wlanStandard = "wifi4";
     };
   };
 
@@ -35,10 +40,19 @@ let
   lanAddress = "${lanSubnetPrefix}.1";
   lanFullAddress = "${lanAddress}/24";
 
-  useNftables = typeIs.routerTesting;
+  useNftables = true;
+
+  # EAP-TLS user file: accept any valid TLS client certificate
+  eapUsersFile = pkgs.writeText "eap_users" ''
+    * TLS
+  '';
 
 in
 {
+  imports = [
+    ./wifi-pki.nix
+  ];
+
   boot.kernel.sysctl = {
     "net.ipv4.conf.all.forwarding" = true;
     "net.ipv6.conf.all.forwarding" = true;
@@ -99,8 +113,27 @@ in
           wifi6.enable = hw.wlanStandard == "wifi6" || hw.wlanStandard == "wifi7";
           wifi7.enable = hw.wlanStandard == "wifi7";
           networks = {
+            # WPA3-Enterprise EAP-TLS — NixOS nodes with GPG-derived X.509 certs
             "${hw.wlan}" = {
-              ssid = "wifi-name";
+              ssid = "criome";
+              authentication.mode = "none";
+              settings = {
+                wpa = 2;
+                wpa_key_mgmt = "WPA-EAP";
+                ieee8021x = 1;
+                eap_server = 1;
+                ca_cert = caCertFile;
+                server_cert = serverCertFile;
+                private_key = serverKeyFile;
+                eap_user_file = "${eapUsersFile}";
+                ieee80211w = 2;
+                rsn_pairwise = "CCMP";
+                bridge = lanBridgeInterface;
+              };
+            };
+            # WPA3-SAE — fallback for mobile devices
+            "${hw.wlan}_sae" = {
+              ssid = "criome-mobile";
               authentication = {
                 mode = "wpa3-sae";
                 saePasswords = [ { password = "leavesarealsoalive"; } ];
@@ -138,6 +171,10 @@ in
                 {
                   name = "routers";
                   data = lanAddress;
+                }
+                {
+                  name = "domain-name-servers";
+                  data = "1.1.1.1, 9.9.9.9";
                 }
               ];
             }

@@ -113,6 +113,11 @@ let
         default = false;
       };
 
+      wifiCert = mkOption {
+        type = lib.types.bool;
+        default = false;
+      };
+
     };
   };
 
