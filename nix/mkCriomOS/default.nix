@@ -58,7 +58,7 @@ let
     ++ (optional (behavesAs.edge && !behavesAs.iso) edgeModule)
     ++ (optional (behavesAs.router && !behavesAs.iso) ./router)
     ++ (optional (behavesAs.bareMetal && !behavesAs.iso) metalModule)
-    ++ (optional isPrometheusNode llmModule)
+    # ++ (optional isPrometheusNode llmModule) # disabled while debugging OOM
     ++ (optional (sizedAtLeast.min && !behavesAs.iso) claudeDesktopModule)
     ++ (optionals _withUsers usersModules);
 
