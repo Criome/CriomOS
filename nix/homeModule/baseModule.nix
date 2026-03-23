@@ -73,7 +73,23 @@ let
        `(line-number ((,class (:foreground "${c.base03}" :background "${c.base01}"))))
        `(line-number-current-line ((,class (:foreground "${c.base05}" :background "${c.base01}"))))
        `(show-paren-match ((,class (:foreground "${c.base00}" :background "${c.base0D}"))))
-       `(show-paren-mismatch ((,class (:foreground "${c.base00}" :background "${c.base08}"))))))
+       `(show-paren-mismatch ((,class (:foreground "${c.base00}" :background "${c.base08}"))))
+
+       ;; Emacs 29+ tree-sitter faces
+       `(font-lock-function-call-face ((,class (:foreground "${c.base0D}"))))
+       `(font-lock-number-face ((,class (:foreground "${c.base09}"))))
+       `(font-lock-operator-face ((,class (:foreground "${c.base05}"))))
+       `(font-lock-property-name-face ((,class (:foreground "${c.base08}"))))
+       `(font-lock-property-use-face ((,class (:foreground "${c.base08}"))))
+       `(font-lock-punctuation-face ((,class (:foreground "${c.base04}"))))
+       `(font-lock-bracket-face ((,class (:foreground "${c.base04}"))))
+       `(font-lock-delimiter-face ((,class (:foreground "${c.base04}"))))
+       `(font-lock-escape-face ((,class (:foreground "${c.base0C}"))))
+       `(font-lock-misc-punctuation-face ((,class (:foreground "${c.base0F}"))))
+       `(font-lock-variable-use-face ((,class (:foreground "${c.base05}"))))
+       `(font-lock-regexp-face ((,class (:foreground "${c.base0B}"))))
+       `(font-lock-regexp-grouping-construct ((,class (:foreground "${c.base0A}"))))
+       `(font-lock-regexp-grouping-backslash ((,class (:foreground "${c.base0C}"))))))
     (provide-theme '${name})
   '';
 

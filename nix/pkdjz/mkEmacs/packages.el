@@ -163,9 +163,10 @@
                :feature 'operator
                '((operator) @font-lock-operator-face
                  (unification "=" @font-lock-operator-face)
-                 "*" @font-lock-operator-face
-                 "~" @font-lock-operator-face
-                 "?" @font-lock-operator-face)
+                 (stored_relation "*" @font-lock-misc-punctuation-face)
+                 (search_apply "~" @font-lock-misc-punctuation-face)
+                 (rule_head "?" @font-lock-misc-punctuation-face)
+                 (system_command "::" @font-lock-misc-punctuation-face))
 
                :language 'cozo
                :feature 'function
