@@ -173,9 +173,21 @@ let
 
 in
 
-{ user }:
+{ user, emacsThemeDir ? null }:
 let
-  loadTheme = "";
+  loadTheme = if emacsThemeDir != null then ''
+    (add-to-list 'custom-theme-load-path "${emacsThemeDir}")
+    (let ((mode-file (expand-file-name "darkman/current-mode"
+                       (or (getenv "XDG_STATE_HOME")
+                           (expand-file-name ".local/state" "~")))))
+      (when (file-readable-p mode-file)
+        (let ((mode (string-trim (with-temp-buffer
+                                   (insert-file-contents mode-file)
+                                   (buffer-string)))))
+          (pcase mode
+            ("dark" (load-theme 'ignis-dark t))
+            ("light" (load-theme 'ignis-light t))))))
+  '' else "";
 
   commonPackagesEl = readFile ./packages.el;
   launcherCommonEl = readFile ./selector-common.el;

@@ -3,11 +3,12 @@
   pkdjz,
   user,
   crioZone,
+  emacsThemeDir ? null,
   ...
 }:
 let
   inherit (pkdjz) mkEmacs;
-  package = mkEmacs { inherit user; };
+  package = mkEmacs { inherit user emacsThemeDir; };
 
   baseDependencies = with pkgs; [
     nil

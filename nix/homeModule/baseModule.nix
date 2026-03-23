@@ -263,6 +263,8 @@ GHOSTTY
 
 in
 {
+  _module.args = { inherit emacsThemeDir; };
+
   config = {
     home = {
       username = user.name;
