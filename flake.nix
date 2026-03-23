@@ -104,7 +104,7 @@
     };
     tree-sitter-cozo = {
       url = "github:Criome/tree-sitter-cozo";
-      flake = false;
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     superchat = {
       url = "github:yibie/superchat";

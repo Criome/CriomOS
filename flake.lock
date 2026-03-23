@@ -1136,13 +1136,17 @@
       }
     },
     "tree-sitter-cozo": {
-      "flake": false,
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
       "locked": {
-        "lastModified": 1774280563,
-        "narHash": "sha256-FBjOOUKjMFeRL6VZYgtYscMcVDERIWaH0nxc1D1OOQk=",
+        "lastModified": 1774281782,
+        "narHash": "sha256-q8gEV+wuQ/xzL1CaNEIsB0CF38ny1IY9QeSZB3WNN2E=",
         "owner": "Criome",
         "repo": "tree-sitter-cozo",
-        "rev": "9fcbb06d019d8ddefd83a71b6437a4bb19bd9d54",
+        "rev": "bf23382dea352f971ef7a78b0967f5e3ede01a26",
         "type": "github"
       },
       "original": {

@@ -239,6 +239,45 @@ Split tunnel: IPv4 user traffic goes through the VPN. Yggdrasil (IPv6) and Tails
 - For production deployment, use `github:LiGoldragon/maisiliym` (not local path overrides).
 - `centerLike` = `typeIs.center || typeIs.largeAI` — headless server nodes.
 
+## Tree-Sitter Grammar Integration
+
+### Adding a new tree-sitter grammar
+
+Two patterns exist — follow the one matching the upstream:
+
+**Flake grammar** (preferred, e.g. `tree-sitter-cozo`):
+1. Grammar repo has its own `flake.nix` exposing `packages.${system}.default`.
+2. CriomOS flake input: `tree-sitter-X = { url = "github:Criome/tree-sitter-X"; inputs.nixpkgs.follows = "nixpkgs"; };`
+3. `nix/pkdjz/adHoc.nix`: pass-through lambda — `lambda = { src, pkgs }: src.packages.${pkgs.system}.default;`
+4. `nix/pkdjz/mkEmacs/default.nix`: add to function args and `treeSitterPackages`.
+5. `nix/pkdjz/mkEmacs/packages.el`: `define-derived-mode` with `treesit-font-lock-rules` under the `treesit` use-package block.
+
+**Source-only grammar** (e.g. `tree-sitter-capnp`):
+1. Upstream has no flake — `flake = false` in CriomOS input.
+2. `nix/pkdjz/adHoc.nix`: `stdenv.mkDerivation` that compiles `src/parser.c` → `.so`.
+3. Same Emacs wiring as above.
+
+### Emacs tree-sitter mode requirements
+
+`treesit-major-mode-setup` alone provides **zero highlighting**. A working mode requires:
+```elisp
+(setq-local treesit-font-lock-feature-list '((comment string) (keyword type) ...))
+(setq-local treesit-font-lock-settings (treesit-font-lock-rules ...))
+(treesit-parser-create 'lang)
+(treesit-major-mode-setup)
+```
+
+The `.scm` query files in the grammar repo are for the tree-sitter CLI, **not for Emacs**.
+
+### Emacs 29+ theme face requirement
+
+Custom themes must define these faces or tree-sitter highlighting is invisible:
+`font-lock-number-face`, `font-lock-operator-face`, `font-lock-function-call-face`,
+`font-lock-bracket-face`, `font-lock-property-use-face`, `font-lock-escape-face`,
+`font-lock-delimiter-face`, `font-lock-misc-punctuation-face`, `font-lock-variable-use-face`.
+
+These are defined in the ignis theme (`nix/homeModule/baseModule.nix`).
+
 ## Constants
 System-wide paths and network constants live in `nix/mkCriomOS/constants.nix`:
 - `fileSystem.nordvpn.privateKeyFile` — NordVPN key path
