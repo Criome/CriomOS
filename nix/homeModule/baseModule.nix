@@ -263,8 +263,6 @@ GHOSTTY
 
 in
 {
-  _module.args = { inherit emacsThemeDir; };
-
   config = {
     home = {
       username = user.name;
@@ -275,6 +273,7 @@ in
         (pkgs.writeShellScriptBin "theme-dark" ''${pkgs.darkman}/bin/darkman set dark'')
         (pkgs.writeShellScriptBin "theme-light" ''${pkgs.darkman}/bin/darkman set light'')
       ];
+      file.".config/emacs-ignis-themes".source = emacsThemeDir;
     };
 
     programs.zsh.initContent = lib.mkBefore terminalInitHook;
