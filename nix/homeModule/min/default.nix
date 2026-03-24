@@ -43,7 +43,7 @@ let
   largeAIModels = largeAIConfig.models;
 
   # Discover the largeAI node from the cluster topology
-  isLargeAINode = node.typeIs.largeAI or node.typeIs."largeAI-router" or false;
+  isLargeAINode = (node.typeIs.largeAI or false) || (node.typeIs."largeAI-router" or false);
   largeAINodeEntry =
     let
       matches = lib.filterAttrs

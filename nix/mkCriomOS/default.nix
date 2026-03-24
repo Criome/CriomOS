@@ -16,7 +16,7 @@ let
   inherit (horizon.node) typeIs;
   inherit (horizon.node.methods) behavesAs sizedAtLeast;
 
-  isLargeAINode = typeIs.largeAI or typeIs."largeAI-router" or false;
+  isLargeAINode = (typeIs.largeAI or false) || (typeIs."largeAI-router" or false);
 
   constants = import ./constants.nix;
   usersModule = import ./users.nix;
