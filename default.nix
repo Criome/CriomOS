@@ -142,6 +142,7 @@ let
               horizon
               user
               litellmProxy
+              inputs
               ;
           };
           evalHomeManager = inputs.home-manager.lib.homeManagerConfiguration;

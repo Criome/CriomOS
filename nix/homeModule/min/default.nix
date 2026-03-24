@@ -8,6 +8,7 @@
   config,
   world,
   litellmProxy,
+  inputs,
   # Todo(data)
   ...
 }:
@@ -345,12 +346,13 @@ let
     if builtins.hasAttr "serviceEndpoints" prometheusModelCatalog
       && builtins.hasAttr "canonical" prometheusModelCatalog.serviceEndpoints
     then prometheusModelCatalog.serviceEndpoints.canonical
-    else "http://[202:68bc:1221:1b13:5397:2a56:4aea:d4a9]:11434/v1";
+    else "http://[200:ca41:6b12:fba:d7bc:cfc6:4aaa:165f]:11434/v1";
   piAgentModels = {
     providers = {
       ${piAgentGatewayProvider} = {
         baseUrl = piAgentGatewayBaseUrl;
         api = "openai-completions";
+        authRequired = false;
         apiKey = piAgentGatewayApiKey;
         models = builtins.map mkPrometheusModelEntry (prometheusCanonicalModelIds ++ piAgentModelAliases);
       };
@@ -373,6 +375,8 @@ let
   piAgentModelsJson = toJSON piAgentModels;
   piAgentSettingsJson = toJSON piAgentSettings;
 
+  piAgent = inputs.llm-agents.packages.${pkgs.system}.pi or null;
+
   AIPackages = with pkgs; [
     gemini-cli
     claude-code
@@ -380,7 +384,7 @@ let
     opencode
     llama-cpp
     litellmProxy
-  ];
+  ] ++ optional (piAgent != null) piAgent;
 
   nixpkgsPackages =
     with pkgs;
