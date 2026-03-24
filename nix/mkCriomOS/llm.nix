@@ -95,12 +95,21 @@ let
 
   litellmRouterFile = yamlFormat.generate "litellm-router.yaml" litellmRouterData;
 
+  # Chain model loading: each service waits for the previous to avoid
+  # Vulkan memory contention during simultaneous large allocations.
+  prevServiceName = index:
+    if index == 0 then null
+    else (elemAt runtimeModels (index - 1)).serviceName;
+
   mkLlamaService = model: {
     name = model.serviceName;
     value = {
       description = "${model.descriptor} llama.cpp OpenAI-compatible service";
       wants = [ "network-online.target" ];
-      after = [ "network-online.target" ];
+      after = [ "network-online.target" ]
+        ++ (if prevServiceName (model.order - 1) != null
+            then [ "${prevServiceName (model.order - 1)}.service" ]
+            else []);
 
       serviceConfig = {
         Type = "simple";
