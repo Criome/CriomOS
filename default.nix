@@ -217,6 +217,9 @@ let
         inherit pkgs;
         hob = hobOutputs;
         fullHob = allMeinHobOutputs;
+        tests = {
+          pki-bootstrap = import ./nix/tests/pki-bootstrap.nix { inherit pkgs; };
+        };
       };
     };
 
