@@ -9,8 +9,8 @@ let
   inherit (builtins)
     concatStringsSep
     elemAt
+    fromJSON
     genList
-    hasAttr
     head
     length
     listToAttrs
@@ -18,7 +18,6 @@ let
     pathExists
     readFile
     toString
-    fromJSON
     ;
   inherit (lib) foldl';
 
@@ -26,150 +25,72 @@ let
   llamaCppPackage = pkgs.callPackage ../llama-cpp-prometheus.nix { inherit pkgs; };
   yamlFormat = pkgs.formats.yaml { };
 
-  prometheusLitellmPort = 11434;
+  nodeName = horizon.node.name;
 
-  # Use a dedicated static system user for the llama runtime. This avoids
-  # depending on any horizon/config user selection and ensures a canonical
-  # persistent state location under /var/lib/llama.
+  # Unified config — single source of truth for all LLM services
+  configPath = ../../data/config/largeAI/litellm.json;
+  cfg = fromJSON (readFile configPath);
+
+  gatewayPort = cfg.gatewayPort;
+  apiKey = cfg.apiKey;
+
   runtimeUser = "llama";
   runtimeHome = "/var/lib/llama";
 
-
-  prometheusApiKey = "sk-no-key-required";
   litellmRouterConfigPath = "/etc/litellm-router.yaml";
 
-  prometheusLockPath = ../../data/config/pi/prometheus-model-lock.json;
-  prometheusLock = if pathExists prometheusLockPath then fromJSON (readFile prometheusLockPath) else { servedModels = [ ]; };
+  # Resolve model source to a store path
+  mkModelPath = spec:
+    let source = spec.source; in
+    if source.kind == "multi-shard"
+    then
+      let
+        fetched = map (shard: {
+          drv = pkgs.fetchurl { url = shard.url; sha256 = shard.sha256; };
+          inherit (shard) filename;
+        }) source.shards;
+        modelDir = pkgs.runCommand "model-shards-${spec.modelId}" {} (
+          "mkdir -p $out\n"
+          + concatStringsSep "\n" (map (s: "ln -s ${s.drv} $out/${s.filename}") fetched)
+        );
+      in "${modelDir}/${(head source.shards).filename}"
+    else if source.kind == "fetchurl"
+    then pkgs.fetchurl { url = source.url; sha256 = source.sha256; }
+    else if source.kind == "local-file"
+    then pkgs.runCommand "local-file-${source.filename}"
+      { nativeBuildInputs = [ pkgs.coreutils ]; allowSubstitutes = true; preferLocalBuild = true; }
+      "cp ${source.path} $out"
+    else source.path;
 
-  legacyModel =
-    if hasAttr "servedModels" prometheusLock then
-      [ ]
-    else
-      [
-        {
-          modelId = prometheusLock.modelId;
-          canonicalId = if hasAttr "canonicalId" prometheusLock then prometheusLock.canonicalId else prometheusLock.modelId;
-          alias = if hasAttr "alias" prometheusLock then prometheusLock.alias else "prometheus-main-sanity";
-          primaryAlias = if hasAttr "primaryAlias" prometheusLock then prometheusLock.primaryAlias else "main-sanity";
-          serviceSuffix = if hasAttr "primaryAlias" prometheusLock then prometheusLock.primaryAlias else "sanity";
-          descriptor = if hasAttr "descriptor" prometheusLock then prometheusLock.descriptor else prometheusLock.modelId;
-          source = if hasAttr "artifact" prometheusLock then {
-            kind = "fetchurl";
-            url = prometheusLock.artifact.url;
-            sha256 = prometheusLock.artifact.sha256;
-            filename = if hasAttr "filename" prometheusLock.artifact then prometheusLock.artifact.filename else null;
-          } else {
-            kind = "local";
-            path = "/var/lib/llama/models/DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf";
-            filename = "DeepSeek-R1-Distill-Llama-70B-Q8_0-00001-of-00002.gguf";
-          };
-          reasoning = if hasAttr "reasoning" prometheusLock then prometheusLock.reasoning else false;
-          contextWindow = if hasAttr "contextWindow" prometheusLock then prometheusLock.contextWindow else 8192;
-          maxTokens = if hasAttr "maxTokens" prometheusLock then prometheusLock.maxTokens else 2048;
-          ctxSize = if hasAttr "ctxSize" prometheusLock then prometheusLock.ctxSize else 8192;
-          port = 11436;
-        }
-      ];
+  mkRuntimeModel = index: spec: {
+    inherit (spec) modelId descriptor reasoning contextWindow maxTokens ctxSize port;
+    alias = "${nodeName}-${spec.modelId}";
+    canonicalId = spec.modelId;
+    serviceName = "${nodeName}-llama-${spec.modelId}";
+    modelPathStr = mkModelPath spec;
+    order = index + 1;
+  };
 
-  servedModelSpecs = if hasAttr "servedModels" prometheusLock then prometheusLock.servedModels else legacyModel;
-
-  mkRuntimeModel = index: spec:
-    let
-      source = if hasAttr "source" spec then spec.source else {
-        kind = "fetchurl";
-        url = spec.artifact.url;
-        sha256 = spec.artifact.sha256;
-        filename = if hasAttr "filename" spec.artifact then spec.artifact.filename else null;
-      };
-      # Multi-shard: symlink all shards into one directory so llama-server
-      # can locate sibling shards by naming convention.
-      modelPath =
-        if source.kind == "multi-shard"
-        then
-          let
-            fetched = map (shard: {
-              drv = pkgs.fetchurl { url = shard.url; sha256 = shard.sha256; };
-              inherit (shard) filename;
-            }) source.shards;
-            modelDir = pkgs.runCommand "model-shards-${spec.modelId}" {} (
-              "mkdir -p $out\n"
-              + concatStringsSep "\n" (map (s: "ln -s ${s.drv} $out/${s.filename}") fetched)
-            );
-          in "${modelDir}/${(head source.shards).filename}"
-        else if source.kind == "fetchurl"
-        then pkgs.fetchurl {
-          url = source.url;
-          sha256 = source.sha256;
-        }
-        else if source.kind == "local-file"
-        then pkgs.runCommand "local-file-${source.filename}"
-          {
-            nativeBuildInputs = [ pkgs.coreutils ];
-            allowSubstitutes = true;
-            preferLocalBuild = true;
-          }
-          ''
-            cp ${source.path} $out
-          ''
-        else source.path;
-      modelPathStr = modelPath;
-      canonicalId = if hasAttr "canonicalId" spec then spec.canonicalId else spec.modelId;
-      primaryAlias = if hasAttr "primaryAlias" spec then spec.primaryAlias else canonicalId;
-      serviceSuffix = if hasAttr "serviceSuffix" spec then spec.serviceSuffix else primaryAlias;
-      alias = if hasAttr "alias" spec then spec.alias else "prometheus-${primaryAlias}";
-      descriptor = if hasAttr "descriptor" spec then spec.descriptor else canonicalId;
-      reasoning = if hasAttr "reasoning" spec then spec.reasoning else false;
-      contextWindow = if hasAttr "contextWindow" spec then spec.contextWindow else 8192;
-      maxTokens = if hasAttr "maxTokens" spec then spec.maxTokens else 2048;
-      ctxSize = if hasAttr "ctxSize" spec then spec.ctxSize else contextWindow;
-      port = if hasAttr "port" spec then spec.port else 11436 + index;
-    in
-    {
-      inherit
-        alias
-        canonicalId
-        contextWindow
-        ctxSize
-        descriptor
-        maxTokens
-        modelPathStr
-        port
-        primaryAlias
-        reasoning
-        serviceSuffix
-        ;
-      order = index + 1;
-      serviceName = "prometheus-llama-${serviceSuffix}";
-    };
-
-  runtimeModels = genList (index: mkRuntimeModel index (elemAt servedModelSpecs index)) (length servedModelSpecs);
+  runtimeModels = genList (i: mkRuntimeModel i (elemAt cfg.models i)) (length cfg.models);
 
   litellmRouterData = {
-    model_list = builtins.map (
-      model: {
-        model_name = model.canonicalId;
-        litellm_params = {
-          model = "openai/${model.alias}";
-          api_base = "http://127.0.0.1:${toString model.port}/v1";
-          api_key = prometheusApiKey;
-        };
-        order = model.order;
-      }
-    ) runtimeModels;
-    router_settings = {
-      enable_pre_call_checks = false;
-      model_group_alias = foldl' (
-        acc: model:
-        if model.primaryAlias == model.canonicalId
-        then acc // { ${model.canonicalId} = model.canonicalId; }
-        else acc // { ${model.primaryAlias} = model.canonicalId; ${model.canonicalId} = model.canonicalId; }
+    model_list = map (model: {
+      model_name = model.canonicalId;
+      litellm_params = {
+        model = "openai/${model.alias}";
+        api_base = "http://127.0.0.1:${toString model.port}/v1";
+        api_key = apiKey;
+      };
+      order = model.order;
+    }) runtimeModels;
+
+    router_settings = cfg.routerSettings // {
+      model_group_alias = foldl' (acc: model:
+        acc // { ${model.canonicalId} = model.canonicalId; }
       ) { } runtimeModels;
     };
-    litellm_settings = {
-      drop_params = true;
-      modify_params = true;
-      logging.level = "info";
-    };
+
+    litellm_settings = cfg.litellmSettings;
   };
 
   litellmRouterFile = yamlFormat.generate "litellm-router.yaml" litellmRouterData;
@@ -187,7 +108,6 @@ let
         WorkingDirectory = runtimeHome;
         Environment = [
           "HOME=${runtimeHome}"
-          # Runtime ROCm gfx enumeration override for gfx1151 (Strix Halo) on current ROCm stack
           "HSA_OVERRIDE_GFX_VERSION=11.5.1"
         ];
 
@@ -198,7 +118,7 @@ let
           + " --model ${model.modelPathStr}"
           + " --n-gpu-layers 99"
           + " --alias ${model.alias}"
-          + " --api-key ${prometheusApiKey}"
+          + " --api-key ${apiKey}"
           + " --parallel 1"
           + " --ctx-size ${toString model.ctxSize}"
           + " --no-warmup"
@@ -213,13 +133,10 @@ let
     };
   };
 
-  llamaServices = listToAttrs (builtins.map mkLlamaService runtimeModels);
+  llamaServices = listToAttrs (map mkLlamaService runtimeModels);
 
 in
 {
-  # Declare the dedicated system user/group for the llama runtime and grant
-  # it access to typical GPU device groups. Kept here in the module's
-  # resulting attribute set so it is applied when this module is used.
   users.users.llama = {
     isSystemUser = true;
     description = "llama runtime user";
@@ -236,28 +153,18 @@ in
     mode = "0644";
   };
 
-  networking.firewall.allowedTCPPorts = [ prometheusLitellmPort ] ++ builtins.map (model: model.port) runtimeModels;
+  networking.firewall.allowedTCPPorts = [ gatewayPort ] ++ map (model: model.port) runtimeModels;
 
-  # Ensure the llama runtime state directory and models subdirectory are
-  # created declaratively on boot and owned by the dedicated "llama" user.
-  # We use systemd.StateDirectory for services and systemd.tmpfiles to
-  # guarantee /var/lib/llama/models exists for local-model fallbacks.
-  # Leave a composable list-based tmpfiles declaration (do not force it).
   systemd.tmpfiles.rules = [
-    # Create /var/lib/llama (StateDirectory will normally manage this too
-    # while the unit is active). Ensure models subdir exists persistently.
     "d /var/lib/llama 0755 llama llama - -"
     "d /var/lib/llama/models 0755 llama llama - -"
   ];
 
-  # Inject StateDirectory = "llama" into generated per-model services so
-  # systemd creates/owns /var/lib/llama at runtime for the llama user.
-  # We add the same for the gateway proxy service.
   systemd.services = lib.mapAttrs (_: svc: svc // {
     serviceConfig = svc.serviceConfig // { StateDirectory = "llama"; };
   }) llamaServices // {
-    prometheus-litellm = {
-      description = "Prometheus LiteLLM gateway";
+    "${nodeName}-litellm" = {
+      description = "${nodeName} LiteLLM gateway";
       wants = [ "network-online.target" ];
       after = [ "network-online.target" ];
 
@@ -267,15 +174,13 @@ in
         Type = "simple";
         User = runtimeUser;
         WorkingDirectory = runtimeHome;
-        Environment = [
-          "HOME=${runtimeHome}"
-        ];
+        Environment = [ "HOME=${runtimeHome}" ];
 
         ExecStart =
           "${litellmProxy}/bin/litellm"
           + " --config ${litellmRouterConfigPath}"
           + " --host ::"
-          + " --port ${toString prometheusLitellmPort}";
+          + " --port ${toString gatewayPort}";
 
         Restart = "on-failure";
         RestartSec = 5;

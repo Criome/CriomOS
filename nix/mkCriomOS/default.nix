@@ -13,9 +13,10 @@ let
   inherit (world) pkdjz home-manager;
   inherit (pkdjz) evalNixos;
   inherit (horizon) node;
+  inherit (horizon.node) typeIs;
   inherit (horizon.node.methods) behavesAs sizedAtLeast;
 
-  isPrometheusNode = node.name == "prometheus";
+  isLargeAINode = typeIs.largeAI or typeIs."largeAI-router" or false;
 
   constants = import ./constants.nix;
   usersModule = import ./users.nix;
@@ -60,7 +61,7 @@ let
     ++ (optional (behavesAs.edge && !behavesAs.iso) edgeModule)
     ++ (optional (behavesAs.router && !behavesAs.iso) ./router)
     ++ (optional (behavesAs.bareMetal && !behavesAs.iso) metalModule)
-    ++ (optional isPrometheusNode llmModule)
+    ++ (optional isLargeAINode llmModule)
     ++ (optional (sizedAtLeast.min && !behavesAs.iso) claudeDesktopModule)
     ++ (optionals _withUsers usersModules);
 
@@ -83,7 +84,7 @@ let
     ++ (optional (behavesAs.edge && !behavesAs.iso) edgeModule)
     ++ (optional (behavesAs.router && !behavesAs.iso) ./router)
     ++ (optional (behavesAs.bareMetal && !behavesAs.iso) metalModule)
-    ++ (optional isPrometheusNode llmModule)
+    ++ (optional isLargeAINode llmModule)
     ++ (optional (sizedAtLeast.min && !behavesAs.iso) claudeDesktopModule)
     ++ (optionals _withUsers usersModules);
 

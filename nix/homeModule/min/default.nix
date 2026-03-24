@@ -37,33 +37,32 @@ let
 
   homeDir = config.home.homeDirectory;
 
-  isPrometheusNode = node.name == "prometheus";
-  isOuranosNode = node.name == "ouranos";
+  # Unified LLM config — single source of truth
+  largeAIConfigPath = ../../../data/config/largeAI/litellm.json;
+  largeAIConfig = builtins.fromJSON (builtins.readFile largeAIConfigPath);
+  largeAIModels = largeAIConfig.models;
 
-  # Prefer a directly-routable IP for cross-node calls (Ouranos → Prometheus).
-  # The criome domain name is not guaranteed to resolve in the current environment.
-  prometheusCriomeHost =
+  # Discover the largeAI node from the cluster topology
+  isLargeAINode = node.typeIs.largeAI or node.typeIs."largeAI-router" or false;
+  largeAINodeEntry =
     let
-      prometheusNode = horizon.exNodes.prometheus or null;
-      prometheusNodeIp =
-        if prometheusNode != null && builtins.hasAttr "nodeIp" prometheusNode
-        then prometheusNode.nodeIp
-        else null;
-      prometheusDomainName =
-        if prometheusNode != null
-        then prometheusNode.criomeDomainName
-        else "prometheus.${horizon.cluster.name}.criome";
+      matches = lib.filterAttrs
+        (_: n: (n.typeIs.largeAI or false) || (n.typeIs."largeAI-router" or false))
+        horizon.exNodes;
     in
-    if prometheusNodeIp != null && prometheusNodeIp != ""
-    then prometheusNodeIp
-    else prometheusDomainName;
+    if matches != {} then builtins.head (builtins.attrValues matches) else null;
 
-  # Current session runtime truth: the working overlay path is Prometheus tailnet IP.
-  # System MagicDNS integration is not yet authoritative for user-space consumers.
-  prometheusOverlayHost = if isOuranosNode then "100.64.0.1" else prometheusCriomeHost;
+  largeAINodeName =
+    if isLargeAINode then node.name
+    else if largeAINodeEntry != null then largeAINodeEntry.name
+    else null;
 
-  # Prometheus runs the llama.cpp server locally; other nodes should route to the Prometheus overlay.
-  prometheusLlamaUpstreamHost = if isPrometheusNode then "127.0.0.1" else prometheusOverlayHost;
+  largeAIHost =
+    if isLargeAINode then "127.0.0.1"
+    else if largeAINodeEntry != null then largeAINodeEntry.criomeDomainName
+    else null;
+
+  hasLargeAI = largeAIHost != null;
 
   terminalFontFamily = if sizedAtLeast.med then "IosevkaTerm Nerd Font" else "DejaVu Sans Mono";
 
@@ -211,167 +210,40 @@ let
 
   unixDeveloperPackages = unixUtilities ++ programmingTools;
 
-  prometheusLlamaPort = 11436;
-  prometheusLlamaApiKey = "sk-no-key-required";
-
-  # Runtime model assets live in the user's home. Do not hard-code presets to
-  # non-existent files; generate the preset at service start from the canonical
-  # filenames that actually exist on disk.
-  prometheusLlamaModelDir = "${homeDir}/.local/share/prometheus-llama/models";
-  prometheusLlamaPreset = "${homeDir}/.config/prometheus-llama/models.ini";
-
-  prometheusLlamaCanonicalModels = [
-    {
-      section = "prometheus-llama-3.2-1b-instruct";
-      file = "llama-3.2-1b-instruct-q4_k_m.gguf";
-      alias = "llama-3.2-1b-instruct";
-    }
-  ];
-
-  litellmRouterYaml = ''
-    ---
-    model_list:
-      - model_name: llama-3.2-1b-instruct
-        litellm_params:
-          model: openai/prometheus-llama-3.2-1b-instruct
-          api_base: http://${prometheusLlamaUpstreamHost}:${toString prometheusLlamaPort}/v1
-          api_key: ${prometheusLlamaApiKey}
-        order: 1
-      - model_name: gpt-oss-120b
-        litellm_params:
-          model: openai/prometheus-gpt-oss-120b
-          api_base: http://${prometheusLlamaUpstreamHost}:11437/v1
-          api_key: ${prometheusLlamaApiKey}
-        order: 2
-    router_settings:
-      enable_pre_call_checks: false
-      model_group_alias:
-        llama-3.2-1b-instruct: llama-3.2-1b-instruct
-        gpt-oss-120b: gpt-oss-120b
-    litellm_settings:
-      drop_params: true
-      modify_params: true
-      logging:
-        level: info
-  '';
-
-  prometheusModelCatalogPath = ../../../data/config/pi/prometheus-model-catalog.json;
-  prometheusModelCatalog = builtins.fromJSON (builtins.readFile prometheusModelCatalogPath);
-  piAgentGatewayProvider =
-    if builtins.hasAttr "provider" prometheusModelCatalog
-    then prometheusModelCatalog.provider
-    else "prometheus";
-  piAgentGatewayApiKey = "sk-no-key-required";
-  prometheusAliasPrefix = "${piAgentGatewayProvider}/";
-  prometheusAliasPrefixLen = builtins.stringLength prometheusAliasPrefix;
-  stripProviderPrefix = alias:
-    let
-      aliasLen = builtins.stringLength alias;
-    in if aliasLen >= prometheusAliasPrefixLen && builtins.substring 0 prometheusAliasPrefixLen alias == prometheusAliasPrefix
-       then builtins.substring prometheusAliasPrefixLen (aliasLen - prometheusAliasPrefixLen) alias
-       else alias;
-  prometheusModels =
-    if builtins.hasAttr "models" prometheusModelCatalog
-    then prometheusModelCatalog.models
-    else [];
-  prometheusCanonicalModelIds = builtins.map (model: model.id) prometheusModels;
-  prometheusAliasQualifiedEnabled =
-    if builtins.hasAttr "enabledAliases" prometheusModelCatalog
-    then prometheusModelCatalog.enabledAliases
-    else [];
-  piAgentModelAliases = builtins.map stripProviderPrefix prometheusAliasQualifiedEnabled;
-  piAgentEnabledModels =
-    builtins.concatLists [
-      (builtins.map (model: "${piAgentGatewayProvider}/${model}") prometheusCanonicalModelIds)
-      prometheusAliasQualifiedEnabled
-    ];
-  prometheusModelMetadata =
-    builtins.listToAttrs (
-      builtins.map (model:
-        {
-          name = model.id;
-          value = {
-            descriptor =
-              if builtins.hasAttr "descriptor" model
-              then model.descriptor
-              else model.id;
-            reasoning =
-              if builtins.hasAttr "reasoning" model
-              then model.reasoning
-              else false;
-            contextWindow =
-              if builtins.hasAttr "contextWindow" model
-              then model.contextWindow
-              else 128000;
-            maxTokens =
-              if builtins.hasAttr "maxTokens" model
-              then model.maxTokens
-              else 32768;
-          };
-        }
-      ) prometheusModels
-    );
-  prometheusAliasTargets =
-    if builtins.hasAttr "aliasTargets" prometheusModelCatalog
-    then prometheusModelCatalog.aliasTargets
-    else { };
-  mkPrometheusModelEntry = modelId:
-    let
-      aliasTarget =
-        if builtins.hasAttr modelId prometheusAliasTargets
-        then builtins.getAttr modelId prometheusAliasTargets
-        else null;
-      canonicalId = if aliasTarget == null then modelId else aliasTarget;
-      info = builtins.getAttr canonicalId prometheusModelMetadata;
-      label =
-        if aliasTarget == null
-        then info.descriptor
-        else "alias for ${info.descriptor}";
-    in
-    {
-      id = modelId;
-      name = "prometheus/${modelId} (${label})";
-      reasoning = info.reasoning;
-      input = [ "text" ];
-      contextWindow = info.contextWindow;
-      maxTokens = info.maxTokens;
-      cost = {
-        input = 0;
-        output = 0;
-        cacheRead = 0;
-        cacheWrite = 0;
-      };
-    };
+  # Pi agent config — derived entirely from largeAI/litellm.json + horizon
+  piAgentGatewayProvider = if largeAINodeName != null then largeAINodeName else "local";
   piAgentGatewayBaseUrl =
-    if builtins.hasAttr "serviceEndpoints" prometheusModelCatalog
-      && builtins.hasAttr "canonical" prometheusModelCatalog.serviceEndpoints
-    then prometheusModelCatalog.serviceEndpoints.canonical
-    else "http://[200:ca41:6b12:fba:d7bc:cfc6:4aaa:165f]:11434/v1";
+    if hasLargeAI
+    then "http://${largeAIHost}:${toString largeAIConfig.gatewayPort}/v1"
+    else null;
+
   piAgentModels = {
-    providers = {
-      ${piAgentGatewayProvider} = {
-        baseUrl = piAgentGatewayBaseUrl;
-        api = "openai-completions";
-        authRequired = false;
-        apiKey = piAgentGatewayApiKey;
-        models = builtins.map mkPrometheusModelEntry (prometheusCanonicalModelIds ++ piAgentModelAliases);
-      };
+    providers.${piAgentGatewayProvider} = {
+      baseUrl = piAgentGatewayBaseUrl;
+      api = "openai-completions";
+      authRequired = false;
+      apiKey = largeAIConfig.apiKey;
+      models = builtins.map (model: {
+        id = model.modelId;
+        name = "${piAgentGatewayProvider}/${model.modelId} (${model.descriptor})";
+        reasoning = model.reasoning;
+        input = [ "text" ];
+        contextWindow = model.contextWindow;
+        maxTokens = model.maxTokens;
+        cost = { input = 0; output = 0; cacheRead = 0; cacheWrite = 0; };
+      }) largeAIModels;
     };
   };
+
   piAgentSettings = {
-    defaultProvider =
-      if builtins.hasAttr "defaultProvider" prometheusModelCatalog
-      then prometheusModelCatalog.defaultProvider
-      else piAgentGatewayProvider;
-    defaultModel =
-      if builtins.hasAttr "defaultModel" prometheusModelCatalog
-      then prometheusModelCatalog.defaultModel
-      else (if builtins.length piAgentModelAliases > 0 then builtins.head piAgentModelAliases else "qwen3.5-35b-a3b");
-    enabledModels = piAgentEnabledModels;
-    hideThinkingBlock = false;
-    defaultThinkingLevel = "medium";
-    compaction = { enabled = false; };
+    defaultProvider = piAgentGatewayProvider;
+    defaultModel = largeAIConfig.piAgent.defaultModel;
+    enabledModels = builtins.map (m: "${piAgentGatewayProvider}/${m.modelId}") largeAIModels;
+    hideThinkingBlock = largeAIConfig.piAgent.hideThinkingBlock;
+    defaultThinkingLevel = largeAIConfig.piAgent.defaultThinkingLevel;
+    compaction = largeAIConfig.piAgent.compaction;
   };
+
   piAgentModelsJson = toJSON piAgentModels;
   piAgentSettingsJson = toJSON piAgentSettings;
 
@@ -797,18 +669,13 @@ mkIf sizedAtLeast.min {
 
         ".config/broot/conf.toml".text = brootConfig;
       }
-      // (optionalAttrs (isOuranosNode || isPrometheusNode) {
+      // (optionalAttrs hasLargeAI {
         ".pi/agent/models.json".text = piAgentModelsJson;
         ".pi/agent/settings.json".text = piAgentSettingsJson;
         ".pi/settings.json" = {
           text = piAgentSettingsJson;
           force = true;
         };
-      })
-      // (optionalAttrs isPrometheusNode {
-        ".config/litellm-router.yaml".text = litellmRouterYaml;
-        ".config/prometheus-llama/.keep".text = "";
-        ".local/share/prometheus-llama/.keep".text = "";
       });
   };
 
