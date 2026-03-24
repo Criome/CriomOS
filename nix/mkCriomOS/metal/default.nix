@@ -161,6 +161,7 @@ in
 
     ledger.enable = behavesAs.edge;
 
+    graphics.enable = true;
     graphics.extraPackages = optionals treatAsIntel intelGpuDrivers;
   };
 
