@@ -4,7 +4,7 @@
   ...
 }:
 let
-  inherit (constants.fileSystem.complex) dir keyFile sshPubFile;
+  inherit (constants.fileSystem.complex) dir;
 
   clavifaber = pkgs.callPackage ../clavifaber.nix { };
 
@@ -24,17 +24,8 @@ in
       RemainAfterExit = true;
     };
     script = ''
-      if [ -f "${keyFile}" ]; then
-        chmod 600 "${keyFile}"
-        chmod 700 "${dir}"
-        chown -R root:root "${dir}"
-        echo "complex: identity exists at ${dir}"
-        cat "${sshPubFile}"
-        exit 0
-      fi
-
-      echo "complex: generating node identity at ${dir}"
       ${clavifaber}/bin/clavifaber complex-init --dir "${dir}"
+      ${clavifaber}/bin/clavifaber derive-pubkey --dir "${dir}"
     '';
   };
 }

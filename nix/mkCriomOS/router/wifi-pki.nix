@@ -33,7 +33,8 @@ in
             echo "wifi-pki: server key not found at ${serverKeyFile}" >&2
             echo "wifi-pki: generate with: clavifaber server-cert --ca-keygrip <kg> --ca-cert ca.pem --cn <host>.criome --out-cert server.pem --out-key server.key" >&2
             echo "wifi-pki: then scp server.key root@<router>:${serverKeyFile}" >&2
-            chmod 1733 "${serverKeyDir}"
+            chmod 700 "${serverKeyDir}"
+            chown root:root "${serverKeyDir}"
           fi
         '';
       };

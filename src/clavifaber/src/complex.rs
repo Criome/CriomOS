@@ -1,8 +1,10 @@
 use ed25519_dalek::SigningKey;
 use rand::rngs::OsRng;
 use std::fs;
+use std::io::Write;
 use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
+use std::time::SystemTime;
 
 /// The complex: a node's root Ed25519 identity.
 /// Generated once at first install, root-owned.
@@ -38,14 +40,14 @@ impl Complex {
         Ok(Self { signing_key })
     }
 
-    /// Write the complex to a directory. Sets restrictive permissions.
+    /// Write the complex to a directory. Atomic writes with restrictive permissions.
     pub fn write(&self, dir: &Path) -> Result<(), String> {
         fs::create_dir_all(dir)
             .map_err(|e| format!("mkdir {}: {e}", dir.display()))?;
         fs::set_permissions(dir, fs::Permissions::from_mode(0o700))
             .map_err(|e| format!("chmod {}: {e}", dir.display()))?;
 
-        // Write PKCS#8 private key
+        // Write PKCS#8 private key (atomic)
         let pkcs8_der = encode_ed25519_pkcs8(&self.signing_key.to_bytes());
         let key_pem = pem_rfc7468::encode_string(
             "PRIVATE KEY",
@@ -54,25 +56,52 @@ impl Complex {
         ).map_err(|e| format!("PEM encode: {e}"))?;
 
         let key_path = dir.join("key.pem");
-        fs::write(&key_path, &key_pem)
-            .map_err(|e| format!("write {}: {e}", key_path.display()))?;
-        fs::set_permissions(&key_path, fs::Permissions::from_mode(0o600))
-            .map_err(|e| format!("chmod {}: {e}", key_path.display()))?;
+        atomic_write(&key_path, key_pem.as_bytes(), 0o600)?;
 
-        // Write SSH public key
+        // Write SSH public key (atomic)
         let ssh_pub = self.ssh_pubkey_string();
         let ssh_path = dir.join("ssh.pub");
-        fs::write(&ssh_path, &ssh_pub)
-            .map_err(|e| format!("write {}: {e}", ssh_path.display()))?;
-        fs::set_permissions(&ssh_path, fs::Permissions::from_mode(0o644))
-            .map_err(|e| format!("chmod {}: {e}", ssh_path.display()))?;
+        atomic_write(&ssh_path, ssh_pub.as_bytes(), 0o644)?;
 
         Ok(())
     }
 
-    /// Check if a complex already exists in the directory.
-    pub fn exists(dir: &Path) -> bool {
-        dir.join("key.pem").exists()
+    /// Validate an existing complex. Returns:
+    /// - Ok(Some(cx)) if key exists and parses correctly
+    /// - Ok(None) if no key exists or key was corrupt (corrupt key renamed aside)
+    /// - Err only on I/O failure during rename
+    pub fn validate(dir: &Path) -> Result<Option<Self>, String> {
+        let key_path = dir.join("key.pem");
+        if !key_path.exists() {
+            return Ok(None);
+        }
+        match Self::load(dir) {
+            Ok(cx) => Ok(Some(cx)),
+            Err(e) => {
+                let ts = SystemTime::now()
+                    .duration_since(SystemTime::UNIX_EPOCH)
+                    .unwrap_or_default()
+                    .as_secs();
+                let broken = dir.join(format!("key.pem.broken.{ts}"));
+                fs::rename(&key_path, &broken).map_err(|re| {
+                    format!(
+                        "corrupt key at {} (error: {e}), rename to {} failed: {re}",
+                        key_path.display(),
+                        broken.display()
+                    )
+                })?;
+                eprintln!(
+                    "warning: corrupt key renamed to {} (parse error: {e})",
+                    broken.display()
+                );
+                let ssh_path = dir.join("ssh.pub");
+                if ssh_path.exists() {
+                    let ssh_broken = dir.join(format!("ssh.pub.broken.{ts}"));
+                    let _ = fs::rename(&ssh_path, &ssh_broken);
+                }
+                Ok(None)
+            }
+        }
     }
 
     /// Get the Ed25519 public key bytes (32 bytes).
@@ -101,6 +130,23 @@ impl Complex {
 }
 
 use base64ct::Encoding;
+
+/// Write contents to path atomically: write to .tmp, sync, chmod, rename.
+pub fn atomic_write(path: &Path, contents: &[u8], mode: u32) -> Result<(), String> {
+    let tmp = path.with_extension("tmp");
+    let mut f = fs::File::create(&tmp)
+        .map_err(|e| format!("create {}: {e}", tmp.display()))?;
+    f.write_all(contents)
+        .map_err(|e| format!("write {}: {e}", tmp.display()))?;
+    f.sync_all()
+        .map_err(|e| format!("sync {}: {e}", tmp.display()))?;
+    drop(f);
+    fs::set_permissions(&tmp, fs::Permissions::from_mode(mode))
+        .map_err(|e| format!("chmod {}: {e}", tmp.display()))?;
+    fs::rename(&tmp, path)
+        .map_err(|e| format!("rename {} -> {}: {e}", tmp.display(), path.display()))?;
+    Ok(())
+}
 
 fn push_ssh_string(buf: &mut Vec<u8>, data: &[u8]) {
     buf.extend_from_slice(&(data.len() as u32).to_be_bytes());

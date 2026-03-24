@@ -84,6 +84,13 @@ enum Commands {
         dir: PathBuf,
     },
 
+    /// Re-derive ssh.pub from the private key (run on every boot)
+    DerivePubkey {
+        /// Directory containing the complex
+        #[arg(long)]
+        dir: PathBuf,
+    },
+
     /// Verify a certificate chains to the CA
     Verify {
         /// Path to the CA certificate PEM
@@ -116,6 +123,7 @@ fn main() {
             out,
         } => cmd_node_cert(&ca_keygrip, &ca_cert, &ssh_pubkey, &cn, &out),
         Commands::ComplexInit { dir } => cmd_complex_init(&dir),
+        Commands::DerivePubkey { dir } => cmd_derive_pubkey(&dir),
         Commands::Verify { ca_cert, cert } => cmd_verify(&ca_cert, &cert),
     };
 
@@ -198,20 +206,29 @@ fn cmd_node_cert(
 }
 
 fn cmd_complex_init(dir: &PathBuf) -> Result<(), String> {
-    if complex::Complex::exists(dir) {
-        let existing = complex::Complex::load(dir)?;
-        let ssh_pub = existing.ssh_pubkey_string();
-        eprintln!("complex already exists at {}", dir.display());
-        println!("{ssh_pub}");
-        return Ok(());
+    match complex::Complex::validate(dir)? {
+        Some(existing) => {
+            let ssh_pub = existing.ssh_pubkey_string();
+            eprintln!("complex already exists at {}", dir.display());
+            println!("{ssh_pub}");
+        }
+        None => {
+            eprintln!("Generating node identity complex at {}", dir.display());
+            let cx = complex::Complex::generate();
+            cx.write(dir)?;
+            let ssh_pub = cx.ssh_pubkey_string();
+            eprintln!("Complex generated. SSH public key:");
+            println!("{ssh_pub}");
+        }
     }
+    Ok(())
+}
 
-    eprintln!("Generating node identity complex at {}", dir.display());
-    let cx = complex::Complex::generate();
-    cx.write(dir)?;
-
+fn cmd_derive_pubkey(dir: &PathBuf) -> Result<(), String> {
+    let cx = complex::Complex::load(dir)?;
     let ssh_pub = cx.ssh_pubkey_string();
-    eprintln!("Complex generated. SSH public key:");
+    let ssh_path = dir.join("ssh.pub");
+    complex::atomic_write(&ssh_path, ssh_pub.as_bytes(), 0o644)?;
     println!("{ssh_pub}");
     Ok(())
 }

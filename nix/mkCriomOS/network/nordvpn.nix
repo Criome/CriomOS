@@ -174,7 +174,10 @@ in
             chmod 700 "${privateKeyDir}"
             chown -R root:root "${privateKeyDir}"
           else
-            chmod 1733 "${privateKeyDir}"
+            chmod 700 "${privateKeyDir}"
+            chown root:root "${privateKeyDir}"
+            echo "nordvpn: private key not found at ${privateKeyFile}" >&2
+            echo "nordvpn: seed as root: echo '<key>' > ${privateKeyFile}" >&2
           fi
         '';
       };

@@ -48,7 +48,8 @@ let
   seedYggdrasilScript = pkgs.writeScript "createYggdrasilKeys.sh" ''
     if [[ ! -e ${preCriadJson} ]]; then
       ${yggExec} -genconf -json | \
-        ${pkgs.jq}/bin/jq '{ PublicKey, PrivateKey }' > ${preCriadJson}
+        ${pkgs.jq}/bin/jq '{ PublicKey, PrivateKey }' > ${preCriadJson}.tmp
+      mv ${preCriadJson}.tmp ${preCriadJson}
     fi
   '';
 
