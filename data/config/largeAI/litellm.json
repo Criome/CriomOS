@@ -50,7 +50,7 @@
       "reasoning": true,
       "contextWindow": 131072,
       "maxTokens": 4096,
-      "ctxSize": 65536,
+      "ctxSize": 131072,
       "port": 11437
     }
   ],
