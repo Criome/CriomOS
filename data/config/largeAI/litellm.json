@@ -147,7 +147,7 @@
       "source": {
         "kind": "fetchurl",
         "url": "https://huggingface.co/unsloth/Qwen3.5-27B-GGUF/resolve/main/Qwen3.5-27B-Q4_K_M.gguf",
-        "sha256": "sha256-awoQGwqGaX/hHqvMGn23Jpmp89Sxi2oax16j+ywmxFA=",
+        "sha256": "sha256-hLX38RIVbWODagGmncPxGmumOxCiO4ynp++vUtWi2AY=",
         "filename": "Qwen3.5-27B-Q4_K_M.gguf"
       },
       "reasoning": true,
