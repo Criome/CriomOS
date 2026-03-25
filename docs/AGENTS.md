@@ -126,6 +126,8 @@ Without `nix-env --set`, the bootloader may boot an old generation.
 - **Never** reboot a machine with a live USB still inserted unless you intend to boot from it.
 - **Never** deploy a model that exceeds the GPU memory budget without testing interactively first (see LLM section).
 - **Never** edit config files in a panic to "fix" a deployment — verify what's actually deployed first, then make one deliberate change.
+- **Never** use hashes from web searches or model cards for `fetchurl` — always `nix-prefetch-url` on the target node and pin HuggingFace URLs to specific repo commits (`resolve/<commit>/` not `resolve/main/`).
+- **Never** build on a remote node with `github:.../main` after pushing a fix — nix caches the old ref. Use the explicit commit hash or `--refresh`.
 
 ### Known node addresses (Yggdrasil)
 - ouranos: `201:6de1:5500:7cac:2db9:759e:42d2:fb1d`
@@ -234,12 +236,24 @@ Split tunnel: IPv4 user traffic goes through the VPN. Yggdrasil (IPv6) and Tails
 ## LLM Runtime (largeAI nodes)
 
 ### Architecture
-- Single config file: `data/config/largeAI/litellm.json` — defines models, ports, pi agent settings, litellm router config.
-- `nix/mkCriomOS/llm.nix` reads the config and generates systemd services + `/etc/litellm-router.yaml`.
+- Single config file: `data/config/largeAI/litellm.json` — defines models, presets, pi agent settings.
+- `nix/mkCriomOS/llm.nix` reads the config and generates one router service + `models-dir` + `presets.ini`.
 - `nix/homeModule/min/default.nix` reads the same config and generates `.pi/agent/models.json` + settings for the pi coding agent.
 - The LLM module loads on any node with `typeIs.largeAI` or `typeIs."largeAI-router"`.
 - Client nodes discover the largeAI node via `horizon.exNodes` — no hardcoded addresses.
 - Provider name, gateway URL, and enabled models are all derived at eval time from the config + horizon topology.
+
+### Router mode (llama.cpp native)
+A single `llama-server` process manages all models via `--models-dir` and `--models-preset`:
+- `--models-max 1` — only one model loaded at a time; LRU-evicts on swap
+- Each model runs as a child process — killed on swap, memory fully freed
+- `POST /models/load {"model":"<id>"}` — explicit load
+- `POST /models/unload {"model":"<id>"}` — explicit unload
+- `GET /v1/models` — list all models and their load status
+- Requesting an unloaded model auto-loads it (evicts current model)
+- Per-model config (ctx-size, flags) via INI presets generated from `litellm.json`
+- Service name: `${nodeName}-llama-router` (e.g. `prometheus-llama-router`)
+- Single port: 11434 for all models
 
 ### Strix Halo GPU memory
 - Vulkan on Strix Halo defaults to ~64GB visible device memory despite 128GB unified RAM.
@@ -250,20 +264,26 @@ Split tunnel: IPv4 user traffic goes through the VPN. Yggdrasil (IPv6) and Tails
   ```
   These are set in `nix/mkCriomOS/metal/default.nix` for `centerIgnoresSuspend` nodes.
 - `hardware.graphics.enable = true` is required for Vulkan ICD — without it, llama-server falls back to CPU.
-- `-fit off` flag bypasses llama.cpp's conservative memory check that rejects models on unified memory APUs.
+- `fit = off` in presets.ini bypasses llama.cpp's conservative memory check that rejects models on unified memory APUs.
 - **GPU memory budget with TTM**: ~106GB usable. Without TTM: ~64GB. Calculate model weights + KV cache before deploying.
+- `MemoryMax=110G` and `MemoryHigh=100G` on the router service protect system services (hostapd, SSH) from model OOM.
 
 ### Model prefetch workflow (FOD pattern)
-Large GGUF models must be prefetched directly on the target node to avoid transferring over the network:
+Large GGUF models must be prefetched directly on the target node. **Never use hashes from web searches or model cards** — HuggingFace re-uploads files under the same URL without versioning.
+
 ```
-# On prometheus:
+# On prometheus — prefetch and get real hash:
 ssh root@prometheus.maisiliym.criome \
   'nix-prefetch-url <huggingface-url> --type sha256'
 
 # Convert to SRI:
 nix hash to-sri --type sha256 <hash>
 
-# Add to litellm.json with the SRI hash
+# Pin the HF URL to a specific repo commit:
+# resolve/main/file.gguf → resolve/<commit>/file.gguf
+# Get the commit: curl -s https://huggingface.co/api/models/<org>/<repo> | jq .sha
+
+# Add to litellm.json with the SRI hash and pinned URL
 # Create GC root to prevent garbage collection:
 ssh root@prometheus.maisiliym.criome \
   'nix-store --add-root /nix/var/nix/gcroots/llm-<name> -r /nix/store/<path>'
@@ -273,44 +293,33 @@ When `nix build` evaluates `pkgs.fetchurl` with the same hash, it finds the stor
 ### Testing a model interactively (BEFORE committing to config)
 ```
 ssh root@prometheus.maisiliym.criome
-systemctl stop prometheus-llama-<old-model>
 
-# Test manually with desired context size:
-/nix/store/<llama-cpp>/bin/llama-server \
-  --host :: --port 11437 \
-  --model /nix/store/<model-path> \
-  --n-gpu-layers 99 --ctx-size 65536 \
-  --no-warmup --no-mmap --no-webui \
-  --parallel 1 --api-key sk-no-key-required \
-  -fit off
-
-# In another terminal, test:
-curl http://localhost:11437/v1/chat/completions \
+# Use the router's load/unload API:
+curl -s http://127.0.0.1:11434/models/load \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer sk-no-key-required" \
-  -d '{"model":"x","messages":[{"role":"user","content":"hi"}],"max_tokens":8}'
+  -d '{"model":"qwen3-8b"}'
+
+# Test inference:
+curl http://127.0.0.1:11434/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-no-key-required" \
+  -d '{"model":"qwen3-8b","messages":[{"role":"user","content":"hi"}],"max_tokens":8}'
 
 # Check memory:
 free -h
 
-# If it works, THEN update litellm.json and deploy.
+# List all models and their status:
+curl -s http://127.0.0.1:11434/v1/models \
+  -H "Authorization: Bearer sk-no-key-required" | jq '.data[] | {id, status: .status.value}'
 ```
 
-### Sequential model loading
-Multiple models on one GPU must load sequentially — simultaneous Vulkan allocations cause OOM crashes. The llama services use `After=` dependencies so each waits for the previous. But `After=` means "start after unit starts", not "start after model is loaded". For reliable multi-model setups, verify the first model is serving before starting the second.
-
-### Protecting headless access from model OOM
-A crash-looping model service can consume all memory and kill hostapd/SSH. Mitigations:
-- Add `MemoryMax=` to llama service systemd config
-- Add `StartLimitBurst=3` and `StartLimitIntervalSec=60` to limit restart frequency
-- Always test model loading interactively before committing to config
-
 ### Current deployment (March 2026)
-- **Model**: Qwen3.5-122B-A10B Q4_K_M — 76.5GB, 10B active MoE, Feb 2026
-- **Context**: 128K tokens
-- **Speed**: ~26 tok/s on Vulkan GPU
-- **Port**: 11437 (direct), 11434 (litellm proxy)
-- **Benchmarks**: GPQA 86.6, SWE-bench 72%, LiveCodeBench 78.9, HMLT 91.4
+- **Default model**: Qwen3.5-122B-A10B Q4_K_M — 76.5GB, 10B active MoE, 128K context
+- **Available**: 7 models (5GB–76.5GB), hot-swappable on demand
+- **Speed**: ~26 tok/s on Vulkan GPU (Qwen3.5-122B)
+- **Port**: 11434 (single router port for all models)
+- **Service**: `prometheus-llama-router`
 
 ## Debugging Commands
 
@@ -338,14 +347,14 @@ ssh root@<host> 'ls /etc/systemd/network/'
 
 ### LLM services
 ```
-# Check model loading
-ssh root@prometheus.maisiliym.criome 'journalctl -u prometheus-llama-<model> --no-pager -n 10'
+# Check router service
+ssh root@prometheus.maisiliym.criome 'systemctl status prometheus-llama-router --no-pager -l | head -20'
+
+# Check model loading logs
+ssh root@prometheus.maisiliym.criome 'journalctl -u prometheus-llama-router --no-pager -n 20'
 
 # Check Vulkan GPU detection
-ssh root@prometheus.maisiliym.criome 'journalctl -u prometheus-llama-<model> --no-pager | grep -iE "vulkan|gpu|device|offload|layers"'
-
-# Check memory fit errors
-ssh root@prometheus.maisiliym.criome 'journalctl -u prometheus-llama-<model> --no-pager | grep -iE "fit|memory|free device"'
+ssh root@prometheus.maisiliym.criome 'journalctl -u prometheus-llama-router --no-pager | grep -iE "vulkan|gpu|device|offload|layers"'
 
 # Check OOM kills
 ssh root@prometheus.maisiliym.criome 'dmesg | grep -i oom | tail -5'
@@ -353,14 +362,21 @@ ssh root@prometheus.maisiliym.criome 'dmesg | grep -i oom | tail -5'
 # Check TTM params active
 ssh root@prometheus.maisiliym.criome 'cat /proc/cmdline | tr " " "\n" | grep ttm'
 
-# Quick model test
-curl -s --max-time 30 http://prometheus.maisiliym.criome:11437/v1/chat/completions \
+# List models and load status
+curl -s http://prometheus.maisiliym.criome:11434/v1/models \
+  -H "Authorization: Bearer sk-no-key-required" | jq '.data[] | {id, status: .status.value}'
+
+# Quick inference test
+curl -s --max-time 30 http://prometheus.maisiliym.criome:11434/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer sk-no-key-required" \
-  -d '{"model":"x","messages":[{"role":"user","content":"hi"}],"max_tokens":8}' | jq '.timings.predicted_per_second'
+  -d '{"model":"qwen3.5-122b-a10b","messages":[{"role":"user","content":"hi"}],"max_tokens":8}' | jq '.timings.predicted_per_second'
 
-# Check litellm proxy
-ssh root@prometheus.maisiliym.criome 'journalctl -u prometheus-litellm --no-pager -n 10'
+# Swap to a different model
+curl -s http://prometheus.maisiliym.criome:11434/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-no-key-required" \
+  -d '{"model":"qwen3-8b","messages":[{"role":"user","content":"hi"}],"max_tokens":8}'
 ```
 
 ### Nix store

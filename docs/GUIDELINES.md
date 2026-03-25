@@ -264,7 +264,7 @@ directly instead of hardcoding the behavior inside a module.
     cd Components/CriomOS && cargo run --quiet --manifest-path ../mentci-execute/Cargo.toml --bin execute -- deploy-manifest --manifest $(nix build .#crioZones.maisiliym.<node>.deployManifest --no-link --print-out-paths --refresh) --node <node>
 
   - Replace `<node>` with the Maisiliym node name (for Prometheus lane builds use `prometheus` as the node/hostname value). The command must be invoked from Components/CriomOS for relative manifest paths to resolve correctly.
-  - The generated manifest prefers Yggdrasil transport first. Current Ygg transport target remains `202:68bc:1221:1b13:5397:2a56:4aea:d4a9` while the Maisiliym node truth stays unchanged.
+  - The generated manifest prefers Yggdrasil transport first. Current Ygg transport target remains `200:ca41:6b12:fba:d7bc:cfc6:4aaa:165f` while the Maisiliym node truth stays unchanged.
   - `ouranos`: use `--allow-localhost` only when remote transport fails. Localhost activation is guarded by a mandatory `hostname` check and must abort when `hostname != nodeName`.
   - Temporary fallback: use the current LAN IP for `prometheus` only when the generated manifest is extended with that transport or when the operator performs a separate explicitly documented override.
   - Prefer the project-local `criomos-deployer` agent when exact attr build + manifest deploy + cross-node verification must happen in one bounded lane.

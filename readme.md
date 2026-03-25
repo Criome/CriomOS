@@ -15,7 +15,7 @@ an evolved version of NixOS, which is used for the bootstrap version.
   attribute; agents should run `nix build .#crioZones.maisiliym.prometheus.os
   --no-link --print-out-paths --refresh` from the nested repo to reproduce the artifact.
 - Nix usage rule: do not use `<nixpkgs>` / `NIX_PATH` style commands here. Use flake attrs in this repo and registry references such as `nix shell nixpkgs#jq` for ad-hoc environment tools.
-- Temporary deployment transport: test the Prometheus Yggdrasil address first and use it when it responds (`202:68bc:1221:1b13:5397:2a56:4aea:d4a9` at the time of writing). Localhost is override-only and must pass a `hostname == nodeName` guard before any activation proceeds.
+- Temporary deployment transport: test the Prometheus Yggdrasil address first and use it when it responds (`200:ca41:6b12:fba:d7bc:cfc6:4aaa:165f` at the time of writing). Localhost is override-only and must pass a `hostname == nodeName` guard before any activation proceeds.
 - Deployment command: `execute deploy-manifest --manifest $(nix build .#crioZones.maisiliym.prometheus.deployManifest --no-link --print-out-paths --refresh) --node prometheus`.
 - GitHub-only override form when needed: `--override-input maisiliym github:LiGoldragon/maisiliym`.
 - Deployment agent note: prefer the project-local `criomos-deployer` agent for exact-attr build + manifest deploy work so the right build is activated on the right node.
@@ -25,11 +25,9 @@ an evolved version of NixOS, which is used for the bootstrap version.
   `hardware.amdgpu` only when `model == "GMKtec EVO-X2"` to keep the driver
   stack neutral yet correct.
 
-  - Stability experiment: this repo applies a targeted kernel-parameter tweak
-    for GMKtec EVO-X2 (Strix Halo ROCm/KFD) test images only — `amdgpu.cwsr_enable=0`.
-    This is a local experiment to improve ROCm/KFD stability on the Strix Halo
-    and is intentionally gated on `model == "GMKtec EVO-X2"` so it is NOT a
-    global default.
+  - GPU memory: Vulkan on Strix Halo only sees ~64GB of 128GB unified RAM by default.
+    TTM kernel params (`ttm.page_pool_size=27787264 ttm.pages_limit=27787264`) expand
+    this to ~106GB. Set in `nix/mkCriomOS/metal/default.nix` for `centerIgnoresSuspend` nodes.
 - Networking: the live image is Ethernet-first; `nix/mkCriomOS/normalize.nix`
   enables NetworkManager for sized nodes so a plugged-in cable is detected
   during the initial boot before other transports are considered.
