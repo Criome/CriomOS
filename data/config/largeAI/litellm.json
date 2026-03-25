@@ -3,7 +3,7 @@
   "apiKey": "sk-no-key-required",
 
   "piAgent": {
-    "defaultModel": "glm-4.7-flash",
+    "defaultModel": "qwen3.5-122b-a10b",
     "hideThinkingBlock": false,
     "defaultThinkingLevel": "medium",
     "compaction": { "enabled": false }
@@ -25,18 +25,32 @@
 
   "models": [
     {
-      "modelId": "glm-4.7-flash",
-      "descriptor": "GLM-4.7-Flash Q8_0 (32GB — fits in 64GB Vulkan limit with room for 32K KV)",
+      "modelId": "qwen3.5-122b-a10b",
+      "descriptor": "Qwen3.5 122B-A10B Q4_K_M (Feb 2026 — reasoning + coding)",
       "source": {
-        "kind": "fetchurl",
-        "url": "https://huggingface.co/unsloth/GLM-4.7-Flash-GGUF/resolve/main/GLM-4.7-Flash-Q8_0.gguf",
-        "sha256": "sha256-jAkisDMmkypAMVzpK77gHMg2rRhmQmgBkUPImL3X3Qs=",
-        "filename": "GLM-4.7-Flash-Q8_0.gguf"
+        "kind": "multi-shard",
+        "shards": [
+          {
+            "url": "https://huggingface.co/unsloth/Qwen3.5-122B-A10B-GGUF/resolve/main/Q4_K_M/Qwen3.5-122B-A10B-Q4_K_M-00001-of-00003.gguf",
+            "sha256": "sha256-Rnyb2S6lGFOc91v1pfv7016aC0DXZsyqZ78SDhIEHfM=",
+            "filename": "Qwen3.5-122B-A10B-Q4_K_M-00001-of-00003.gguf"
+          },
+          {
+            "url": "https://huggingface.co/unsloth/Qwen3.5-122B-A10B-GGUF/resolve/main/Q4_K_M/Qwen3.5-122B-A10B-Q4_K_M-00002-of-00003.gguf",
+            "sha256": "sha256-kNsUhGQTrr2sNltXIGRBQ3ysX35QN9lLMl8BZ/kC5uc=",
+            "filename": "Qwen3.5-122B-A10B-Q4_K_M-00002-of-00003.gguf"
+          },
+          {
+            "url": "https://huggingface.co/unsloth/Qwen3.5-122B-A10B-GGUF/resolve/main/Q4_K_M/Qwen3.5-122B-A10B-Q4_K_M-00003-of-00003.gguf",
+            "sha256": "sha256-48JLjr7AcLtPaeoKyiWhZTHadEDNUVUplT4EaIKQH5c=",
+            "filename": "Qwen3.5-122B-A10B-Q4_K_M-00003-of-00003.gguf"
+          }
+        ]
       },
       "reasoning": true,
       "contextWindow": 131072,
       "maxTokens": 4096,
-      "ctxSize": 32768,
+      "ctxSize": 65536,
       "port": 11437
     }
   ],
