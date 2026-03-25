@@ -131,7 +131,7 @@
       "source": {
         "kind": "fetchurl",
         "url": "https://huggingface.co/unsloth/Nemotron-3-Nano-30B-A3B-GGUF/resolve/main/Nemotron-3-Nano-30B-A3B-Q4_K_M.gguf",
-        "sha256": "sha256-QzqcDTnGw0NCBHl7MJkcTRR8DyUyhpDWCGLsOeKpIYg=",
+        "sha256": "sha256-Dn9uUf3ZA5kodJ0H7tnoRtv9l2gWRlRMVAa83XiOWUA=",
         "filename": "Nemotron-3-Nano-30B-A3B-Q4_K_M.gguf"
       },
       "reasoning": true,
