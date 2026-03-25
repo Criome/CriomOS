@@ -115,7 +115,7 @@
       "source": {
         "kind": "fetchurl",
         "url": "https://huggingface.co/unsloth/GLM-4.7-Flash-GGUF/resolve/main/GLM-4.7-Flash-Q4_K_M.gguf",
-        "sha256": "sha256-jAkisDMmkypAMVzpK77gHMg2rRhmQmgBkUPImL3X3Qs=",
+        "sha256": "sha256-KYN+0sD8X1GYGt+KyAg/z4B0PFmDgfE+nwbLrQSYsXQ=",
         "filename": "GLM-4.7-Flash-Q4_K_M.gguf"
       },
       "reasoning": false,
