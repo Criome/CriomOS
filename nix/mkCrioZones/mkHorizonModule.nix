@@ -207,7 +207,8 @@ let
           nixUrl = if isNixCache then ("http://" + nixCacheDomain) else null;
 
           behavesAs = rec {
-            center = typeIs.center || typeIs.largeAI || typeIs."largeAI-router";
+            largeAI = (typeIs.largeAI or false) || (typeIs."largeAI-router" or false);
+            center = typeIs.center || largeAI;
             router = typeIs.hybrid || typeIs.router || typeIs."largeAI-router";
             edge = typeIs.edge || typeIs.hybrid || typeIs.edgeTesting;
             nextGen = typeIs.edgeTesting || typeIs.hybrid;

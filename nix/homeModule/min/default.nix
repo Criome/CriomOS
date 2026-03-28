@@ -42,7 +42,6 @@ let
   largeAIModels = largeAIConfig.models;
 
   # Discover the largeAI node from the cluster topology
-  isLargeAINode = (node.typeIs.largeAI or false) || (node.typeIs."largeAI-router" or false);
   largeAINodeEntry =
     let
       matches = lib.filterAttrs
@@ -52,12 +51,12 @@ let
     if matches != {} then builtins.head (builtins.attrValues matches) else null;
 
   largeAINodeName =
-    if isLargeAINode then node.name
+    if node.methods.behavesAs.largeAI then node.name
     else if largeAINodeEntry != null then largeAINodeEntry.name
     else null;
 
   largeAIHost =
-    if isLargeAINode then "127.0.0.1"
+    if node.methods.behavesAs.largeAI then "127.0.0.1"
     else if largeAINodeEntry != null then largeAINodeEntry.criomeDomainName
     else null;
 

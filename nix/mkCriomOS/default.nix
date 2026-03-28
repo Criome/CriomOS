@@ -16,7 +16,6 @@ let
   inherit (horizon.node) typeIs;
   inherit (horizon.node.methods) behavesAs sizedAtLeast;
 
-  isLargeAINode = (typeIs.largeAI or false) || (typeIs."largeAI-router" or false);
 
   constants = import ./constants.nix;
   usersModule = import ./users.nix;
@@ -61,7 +60,7 @@ let
     ++ (optional (behavesAs.edge && !behavesAs.iso) edgeModule)
     ++ (optional (behavesAs.router && !behavesAs.iso) ./router)
     ++ (optional (behavesAs.bareMetal && !behavesAs.iso) metalModule)
-    ++ (optional isLargeAINode llmModule)
+    ++ (optional behavesAs.largeAI llmModule)
     ++ (optional (sizedAtLeast.min && !behavesAs.iso) claudeDesktopModule)
     ++ (optionals _withUsers usersModules);
 
@@ -85,7 +84,7 @@ let
     ++ (optional (behavesAs.edge && !behavesAs.iso) edgeModule)
     ++ (optional (behavesAs.router && !behavesAs.iso) ./router)
     ++ (optional (behavesAs.bareMetal && !behavesAs.iso) metalModule)
-    ++ (optional isLargeAINode llmModule)
+    ++ (optional behavesAs.largeAI llmModule)
     ++ (optional (sizedAtLeast.min && !behavesAs.iso) claudeDesktopModule)
     ++ (optionals _withUsers usersModules);
 
