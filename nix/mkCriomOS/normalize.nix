@@ -26,11 +26,10 @@ let
     sizedAtLeast
     useColemak
     behavesAs
+    hasVideoOutput
     ;
 
-  # TODO
-  hasAudioOutput = !behavesAs.iso;
-  hasVideoOutput = !behavesAs.iso;
+  hasAudioOutput = hasVideoOutput;
 
   jsonHorizonFail = exportJSON "horizon.json" horizon;
 

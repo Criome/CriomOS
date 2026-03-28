@@ -34,18 +34,9 @@ let
   nodeNames = attrNames inputCluster.nodes;
   userNames = attrNames inputCluster.users;
 
-  # TODO - redesign
   archToSystemMap = {
     x86-64 = "x86_64-linux";
-    amd64 = "x86_64-linux";
-    i686 = "i686-linux";
-    x86 = "i686-linux";
-    aarch64 = "aarch64-linux";
     arm64 = "aarch64-linux";
-    armv8 = "aarch64-linux";
-    armv7l = "armv7l-linux";
-    armv = "armv7l-linux";
-    avr = "avr-none";
   };
 
   mkTrust = list: lowestOf (list ++ [ metaTrust ]);
