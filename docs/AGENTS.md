@@ -472,7 +472,6 @@ System-wide paths and network constants live in `nix/mkCriomOS/constants.nix`:
 - `network.yggdrasil.*` — Yggdrasil subnet and ports
 
 ## Agent-Specific Instructions
-- Follow `AGENT_RULES.md`: ALL CAPS paths are immutable; PascalCase paths are stable contracts; lowercase paths are mutable.
 - **Never use git CLI** — jj only. This is a hard rule.
 - **Push before building** — always build from `github:Criome/CriomOS/dev#...`, never from `.#...` for deployment.
 - **SSH uses keys only** — never enable password authentication on SSH.
