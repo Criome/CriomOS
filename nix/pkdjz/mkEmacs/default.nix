@@ -5,6 +5,9 @@
   hob,
   tree-sitter-capnp,
   tree-sitter-cozo,
+  tree-sitter-aski,
+  aski-mode,
+  aski-ts-mode,
 }:
 with builtins;
 let
@@ -167,6 +170,9 @@ let
         version = src.shortRev;
         commit = src.rev;
       };
+
+    inherit aski-mode;
+    inherit aski-ts-mode;
   };
 
   overiddenEmacsPackages = emacsPackages // customPackages;
@@ -229,6 +235,7 @@ let
     (emacsPackages.treesit-grammars.with-all-grammars)
     tree-sitter-capnp
     tree-sitter-cozo
+    tree-sitter-aski
   ];
 
   autoformatPackages = with pkgs.python3Packages; [

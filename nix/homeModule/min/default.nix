@@ -734,6 +734,16 @@ mkIf sizedAtLeast.min {
       "fontconfig/conf.d/10-CriomOS-fonts-paths.conf".text = mkFontConf;
     };
 
+    dataFile."mime/packages/aski.xml".text = ''
+      <?xml version="1.0" encoding="UTF-8"?>
+      <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+        <mime-type type="text/x-aski">
+          <comment>Aski source</comment>
+          <glob pattern="*.aski"/>
+        </mime-type>
+      </mime-info>
+    '';
+
     mimeApps = {
       enable = true;
       defaultApplications =
@@ -743,6 +753,7 @@ mkIf sizedAtLeast.min {
           defaultAudioPlayer = "mpv.desktop";
         in
         {
+          "text/x-aski" = "emacs.desktop";
           "audio/x-m4b" = defaultAudioPlayer;
           "application/zip" = "org.gnome.FileRoller.desktop";
 

@@ -6,7 +6,10 @@
 (use-package eat :ensure t :defer t)
 
 ;; Cap’n Proto (regex-based, non–Tree-Sitter)
-(use-package capnp-mode :mode ("\\.capnp\\'" . capnp-mode))
+(use-package capnp-mode :mode ("\\.capnp\\’" . capnp-mode))
+
+;; Aski (tree-sitter major mode from aski flake)
+(use-package aski-ts-mode :mode ("\\.aski\\’" . aski-ts-mode))
 
 (use-package chatgpt-shell)
 

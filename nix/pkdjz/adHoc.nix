@@ -358,6 +358,45 @@ in
       src.packages.${pkgs.stdenv.hostPlatform.system}.default;
   };
 
+  tree-sitter-aski = {
+    mods = [ "pkgs" ];
+    src = hob.aski;
+
+    lambda =
+      {
+        src,
+        pkgs,
+      }:
+
+      src.packages.${pkgs.stdenv.hostPlatform.system}.tree-sitter-aski;
+  };
+
+  aski-mode = {
+    mods = [ "pkgs" ];
+    src = hob.aski;
+
+    lambda =
+      {
+        src,
+        pkgs,
+      }:
+
+      src.packages.${pkgs.stdenv.hostPlatform.system}.aski-mode;
+  };
+
+  aski-ts-mode = {
+    mods = [ "pkgs" ];
+    src = hob.aski;
+
+    lambda =
+      {
+        src,
+        pkgs,
+      }:
+
+      src.packages.${pkgs.stdenv.hostPlatform.system}.aski-ts-mode;
+  };
+
   videomass.lambda =
     {
       python3,

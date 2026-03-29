@@ -113,6 +113,10 @@
       url = "github:Criome/tree-sitter-cozo";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    aski = {
+      url = "github:Criome/aski";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     superchat = {
       url = "github:yibie/superchat";
       flake = false;
