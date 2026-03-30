@@ -57,11 +57,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1774864780,
-        "narHash": "sha256-DtgkDJfx5Aozogv1UVYd5fi3LLC8LbhJVP224rRctWg=",
+        "lastModified": 1774865565,
+        "narHash": "sha256-pTt8F+2KMUrut9swFUwsE7+xt3+oGdGt3PHD0pabM2U=",
         "owner": "Criome",
         "repo": "aski",
-        "rev": "87416690f31c15e2179aac944fbb6538d3aa6e1a",
+        "rev": "3c54ba829b98532a0e7ac8c556f1837187d24484",
         "type": "github"
       },
       "original": {
