@@ -44,7 +44,7 @@ let
   mkPkgsAndWorldFromSystem =
     system:
     let
-      pkgs = local.mkPkgs { inherit nixpkgs lib system; };
+      pkgs = local.mkPkgs { inherit nixpkgs lib; localSystem = { inherit system; }; };
     in
     {
       inherit pkgs;

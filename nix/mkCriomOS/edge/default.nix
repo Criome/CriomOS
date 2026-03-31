@@ -98,7 +98,7 @@ in
 
     xserver = {
       enable = sizedAtLeast.min;
-      excludePackages = with pkgs; [ xorg.xorgserver.out ];
+      excludePackages = [ pkgs.xorg-server.out ];
 
       # TODO - investigate difference between this and `programs.hyprland`
       windowManager.hypr.enable = behavesAs.nextGen;

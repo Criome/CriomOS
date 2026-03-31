@@ -179,7 +179,7 @@ let
     # pkdjz.nightlyRustDevEnv # TODO: debug - breaks zsh completions
     # Nix
     nil
-    nixfmt-rfc-style
+    nixfmt
     npins
     # Clojure
     clojure
@@ -245,9 +245,9 @@ let
   piAgentModelsJson = toJSON piAgentModels;
   piAgentSettingsJson = toJSON piAgentSettings;
 
-  piAgent = inputs.llm-agents.packages.${pkgs.system}.pi or null;
+  piAgent = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.pi or null;
 
-  codex = inputs.codex-cli.packages.${pkgs.system}.default;
+  codex = inputs.codex-cli.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
   AIPackages = [
     pkgs.gemini-cli
@@ -512,13 +512,13 @@ mkIf sizedAtLeast.min {
 
     git = {
       enable = true;
-      userEmail = methods.emailAddress;
-      userName = name;
       signing = mkIf hasPreCriome {
         key = gitSigningKey;
         signByDefault = true;
       };
-      extraConfig = {
+      settings = {
+        user.email = methods.emailAddress;
+        user.name = name;
         pull.rebase = true;
         init.defaultBranch = "main";
         github.user = githubId;
@@ -604,7 +604,7 @@ mkIf sizedAtLeast.min {
 
     zsh = {
       enable = true;
-      dotDir = ".config/zsh";
+      dotDir = "${config.xdg.configHome}/zsh";
       history = {
         ignoreDups = true;
         expireDuplicatesFirst = true;

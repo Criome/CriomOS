@@ -125,7 +125,7 @@ lib.mkIf sizedAtLeast.med {
         # ocrmypdf
         # C/C++
         imagemagick
-        opusTools
+        opus-tools
         mediainfo
         #== go
         gopass

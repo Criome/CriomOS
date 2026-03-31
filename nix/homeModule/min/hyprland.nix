@@ -197,8 +197,7 @@ in
           command = lockScreen;
         }
       ];
-      events = [
-      ];
+      events = { };
     };
   };
 }
