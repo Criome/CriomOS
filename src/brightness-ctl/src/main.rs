@@ -71,9 +71,9 @@ const DBUS_IFACE: &str = "rs.wl.gammarelay";
 const STEP_NUM: u64 = 15;
 const STEP_DEN: u64 = 100;
 
-/// Software gamma tiers below hardware minimum. Geometrically spaced so each
-/// step roughly halves perceived brightness. The last tier is effectively off.
-const GAMMA_LEVELS: [f64; 6] = [1.0, 0.6, 0.35, 0.15, 0.05, 0.01];
+/// Software gamma tiers below hardware minimum. Linearly spaced with 7 steps
+/// from full gamma down to effectively off.
+const GAMMA_LEVELS: [f64; 8] = [1.0, 0.875, 0.75, 0.625, 0.5, 0.375, 0.25, 0.125];
 
 // --- Backlight ---
 
