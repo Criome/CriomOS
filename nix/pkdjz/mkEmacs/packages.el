@@ -549,6 +549,11 @@
   adaptive-wrap-prefix-mode))
 
 (use-package
+ visual-fill-column
+ :hook (markdown-mode . visual-fill-column-mode)
+ :custom (visual-fill-column-width 80))
+
+(use-package
  transmission
  :custom
  (transmission-refresh-modes
