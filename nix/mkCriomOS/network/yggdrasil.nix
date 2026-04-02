@@ -53,10 +53,6 @@ let
     fi
   '';
 
-  extractPreCriomeJson = ''
-    ${yggCtlExec} -json -v getself > ${preCriomeJson}
-  '';
-
 in
 {
   environment.systemPackages = [ package ];

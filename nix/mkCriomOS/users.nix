@@ -15,7 +15,7 @@ let
     ;
 
   inherit (horizon) node users;
-  inherit (node.methods) adminSshPreCriomes;
+  inherit (node.methods) adminSshPreCriomes behavesAs;
 
   mkUser =
     attrName: user:
@@ -47,6 +47,8 @@ let
           "storage"
           "libvirtd"
         ]);
+
+      linger = trust >= 3 && behavesAs.center;
     };
 
   mkUserUsers = mapAttrs mkUser users;
