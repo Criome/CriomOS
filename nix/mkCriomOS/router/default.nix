@@ -151,7 +151,7 @@ in
                 }
                 {
                   name = "domain-name-servers";
-                  data = "1.1.1.1, 9.9.9.9";
+                  data = lanAddress;
                 }
               ];
             }
