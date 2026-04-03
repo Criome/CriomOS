@@ -5,6 +5,7 @@
   ...
 }:
 let
+  inherit (builtins) toJSON;
   inherit (user.methods) isCodeDev sizedAtLeast;
 
   visualjj = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
@@ -29,6 +30,45 @@ let
     '';
   };
 
+  settingsJson = toJSON {
+    # Darkman portal — auto dark/light via dconf color-scheme
+    "window.autoDetectColorScheme" = true;
+    "workbench.preferredDarkColorTheme" = "Default Dark Modern";
+    "workbench.preferredLightColorTheme" = "Default Light Modern";
+
+    # jj as primary SCM — hide git, show VisualJJ in Source Control panel
+    "git.enabled" = false;
+    "git.autoRepositoryDetection" = false;
+    "visualjj.showSourceControlColocated" = true;
+
+    # direnv — auto-reload on .envrc change
+    "direnv.restart.automatic" = true;
+
+    # Nix
+    "nix.enableLanguageServer" = true;
+
+    # Terminal
+    "terminal.integrated.defaultProfile.linux" = "zsh";
+
+    # Suppress welcome tab and extension walkthroughs
+    "workbench.startupEditor" = "none";
+    "workbench.welcomePage.walkthroughs.openOnInstall" = false;
+
+    # Extensions managed by Nix — no marketplace updates
+    "extensions.autoUpdate" = false;
+    "extensions.autoCheckUpdates" = false;
+
+    # Telemetry off
+    "telemetry.telemetryLevel" = "off";
+    "update.mode" = "none";
+
+    # Editor
+    "editor.renderWhitespace" = "boundary";
+    "editor.minimap.enabled" = false;
+    "files.trimTrailingWhitespace" = true;
+    "files.insertFinalNewline" = true;
+  };
+
 in
 lib.mkIf (sizedAtLeast.med && isCodeDev) {
 
@@ -43,45 +83,19 @@ lib.mkIf (sizedAtLeast.med && isCodeDev) {
         pkgs.vscode-extensions.mkhl.direnv
         pkgs.vscode-extensions.jnoortheen.nix-ide
       ];
-
-      userSettings = {
-        # Darkman portal — auto dark/light via dconf color-scheme
-        "window.autoDetectColorScheme" = true;
-        "workbench.preferredDarkColorTheme" = "Stylix";
-        "workbench.preferredLightColorTheme" = "Default Light Modern";
-
-        # jj as primary SCM — hide git, show VisualJJ in Source Control panel
-        "git.enabled" = false;
-        "git.autoRepositoryDetection" = false;
-        "visualjj.showSourceControlColocated" = true;
-
-        # direnv — auto-reload on .envrc change
-        "direnv.restart.automatic" = true;
-
-        # Nix
-        "nix.enableLanguageServer" = true;
-
-        # Terminal
-        "terminal.integrated.defaultProfile.linux" = "zsh";
-
-        # Suppress welcome tab and extension walkthroughs
-        "workbench.startupEditor" = "none";
-        "workbench.welcomePage.walkthroughs.openOnInstall" = false;
-
-        # Extensions managed by Nix — no marketplace updates
-        "extensions.autoUpdate" = false;
-        "extensions.autoCheckUpdates" = false;
-
-        # Telemetry off
-        "telemetry.telemetryLevel" = "off";
-        "update.mode" = "none";
-
-        # Editor
-        "editor.renderWhitespace" = "boundary";
-        "editor.minimap.enabled" = false;
-        "files.trimTrailingWhitespace" = true;
-        "files.insertFinalNewline" = true;
-      };
     };
   };
+
+  home.activation.seedVscodiumSettings =
+    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      settings="$HOME/.config/VSCodium/User/settings.json"
+      mkdir -p "$(dirname "$settings")"
+
+      if [ ! -e "$settings" ] || [ -L "$settings" ]; then
+        rm -f "$settings"
+        cat > "$settings" << 'SETTINGS'
+      ${settingsJson}
+      SETTINGS
+      fi
+    '';
 }

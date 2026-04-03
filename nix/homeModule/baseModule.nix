@@ -314,6 +314,7 @@ in
         # Darkman manages these at runtime
         emacs.enable = false;
         ghostty.enable = false;
+        vscode.enable = false;
         wezterm.enable = false;
         waybar.enable = false;
         fzf.enable = false;
