@@ -164,7 +164,7 @@ in
 
       # Gestures
       gestures = {
-        hot-corners.off = true;
+        hot-corners.enable = false;
       };
     };
   };
