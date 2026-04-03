@@ -214,6 +214,7 @@ font-family = IosevkaTerm Nerd Font
 font-size = 14
 window-decoration = false
 gtk-titlebar = false
+window-theme = ghostty
 background = ${c.base00}
 foreground = ${c.base05}
 GHOSTTY
@@ -256,6 +257,7 @@ GHOSTTY
   /*
     Shell hook: new terminals get correct colors + fzf theme.
   */
+  darkOsc = mkOscSequence dark;
   lightOsc = mkOscSequence light;
   terminalInitHook = ''
     __darkman_init_theme() {
@@ -264,6 +266,8 @@ GHOSTTY
       mode=$(cat "$state/current-mode" 2>/dev/null) || return
       if [ "$mode" = "light" ]; then
         printf "${lightOsc}"
+      else
+        printf "${darkOsc}"
       fi
       [ -f "$state/fzf-theme.sh" ] && source "$state/fzf-theme.sh"
     }
