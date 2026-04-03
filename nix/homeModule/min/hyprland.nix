@@ -145,8 +145,8 @@ in
     bind = $MS, ${up},    layoutmsg, swapprev
     bind = $M,  ${left},  layoutmsg, addmaster
     bind = $M,  ${right}, layoutmsg, removemaster
-    bind = $MS, ${left},  splitratio, -0.05
-    bind = $MS, ${right}, splitratio, +0.05
+    bind = $MS, ${left},  layoutmsg, mfact -0.05
+    bind = $MS, ${right}, layoutmsg, mfact +0.05
 
     # Focus cycling
     bind = $M,  Tab, cyclenext
