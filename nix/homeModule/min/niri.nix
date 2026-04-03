@@ -7,6 +7,8 @@ let
   strip = color: builtins.substring 1 6 color;
   colors = config.lib.stylix.colors.withHashtag;
 
+  a = config.lib.niri.actions;
+
 in
 {
   imports = [
@@ -77,92 +79,91 @@ in
 
       animations = { };
 
-      binds = with config.lib.niri.actions; {
+      binds = {
         # Launch
-        "Mod+Shift+Return".action = spawn terminal;
-        "Mod+O".action = spawn launcher;
+        "Mod+Shift+Return".action = a.spawn terminal;
+        "Mod+O".action = a.spawn launcher;
 
         # Window
-        "Mod+Q".action = close-window;
-        "Mod+T".action = fullscreen-window;
-        "Mod+Alt+Delete".action = quit { skip-confirmation = true; };
+        "Mod+Q".action = a.close-window;
+        "Mod+T".action = a.fullscreen-window;
+        "Mod+Alt+Delete".action = a.quit { skip-confirmation = true; };
 
         # Focus (Colemak: N=left I=right U=up E=down)
-        "Mod+N".action = focus-column-left;
-        "Mod+I".action = focus-column-right;
-        "Mod+U".action = focus-window-up;
-        "Mod+E".action = focus-window-down;
+        "Mod+N".action = a.focus-column-left;
+        "Mod+I".action = a.focus-column-right;
+        "Mod+U".action = a.focus-window-up;
+        "Mod+E".action = a.focus-window-down;
 
         # Move window
-        "Mod+Shift+N".action = move-column-left;
-        "Mod+Shift+I".action = move-column-right;
-        "Mod+Shift+U".action = move-window-up;
-        "Mod+Shift+E".action = move-window-down;
+        "Mod+Shift+N".action = a.move-column-left;
+        "Mod+Shift+I".action = a.move-column-right;
+        "Mod+Shift+U".action = a.move-window-up;
+        "Mod+Shift+E".action = a.move-window-down;
 
         # Column management
-        "Mod+Comma".action = consume-window-into-column;
-        "Mod+Period".action = expel-window-from-column;
+        "Mod+Comma".action = a.consume-window-into-column;
+        "Mod+Period".action = a.expel-window-from-column;
 
         # Resize
-        "Mod+R".action = switch-preset-column-width;
-        "Mod+Minus".action = set-column-width "-10%";
-        "Mod+Equal".action = set-column-width "+10%";
-        "Mod+Shift+Minus".action = set-window-height "-10%";
-        "Mod+Shift+Equal".action = set-window-height "+10%";
-        "Mod+F".action = maximize-column;
-        "Mod+B".action = center-column;
+        "Mod+R".action = a.switch-preset-column-width;
+        "Mod+Minus".action = a.set-column-width "-10%";
+        "Mod+Equal".action = a.set-column-width "+10%";
+        "Mod+Shift+Minus".action = a.set-window-height "-10%";
+        "Mod+Shift+Equal".action = a.set-window-height "+10%";
+        "Mod+F".action = a.maximize-column;
+        "Mod+B".action = a.center-column;
 
         # Workspaces (vertical: up/down)
-        "Mod+Ctrl+U".action = focus-workspace-up;
-        "Mod+Ctrl+E".action = focus-workspace-down;
-        "Mod+Ctrl+Shift+U".action = move-column-to-workspace-up;
-        "Mod+Ctrl+Shift+E".action = move-column-to-workspace-down;
+        "Mod+Ctrl+U".action = a.focus-workspace-up;
+        "Mod+Ctrl+E".action = a.focus-workspace-down;
+        "Mod+Ctrl+Shift+U".action = a.move-column-to-workspace-up;
+        "Mod+Ctrl+Shift+E".action = a.move-column-to-workspace-down;
 
         # Tab/focus cycling
-        "Mod+Tab".action = focus-workspace-previous;
+        "Mod+Tab".action = a.focus-workspace-previous;
 
         # Monitor
-        "Mod+Shift+Left".action = focus-monitor-left;
-        "Mod+Shift+Right".action = focus-monitor-right;
-        "Mod+Shift+Ctrl+Left".action = move-column-to-monitor-left;
-        "Mod+Shift+Ctrl+Right".action = move-column-to-monitor-right;
+        "Mod+Shift+Left".action = a.focus-monitor-left;
+        "Mod+Shift+Right".action = a.focus-monitor-right;
+        "Mod+Shift+Ctrl+Left".action = a.move-column-to-monitor-left;
+        "Mod+Shift+Ctrl+Right".action = a.move-column-to-monitor-right;
 
         # Numbered workspaces
-        "Mod+1".action = focus-workspace 1;
-        "Mod+2".action = focus-workspace 2;
-        "Mod+3".action = focus-workspace 3;
-        "Mod+4".action = focus-workspace 4;
-        "Mod+5".action = focus-workspace 5;
-        "Mod+Ctrl+1".action = move-column-to-workspace 1;
-        "Mod+Ctrl+2".action = move-column-to-workspace 2;
-        "Mod+Ctrl+3".action = move-column-to-workspace 3;
-        "Mod+Ctrl+4".action = move-column-to-workspace 4;
-        "Mod+Ctrl+5".action = move-column-to-workspace 5;
+        "Mod+1".action = a.focus-workspace 1;
+        "Mod+2".action = a.focus-workspace 2;
+        "Mod+3".action = a.focus-workspace 3;
+        "Mod+4".action = a.focus-workspace 4;
+        "Mod+5".action = a.focus-workspace 5;
+        "Mod+Ctrl+1".action = a.move-column-to-workspace 1;
+        "Mod+Ctrl+2".action = a.move-column-to-workspace 2;
+        "Mod+Ctrl+3".action = a.move-column-to-workspace 3;
+        "Mod+Ctrl+4".action = a.move-column-to-workspace 4;
+        "Mod+Ctrl+5".action = a.move-column-to-workspace 5;
 
         # Mouse scroll workspaces
         "Mod+WheelScrollDown" = {
-          action = focus-workspace-down;
+          action = a.focus-workspace-down;
           cooldown-ms = 150;
         };
         "Mod+WheelScrollUp" = {
-          action = focus-workspace-up;
+          action = a.focus-workspace-up;
           cooldown-ms = 150;
         };
 
         # Screenshot
-        "Mod+P".action = screenshot;
-        "Mod+Print".action = screenshot-screen;
+        "Mod+P".action = a.screenshot;
+        "Mod+Print".action = a.screenshot-screen;
 
         # Volume
-        "XF86AudioMute".action = spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle";
-        "XF86AudioRaiseVolume".action = spawn "wpctl" "set-volume" "-l" "1" "@DEFAULT_AUDIO_SINK@" "5%+";
-        "XF86AudioLowerVolume".action = spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-";
+        "XF86AudioMute".action = a.spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle";
+        "XF86AudioRaiseVolume".action = a.spawn "wpctl" "set-volume" "-l" "1" "@DEFAULT_AUDIO_SINK@" "5%+";
+        "XF86AudioLowerVolume".action = a.spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-";
 
         # Hotkey overlay
-        "Mod+Shift+S".action = show-hotkey-overlay;
+        "Mod+Shift+S".action = a.show-hotkey-overlay;
       };
 
-      # Gestures
       gestures = {
         hot-corners.enable = false;
       };
