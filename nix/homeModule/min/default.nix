@@ -394,7 +394,7 @@ mkIf sizedAtLeast.min {
     };
 
     hyprsunset = {
-      enable = false;
+      enable = true;
     };
 
     gpg-agent = {
