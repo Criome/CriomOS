@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, lib, config, ... }:
 let
   terminal = "${pkgs.ghostty}/bin/ghostty";
   keyboardLauncher = "wofi --show drun";
@@ -23,6 +23,11 @@ let
 in
 {
   home.packages = with pkgs; [ hyprnome ];
+
+  home.activation.hyprlandReload = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    ${pkgs.hyprland}/bin/hyprctl reload 2>/dev/null || true
+    ${pkgs.hyprland}/bin/hyprctl seterror disable 2>/dev/null || true
+  '';
 
   xdg.configFile."hypr/hyprland.conf".text = with keys; let
     colors = config.lib.stylix.colors.withHashtag;
@@ -154,11 +159,11 @@ in
     bind = SUPER_CONTROL, ${left}, exec, hyprnome --previous --move
     bind = SUPER_CONTROL, ${right}, exec, hyprnome --move
 
-    windowrule = nomaxsize,class:^(winecfg\.exe)$
-    windowrule = nomaxsize,class:^(osu\.exe)$
-    windowrule = opaque,class:^(kitty)$
-    windowrule = noblur,class:^(kitty)$
-    windowrule = tile,class:^(.qemu-system-x86_64-wrapped)$
+    windowrule = nomaxsize, class:winecfg\.exe
+    windowrule = nomaxsize, class:osu\.exe
+    windowrule = opaque, class:kitty
+    windowrule = noblur, class:kitty
+    windowrule = tile, class:\.qemu-system-x86_64-wrapped
 
     # Scroll through existing workspaces with super + scroll
     bind = $SUPER, mouse_down, workspace, e+1
@@ -178,7 +183,7 @@ in
       disable_hyprland_logo = yes
       animate_manual_resizes = yes
       animate_mouse_windowdragging = yes
-      disable_autoreload = no
+      disable_autoreload = yes
     }
   '';
 
