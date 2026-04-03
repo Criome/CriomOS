@@ -7,8 +7,18 @@
 let
   inherit (user.methods) isCodeDev sizedAtLeast;
 
-  visualjj = pkgs.vscode-extensions.visualjj.visualjj.overrideAttrs (old: {
-    postInstall = (old.postInstall or "") + ''
+  visualjj = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
+    mktplcRef = {
+      name = "visualjj";
+      publisher = "visualjj";
+      version = "0.27.0";
+    };
+    vsix = pkgs.fetchurl {
+      name = "visualjj-0.27.0-linux-x64.vsix";
+      url = "https://open-vsx.org/api/visualjj/visualjj/linux-x64/0.27.0/file/visualjj.visualjj-0.27.0@linux-x64.vsix";
+      hash = "sha256-4w/A3C9WWfKbZF3LnaLR9aZ78hvU+lrEXS8nnMbgzeA=";
+    };
+    postInstall = ''
       jj=$out/share/vscode/extensions/visualjj.visualjj/dist/bin/jj
       if [ -f "$jj" ]; then
         ${pkgs.patchelf}/bin/patchelf \
@@ -17,7 +27,7 @@ let
           "$jj"
       fi
     '';
-  });
+  };
 
 in
 lib.mkIf (sizedAtLeast.med && isCodeDev) {
