@@ -162,6 +162,9 @@ in
         "XF86AudioRaiseVolume".action = a.spawn "wpctl" "set-volume" "-l" "1" "@DEFAULT_AUDIO_SINK@" "5%+";
         "XF86AudioLowerVolume".action = a.spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-";
 
+        # Lock
+        "Mod+L".action = a.spawn lock;
+
         # Hotkey overlay
         "Mod+Shift+S".action = a.show-hotkey-overlay;
       };
