@@ -119,7 +119,6 @@ let
     ffmpeg-full
     # start("GTK")
     appflowy
-    wofi
     gitg
     pwvucontrol # Pipewire audio GTK UI
     sonata
@@ -633,6 +632,10 @@ mkIf sizedAtLeast.min {
           fi
         ''
         + (optionalString useColemak (builtins.readFile ../nonNix/colemak.zsh));
+    };
+
+    wofi = {
+      enable = true;
     };
 
     zoxide.enable = true;
