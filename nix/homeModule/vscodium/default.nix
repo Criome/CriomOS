@@ -7,6 +7,15 @@
 let
   inherit (user.methods) isCodeDev sizedAtLeast;
 
+  patchBinary = bin: ''
+    if [ -f "${bin}" ]; then
+      ${pkgs.patchelf}/bin/patchelf \
+        --set-interpreter "$(cat ${pkgs.stdenv.cc}/nix-support/dynamic-linker)" \
+        --set-rpath "${lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ]}" \
+        "${bin}"
+    fi
+  '';
+
   visualjj = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
     mktplcRef = {
       name = "visualjj";
@@ -18,15 +27,21 @@ let
       url = "https://open-vsx.org/api/visualjj/visualjj/linux-x64/0.27.0/file/visualjj.visualjj-0.27.0@linux-x64.vsix";
       hash = "sha256-4w/A3C9WWfKbZF3LnaLR9aZ78hvU+lrEXS8nnMbgzeA=";
     };
-    postInstall = ''
-      jj=$out/share/vscode/extensions/visualjj.visualjj/dist/bin/jj
-      if [ -f "$jj" ]; then
-        ${pkgs.patchelf}/bin/patchelf \
-          --set-interpreter "$(cat ${pkgs.stdenv.cc}/nix-support/dynamic-linker)" \
-          --set-rpath "${lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ]}" \
-          "$jj"
-      fi
-    '';
+    postInstall = patchBinary "$out/share/vscode/extensions/visualjj.visualjj/dist/bin/jj";
+  };
+
+  claude-code = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
+    mktplcRef = {
+      name = "claude-code";
+      publisher = "anthropic";
+      version = "2.1.90";
+    };
+    vsix = pkgs.fetchurl {
+      name = "claude-code-2.1.90-linux-x64.vsix";
+      url = "https://open-vsx.org/api/anthropic/claude-code/linux-x64/2.1.90/file/anthropic.claude-code-2.1.90@linux-x64.vsix";
+      hash = "sha256-ij8sE8JCXKhQzSarOECjhEijGVxLCFUA0PmqlOF3ZoQ=";
+    };
+    postInstall = patchBinary "$out/share/vscode/extensions/anthropic.claude-code/resources/native-binary/claude";
   };
 
 in
@@ -37,11 +52,12 @@ lib.mkIf (sizedAtLeast.med && isCodeDev) {
     package = pkgs.vscodium;
 
     profiles.default = {
-      extensions = [ visualjj ] ++ (with pkgs.vscode-extensions; [
-        anthropic.claude-code
-        mkhl.direnv
-        jnoortheen.nix-ide
-      ]);
+      extensions = [
+        visualjj
+        claude-code
+        pkgs.vscode-extensions.mkhl.direnv
+        pkgs.vscode-extensions.jnoortheen.nix-ide
+      ];
 
       userSettings = {
         # Darkman portal — auto dark/light with stylix base16 as dark theme
