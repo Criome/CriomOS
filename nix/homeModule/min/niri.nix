@@ -27,9 +27,9 @@ in
         keyboard = {
           xkb = {
             layout = "us";
-            variant = "colemak";
-            options = "ctrl:nocaps,altwin:swap_alt_win";
           };
+          repeat-delay = 200;
+          repeat-rate = 50;
         };
         touchpad = {
           tap = true;
