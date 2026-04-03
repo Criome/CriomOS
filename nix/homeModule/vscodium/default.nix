@@ -30,14 +30,31 @@ let
     '';
   };
 
-  claude-code = pkgs.vscode-extensions.anthropic.claude-code.overrideAttrs (old: {
-    postInstall = (old.postInstall or "") + ''
-      substituteInPlace \
-        "$out/share/vscode/extensions/anthropic.claude-code/webview/index.js" \
+  claude-code = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
+    mktplcRef = {
+      name = "claude-code";
+      publisher = "anthropic";
+      version = "2.1.90";
+    };
+    vsix = pkgs.fetchurl {
+      name = "claude-code-2.1.90-linux-x64.vsix";
+      url = "https://open-vsx.org/api/anthropic/claude-code/linux-x64/2.1.90/file/anthropic.claude-code-2.1.90@linux-x64.vsix";
+      hash = "sha256-ij8sE8JCXKhQzSarOECjhEijGVxLCFUA0PmqlOF3ZoQ=";
+    };
+    postInstall = ''
+      extDir="$out/share/vscode/extensions/anthropic.claude-code"
+
+      # Replace bundled native binary with Nix-built one (Go binary can't survive patchelf)
+      rm -f "$extDir/resources/native-binary/claude"
+      ln -s ${pkgs.vscode-extensions.anthropic.claude-code}/share/vscode/extensions/anthropic.claude-code/resources/native-binary/claude \
+        "$extDir/resources/native-binary/claude"
+
+      # Fix hardcoded dark theme in diff view
+      substituteInPlace "$extDir/webview/index.js" \
         --replace-fail 'theme:"vs-dark"' \
         'theme:document.body.classList.contains("vscode-light")?"vs":"vs-dark"'
     '';
-  });
+  };
 
   settingsJson = toJSON {
     # Darkman portal — auto dark/light via dconf color-scheme
