@@ -1,47 +1,42 @@
 { pkgs, lib, config, ... }:
 let
   terminal = "${pkgs.ghostty}/bin/ghostty";
-  keyboardLauncher = "wofi --show drun";
-  lockScreen = "swaylock";
-  turnOffScreens = "hyrctl dispatch dpms off";
-  turnOnScreens = "hyrctl dispatch dpms on";
+  launcher = "wofi --show drun";
+  lock = "${pkgs.hyprlock}/bin/hyprlock";
 
   modifier = "SUPER";
 
-  colemakKeys = {
-    left = "N";
-    right = "I";
-    up = "U";
-    down = "E";
-    fullscreen = "T";
-    specialWorkspace = "-";
-    float = "SPACE";
-  };
+  # Colemak navigation
+  left = "N";
+  right = "I";
+  up = "U";
+  down = "E";
 
-  keys = colemakKeys;
+  strip = color: builtins.substring 1 6 color;
+  colors = config.lib.stylix.colors.withHashtag;
 
 in
 {
-  home.packages = with pkgs; [ hyprnome ];
+  home.packages = with pkgs; [
+    hyprnome
+    hyprlock
+    grimblast
+  ];
 
   home.activation.hyprlandReload = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
     ${pkgs.hyprland}/bin/hyprctl reload 2>/dev/null || true
-    ${pkgs.hyprland}/bin/hyprctl seterror disable 2>/dev/null || true
   '';
 
-  xdg.configFile."hypr/hyprland.conf".text = with keys; let
-    colors = config.lib.stylix.colors.withHashtag;
-  in ''
-    exec-once=waybar
+  xdg.configFile."hypr/hyprland.conf".text = ''
+    exec-once = waybar
 
-    monitor=,preferred,auto,1
+    monitor = , preferred, auto, 1
 
+    # --- Input ---
     input {
-      kb_layout = us
-      kb_variant=
       accel_profile = flat
-      repeat_rate=50
-      repeat_delay=350
+      repeat_rate = 50
+      repeat_delay = 350
       follow_mouse = 1
       mouse_refocus = 0
       sensitivity = 0
@@ -55,154 +50,200 @@ in
       name = at-translated-set-2-keyboard
       resolve_binds_by_sym = 1
       kb_layout = us
-      kb_variant=colemak
+      kb_variant = colemak
       kb_options = ctrl:nocaps,altwin:swap_alt_win
     }
 
+    # --- General ---
     general {
       gaps_in = 3
       gaps_out = 3
       border_size = 3
-      col.active_border = rgb(${builtins.substring 1 6 colors.base0E}) rgb(${builtins.substring 1 6 colors.base0D}) 45deg
-      col.inactive_border = rgb(${builtins.substring 1 6 colors.base01})
+      col.active_border = rgb(${strip colors.base0E}) rgb(${strip colors.base0D}) 45deg
+      col.inactive_border = rgb(${strip colors.base01})
       layout = master
+      resize_on_border = true
     }
 
+    # --- Decoration ---
     decoration {
       rounding = 0
-      fullscreen_opacity = 0.9999999
-      dim_strength = 0.25
+      dim_inactive = false
+      dim_modal = true
+
+      blur {
+        enabled = false
+      }
+
+      shadow {
+        enabled = false
+      }
     }
 
+    # --- Animations ---
     animations {
       enabled = yes
-      bezier = myBezier, 0.05, 0.9, 0.1, 1.05
-      animation = windows, 1, 7, myBezier
-      animation = windowsOut, 1, 7, default, popin 80%
-      animation = border, 1, 10, default
-      animation = borderangle, 1, 8, default
-      animation = fade, 1, 7, default
-      animation = workspaces, 1, 6, default, slidevert
-      animation = specialWorkspace, 1, 6, default, fade
+
+      bezier = easeOutQuint, 0.23, 1, 0.32, 1
+      bezier = linear, 0, 0, 1, 1
+      bezier = almostLinear, 0.5, 0.5, 0.75, 1
+      bezier = quick, 0.15, 0, 0.1, 1
+
+      animation = global,        1, 10,  default
+      animation = border,        1, 5.4, easeOutQuint
+      animation = windows,       1, 4.8, easeOutQuint
+      animation = windowsIn,     1, 4.1, easeOutQuint, popin 87%
+      animation = windowsOut,    1, 1.5, linear,        popin 87%
+      animation = fadeIn,        1, 1.7, almostLinear
+      animation = fadeOut,       1, 1.5, almostLinear
+      animation = fade,          1, 3,   quick
+      animation = workspaces,    1, 1.9, almostLinear,  fade
     }
 
-    dwindle {
-      preserve_split = yes
-      special_scale_factor = 1
-    }
-
+    # --- Master layout ---
     master {
-      new_on_top = no
       mfact = 0.65
-      special_scale_factor = 1
+      new_on_top = false
+      orientation = left
     }
 
+    # --- Binds ---
     binds {
       allow_workspace_cycles = yes
     }
 
-    # gesture = fingers, direction, action, options...
-    # Workspace switching (classic 3-finger vertical swipe)
+    # --- Gestures ---
     gesture = 3, vertical, workspace
 
-    $SUPER = ${modifier}
-    $SUPER_SHIFT = ${modifier}_SHIFT
-    $SUPER_ALT = ${modifier}_ALT
+    # --- Variables ---
+    $M   = ${modifier}
+    $MS  = ${modifier}_SHIFT
+    $MA  = ${modifier}_ALT
+    $MC  = ${modifier}_CONTROL
 
-    bind = $SUPER_SHIFT, Return, exec, ${terminal}
-    bind = $SUPER, O, exec, ${keyboardLauncher}
-    bind = $SUPER, Q, killactive
+    # Launch
+    bind = $MS, Return, exec, ${terminal}
+    bind = $M,  O,      exec, ${launcher}
 
-    bind = $SUPER, P, exec, toastify --icon=$(grimblast save screen) Screenshot Captured.
-    bind = $SUPER, Print, exec, grimblast copy area
+    # Window
+    bind = $M,  Q,     killactive
+    bind = $M,  SPACE, togglefloating
+    bind = $M,  B,     centerwindow
+    bind = $M,  X,     pin
+    bind = $M,  T,     fullscreen
+    bind = $MA, delete, exit
 
-    bind = $SUPER_ALT, delete, exit
-    bind = $SUPER, ${float}, togglefloating
-    bind = $SUPER, B, centerwindow
-    bind = $SUPER, X, pin
-    bind = $SUPER, ${fullscreen}, fullscreen
+    # Screenshot
+    bind = $M, P,     exec, grimblast --notify save screen
+    bind = $M, Print, exec, grimblast copy area
 
-    # TODO - not working
-    bind = $SUPER, ${specialWorkspace}, togglespecialworkspace
-    # Double binding - which to keep?
-    bind = $SUPER_SHIFT, ${specialWorkspace}, movetoworkspace, special
-    # bind = $SUPER_SHIFT, ${specialWorkspace}, focuscurrentorlast
+    # Master layout navigation (Colemak)
+    bind = $M,  Return, layoutmsg, swapwithmaster master
+    bind = $M,  ${down},  layoutmsg, cyclenext
+    bind = $M,  ${up},    layoutmsg, cycleprev
+    bind = $MS, ${down},  layoutmsg, swapnext
+    bind = $MS, ${up},    layoutmsg, swapprev
+    bind = $M,  ${left},  layoutmsg, addmaster
+    bind = $M,  ${right}, layoutmsg, removemaster
+    bind = $MS, ${left},  splitratio, -0.05
+    bind = $MS, ${right}, splitratio, +0.05
 
-    bind = $SUPER, F2, togglespecialworkspace
+    # Focus cycling
+    bind = $M,  Tab, cyclenext
+    bind = $M,  Tab, bringactivetotop
+    bind = $MS, Tab, cyclenext, prev
+    bind = $MS, Tab, bringactivetotop
 
-    bind = $SUPER, Return, layoutmsg, swapwithmaster master
-    bind = $SUPER, ${down}, layoutmsg, cyclenext
-    bind = $SUPER, ${up}, layoutmsg, cycleprev
-    bind = $SUPER_SHIFT, ${down}, layoutmsg, swapnext
-    bind = $SUPER_SHIFT, ${up}, layoutmsg, swapprev
-    bind = $SUPER, C, splitratio, exact 0.80
-    bind = $SUPER, C, layoutmsg, orientationtop
-    bind = $SUPER_SHIFT, C, splitratio, exact 0.65
-    bind = $SUPER_SHIFT, C, layoutmsg, orientationleft
-    bind = $SUPER, ${left}, layoutmsg, addmaster
-    bind = $SUPER, ${right}, layoutmsg, removemaster
-    bind = $SUPER_SHIFT, ${left}, splitratio, -0.05
-    bind = $SUPER_SHIFT, ${right}, splitratio, +0.05
+    # Workspace cycling (hyprnome)
+    bind = $MC, ${up},    exec, hyprnome --previous
+    bind = $MC, ${down},  exec, hyprnome
+    bind = $MC, ${left},  exec, hyprnome --previous --move
+    bind = $MC, ${right}, exec, hyprnome --move
 
-    bind = $SUPER, Tab, cyclenext           # change focus to another window
-    bind = $SUPER, Tab, bringactivetotop     # bring it to the top
-    bind = $SUPER_SHIFT, tab, cyclenext, prev
-    bind = $SUPER_SHIFT, Tab, bringactivetotop
+    # Special workspace
+    bind = $M,  F2, togglespecialworkspace
+    bind = $MS, F2, movetoworkspace, special
 
-    # bind = $SUPER, H, exec, warpd --hint
-    # bind = $SUPER, D, exec, warpd --normal
-    # bind = $SUPER, G, exec, warpd --grid
+    # Mouse
+    bind  = $M, mouse_down, workspace, e+1
+    bind  = $M, mouse_up,   workspace, e-1
+    bindm = $M, mouse:272,  movewindow
+    bindm = $M, mouse:273,  resizewindow
 
-    # TODO - use hyprnome
-    bind = SUPER_CONTROL, ${up}, exec, hyprnome --previous
-    bind = SUPER_CONTROL, ${down}, exec, hyprnome
-    bind = SUPER_CONTROL, ${left}, exec, hyprnome --previous --move
-    bind = SUPER_CONTROL, ${right}, exec, hyprnome --move
+    # Volume
+    bindl = , XF86AudioMute,        exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+    bindl = , XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
+    bindl = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
 
-    windowrule = nomaxsize, class:winecfg\.exe
-    windowrule = nomaxsize, class:osu\.exe
-    windowrule = opaque, class:kitty
-    windowrule = noblur, class:kitty
-    windowrule = tile, class:\.qemu-system-x86_64-wrapped
+    # --- Window rules ---
+    windowrule {
+      match:class = .*
+      suppress_event = maximize
+    }
 
-    # Scroll through existing workspaces with super + scroll
-    bind = $SUPER, mouse_down, workspace, e+1
-    bind = $SUPER, mouse_up, workspace, e-1
-
-    # Move/resize windows with super + LMB/RMB and dragging
-    bindm = $SUPER, mouse:272, movewindow
-    bindm = $SUPER, mouse:273, resizewindow
-
-    # Change volume with keys
-    # TODO: Change notification once at 0/100%
-    bindl=, XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && notify-send -t 2000 "Muted" "$(wpctl get-volume @DEFAULT_AUDIO_SINK@)"
-    bindl=, XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+ && notify-send -t 2000 "Raised volume to" "$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | tail -c 3)%"
-    bindl=, XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && notify-send -t 2000 "Lowered volume to" "$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | tail -c 3)%"
-
+    # --- Misc ---
     misc {
       disable_hyprland_logo = yes
-      animate_manual_resizes = yes
-      animate_mouse_windowdragging = yes
-      disable_autoreload = yes
+      force_default_wallpaper = 0
+    }
+  '';
+
+  # --- hypridle ---
+  xdg.configFile."hypr/hypridle.conf".text = ''
+    general {
+      lock_cmd = pidof hyprlock || ${lock}
+      before_sleep_cmd = loginctl lock-session
+      after_sleep_cmd = hyprctl dispatch dpms on
+    }
+
+    listener {
+      timeout = 300
+      on-timeout = hyprctl dispatch dpms off
+      on-resume = hyprctl dispatch dpms on
+    }
+
+    listener {
+      timeout = 600
+      on-timeout = loginctl lock-session
+    }
+  '';
+
+  # --- hyprlock ---
+  xdg.configFile."hypr/hyprlock.conf".text = ''
+    general {
+      hide_cursor = true
+    }
+
+    background {
+      color = rgb(${strip colors.base00})
+    }
+
+    input-field {
+      size = 250, 50
+      outline_thickness = 3
+      outer_color = rgb(${strip colors.base0D})
+      inner_color = rgb(${strip colors.base01})
+      font_color = rgb(${strip colors.base05})
+      fade_on_empty = true
+      placeholder_text = <i>password</i>
+      halign = center
+      valign = center
+    }
+
+    label {
+      text = $TIME
+      color = rgb(${strip colors.base05})
+      font_size = 64
+      font_family = IosevkaTerm Nerd Font
+      halign = center
+      valign = top
+      position = 0, -100
     }
   '';
 
   services = {
-    swayidle = {
+    hypridle = {
       enable = true;
-      systemdTarget = "graphical-session.target";
-      timeouts = [
-        {
-          timeout = 300;
-          command = turnOffScreens;
-          resumeCommand = turnOnScreens;
-        }
-        {
-          timeout = 900;
-          command = lockScreen;
-        }
-      ];
-      events = { };
     };
   };
 }
