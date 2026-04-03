@@ -2,7 +2,6 @@
   lib,
   horizon,
   pkgs,
-  inputs,
   ...
 }:
 let
@@ -25,9 +24,6 @@ let
 
 in
 {
-  imports = [
-    inputs.niri-flake.nixosModules.niri
-  ];
 
   hardware = {
     bluetooth.enable = true;
