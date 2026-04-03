@@ -643,7 +643,27 @@ mkIf sizedAtLeast.min {
       brightness
     ];
 
-    activation = { };
+    activation = { }
+      // (optionalAttrs hasLargeAI {
+        seedPiAgentConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          pi_agent_dir="$HOME/.pi/agent"
+          mkdir -p "$pi_agent_dir"
+
+          if [ ! -e "$pi_agent_dir/settings.json" ] || [ -L "$pi_agent_dir/settings.json" ]; then
+            rm -f "$pi_agent_dir/settings.json"
+            cat > "$pi_agent_dir/settings.json" << 'SETTINGS'
+          ${piAgentSettingsJson}
+          SETTINGS
+          fi
+
+          if [ ! -e "$pi_agent_dir/models.json" ] || [ -L "$pi_agent_dir/models.json" ]; then
+            rm -f "$pi_agent_dir/models.json"
+            cat > "$pi_agent_dir/models.json" << 'MODELS'
+          ${piAgentModelsJson}
+          MODELS
+          fi
+        '';
+      });
 
     file =
       {
@@ -669,8 +689,6 @@ mkIf sizedAtLeast.min {
         ".config/broot/conf.toml".text = brootConfig;
       }
       // (optionalAttrs hasLargeAI {
-        ".pi/agent/models.json".text = piAgentModelsJson;
-        ".pi/agent/settings.json".text = piAgentSettingsJson;
         ".pi/settings.json" = {
           text = piAgentSettingsJson;
           force = true;

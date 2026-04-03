@@ -1,5 +1,24 @@
+# Rust
+**/target/
 
-.aider*
-asklepios.qcow2
+# Nix
+.direnv/
+result
+
+# Editor tempfiles
+\#*\#
+.\#*
+*~
+.*.swp
+
+# MCP config (local)
+.mcp.json
+
+# Databases (local)
+*.db
+
+# VM images
 *.qcow2
-target/
+
+# AI agents (local)
+.aider*
