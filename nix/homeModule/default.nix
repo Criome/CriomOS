@@ -4,7 +4,7 @@
     ./emacs
     ./vscodium
     ./min
-    ./min/hyprland.nix
+    ./min/niri.nix
     ./min/waybar.nix
     ./med
     ./med/qutebrowser.nix

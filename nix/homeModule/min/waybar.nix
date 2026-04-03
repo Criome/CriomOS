@@ -19,7 +19,7 @@ let
   # TODO - module for packages
   sysMonitor = "btm";
   launcher = "rofi -show drun";
-  displaySystemInfo = "hyprctl dispatch exec '[float; center; size 950 650] ${pkgs.ghostty}/bin/ghostty -e ${sysMonitor}'";
+  displaySystemInfo = "${pkgs.ghostty}/bin/ghostty -e ${sysMonitor}";
   launchVolumeControl = "pwvucontrol";
 
 in
@@ -37,7 +37,7 @@ in
       margin-right = 0;
       modules-left = [
         "custom/launcher"
-        "hyprland/workspaces"
+        "niri/workspaces"
         "tray"
       ];
       modules-center = [ "clock" ];
@@ -48,7 +48,7 @@ in
         "pulseaudio"
         "network"
         "battery"
-        "hyprland/language"
+        "niri/language"
         "custom/notification"
       ];
       clock = {
@@ -62,11 +62,8 @@ in
         tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
         format-alt = "  {:%d/%m}";
       };
-      "hyprland/workspaces" = {
-        active-only = false;
-        disable-scroll = true;
+      "niri/workspaces" = {
         format = "{icon}";
-        on-click = "activate";
         format-icons = {
           "1" = "I";
           "2" = "II";
@@ -78,14 +75,6 @@ in
           "8" = "VIII";
           "9" = "IX";
           "10" = "X";
-          sort-by-number = true;
-        };
-        persistent-workspaces = {
-          "1" = [ ];
-          "2" = [ ];
-          "3" = [ ];
-          "4" = [ ];
-          "5" = [ ];
         };
       };
       cpu = {
@@ -146,7 +135,7 @@ in
         tooltip = true;
         tooltip-format = "{time}";
       };
-      "hyprland/language" = {
+      "niri/language" = {
         format = "<span foreground='${yellow}'> </span> {}";
         format-fr = "FR";
         format-en = "US";

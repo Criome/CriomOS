@@ -184,8 +184,6 @@ let
       ${osc 12 c.base0D}${osc 13 c.base0E}${osc 14 c.base0C}${osc 15 c.base07}\
       \033]10;${c.base05}\007\033]11;${c.base00}\007\033]12;${c.base05}\007'';
 
-  strip = color: builtins.substring 1 6 color;
-
   /*
     mkApplyScript: darkman calls this on sunrise/sunset.
     Writes real config files and reloads every app that doesn't
@@ -233,10 +231,6 @@ GHOSTTY
       for pty in /dev/pts/[0-9]*; do
         printf "$SEQ" > "$pty" 2>/dev/null || true
       done
-
-      # --- Hyprland borders ---
-      ${pkgs.hyprland}/bin/hyprctl keyword general:col.active_border "rgb(${strip c.base0E}) rgb(${strip c.base0D}) 45deg" 2>/dev/null || true
-      ${pkgs.hyprland}/bin/hyprctl keyword general:col.inactive_border "rgb(${strip c.base01})" 2>/dev/null || true
 
       # --- Emacs ---
       ${pkgs.emacs-pgtk}/bin/emacsclient --eval "(progn (add-to-list 'custom-theme-load-path \"${emacsThemeDir}\") (mapc #'disable-theme custom-enabled-themes) (load-theme '${emacsTheme} t))" 2>/dev/null || true

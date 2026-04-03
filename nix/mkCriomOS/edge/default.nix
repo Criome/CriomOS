@@ -2,12 +2,12 @@
   lib,
   horizon,
   pkgs,
+  inputs,
   ...
 }:
 let
   inherit (lib) mkIf optionals;
-  inherit (horizon.node) typeIs;
-  inherit (horizon.node.methods) sizedAtLeast behavesAs;
+  inherit (horizon.node.methods) sizedAtLeast;
 
   minPackages = optionals sizedAtLeast.min (
     with pkgs;
@@ -15,6 +15,7 @@ let
       adwaita-icon-theme
       nautilus
       libinput
+      gnome-control-center
     ]
   );
 
@@ -24,6 +25,10 @@ let
 
 in
 {
+  imports = [
+    inputs.niri-flake.nixosModules.niri
+  ];
+
   hardware = {
     bluetooth.enable = true;
     graphics.enable32Bit = sizedAtLeast.max;
@@ -48,9 +53,9 @@ in
 
     firejail.enable = sizedAtLeast.med;
 
-    hyprland = {
-      enable = behavesAs.nextGen;
-      withUWSM = true;
+    niri = {
+      enable = sizedAtLeast.min;
+      package = pkgs.niri-unstable;
     };
 
     regreet = {
@@ -62,6 +67,20 @@ in
           icon_theme_name = "Adwaita";
           theme_name = "Adwaita";
         };
+      };
+    };
+  };
+
+  xdg.portal = {
+    enable = true;
+    xdgOpenUsePortal = true;
+    config = {
+      niri = {
+        default = [ "gnome" "gtk" ];
+        "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+      };
+      common = {
+        default = [ "gtk" ];
       };
     };
   };
@@ -88,9 +107,6 @@ in
 
     tumbler.enable = sizedAtLeast.med;
 
-    desktopManager.gnome.enable = sizedAtLeast.med && typeIs.edge;
-
     pulseaudio.enable = false;
-
   };
 }

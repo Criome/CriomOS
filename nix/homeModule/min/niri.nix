@@ -1,0 +1,228 @@
+{ pkgs, lib, config, inputs, ... }:
+let
+  terminal = "${pkgs.ghostty}/bin/ghostty";
+  launcher = "wofi --show drun";
+  lock = "${pkgs.hyprlock}/bin/hyprlock";
+
+  strip = color: builtins.substring 1 6 color;
+  colors = config.lib.stylix.colors.withHashtag;
+
+in
+{
+  imports = [
+    inputs.niri-flake.homeModules.niri
+  ];
+
+  home.packages = with pkgs; [
+    hyprlock
+    grim
+    slurp
+    wl-clipboard
+  ];
+
+  programs.niri = {
+    enable = true;
+    package = pkgs.niri-unstable;
+    settings = {
+      prefer-no-csd = true;
+
+      input = {
+        keyboard = {
+          xkb = {
+            layout = "us";
+            variant = "colemak";
+            options = "ctrl:nocaps,altwin:swap_alt_win";
+          };
+        };
+        touchpad = {
+          tap = true;
+          natural-scroll = true;
+          dwt = false;
+        };
+        mouse = {
+          accel-profile = "flat";
+        };
+        focus-follows-mouse = {
+          enable = true;
+          max-scroll-amount = "0%";
+        };
+      };
+
+      outputs."*" = {
+        scale = 1.0;
+      };
+
+      layout = {
+        gaps = 6;
+        default-column-width.proportion = 0.5;
+        preset-column-widths = [
+          { proportion = 0.33333; }
+          { proportion = 0.5; }
+          { proportion = 0.66667; }
+          { proportion = 1.0; }
+        ];
+        center-focused-column = "never";
+
+        border = {
+          enable = true;
+          width = 3;
+          active.color = colors.base0D;
+          inactive.color = colors.base01;
+        };
+      };
+
+      spawn-at-startup = [
+        { command = [ "waybar" ]; }
+      ];
+
+      animations = { };
+
+      binds = with config.lib.niri.actions; let
+        sh = spawn;
+      in {
+        # Launch
+        "Mod+Shift+Return".action = spawn terminal;
+        "Mod+O".action = spawn launcher;
+
+        # Window
+        "Mod+Q".action = close-window;
+        "Mod+T".action = fullscreen-window;
+        "Mod+Alt+Delete".action = quit { skip-confirmation = true; };
+
+        # Focus (Colemak: N=left I=right U=up E=down)
+        "Mod+N".action = focus-column-left;
+        "Mod+I".action = focus-column-right;
+        "Mod+U".action = focus-window-up;
+        "Mod+E".action = focus-window-down;
+
+        # Move window
+        "Mod+Shift+N".action = move-column-left;
+        "Mod+Shift+I".action = move-column-right;
+        "Mod+Shift+U".action = move-window-up;
+        "Mod+Shift+E".action = move-window-down;
+
+        # Column management
+        "Mod+Comma".action = consume-window-into-column;
+        "Mod+Period".action = expel-window-from-column;
+
+        # Resize
+        "Mod+R".action = switch-preset-column-width;
+        "Mod+Minus".action = set-column-width "-10%";
+        "Mod+Equal".action = set-column-width "+10%";
+        "Mod+Shift+Minus".action = set-window-height "-10%";
+        "Mod+Shift+Equal".action = set-window-height "+10%";
+        "Mod+F".action = maximize-column;
+        "Mod+B".action = center-column;
+
+        # Workspaces (vertical: up/down)
+        "Mod+Ctrl+U".action = focus-workspace-up;
+        "Mod+Ctrl+E".action = focus-workspace-down;
+        "Mod+Ctrl+Shift+U".action = move-column-to-workspace-up;
+        "Mod+Ctrl+Shift+E".action = move-column-to-workspace-down;
+
+        # Tab/focus cycling
+        "Mod+Tab".action = focus-workspace-previous;
+
+        # Monitor
+        "Mod+Shift+Left".action = focus-monitor-left;
+        "Mod+Shift+Right".action = focus-monitor-right;
+        "Mod+Shift+Ctrl+Left".action = move-column-to-monitor-left;
+        "Mod+Shift+Ctrl+Right".action = move-column-to-monitor-right;
+
+        # Numbered workspaces
+        "Mod+1".action = focus-workspace 1;
+        "Mod+2".action = focus-workspace 2;
+        "Mod+3".action = focus-workspace 3;
+        "Mod+4".action = focus-workspace 4;
+        "Mod+5".action = focus-workspace 5;
+        "Mod+Ctrl+1".action = move-column-to-workspace 1;
+        "Mod+Ctrl+2".action = move-column-to-workspace 2;
+        "Mod+Ctrl+3".action = move-column-to-workspace 3;
+        "Mod+Ctrl+4".action = move-column-to-workspace 4;
+        "Mod+Ctrl+5".action = move-column-to-workspace 5;
+
+        # Mouse scroll workspaces
+        "Mod+WheelScrollDown" = {
+          action = focus-workspace-down;
+          cooldown-ms = 150;
+        };
+        "Mod+WheelScrollUp" = {
+          action = focus-workspace-up;
+          cooldown-ms = 150;
+        };
+
+        # Screenshot
+        "Mod+P".action = screenshot;
+        "Mod+Print".action = screenshot-screen;
+
+        # Volume
+        "XF86AudioMute".action = spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle";
+        "XF86AudioRaiseVolume".action = spawn "wpctl" "set-volume" "-l" "1" "@DEFAULT_AUDIO_SINK@" "5%+";
+        "XF86AudioLowerVolume".action = spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-";
+
+        # Hotkey overlay
+        "Mod+Shift+S".action = show-hotkey-overlay;
+      };
+
+      # Gestures
+      gestures = {
+        hot-corners.off = true;
+      };
+    };
+  };
+
+  # --- hypridle ---
+  xdg.configFile."hypr/hypridle.conf".text = ''
+    general {
+      lock_cmd = pidof hyprlock || ${lock}
+      before_sleep_cmd = loginctl lock-session
+      after_sleep_cmd = niri msg action power-on-monitors
+    }
+
+    listener {
+      timeout = 600
+      on-timeout = niri msg action power-off-monitors
+      on-resume = niri msg action power-on-monitors
+    }
+
+    listener {
+      timeout = 3600
+      on-timeout = loginctl lock-session
+    }
+  '';
+
+  # --- hyprlock ---
+  xdg.configFile."hypr/hyprlock.conf".text = ''
+    general {
+      hide_cursor = true
+    }
+
+    background {
+      color = rgb(${strip colors.base00})
+    }
+
+    input-field {
+      size = 250, 50
+      outline_thickness = 3
+      outer_color = rgb(${strip colors.base0D})
+      inner_color = rgb(${strip colors.base01})
+      font_color = rgb(${strip colors.base05})
+      fade_on_empty = true
+      placeholder_text = <i>password</i>
+      halign = center
+      valign = center
+    }
+
+    label {
+      text = $TIME
+      color = rgb(${strip colors.base05})
+      font_size = 64
+      font_family = IosevkaTerm Nerd Font
+      halign = center
+      valign = top
+      position = 0, -100
+    }
+  '';
+
+  services.hypridle.enable = true;
+}
