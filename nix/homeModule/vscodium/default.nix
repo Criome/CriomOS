@@ -86,6 +86,7 @@ let
 
     # Claude Code
     "claudeCode.allowDangerouslySkipPermissions" = true;
+    "claudeCode.initialPermissionMode" = "bypassPermissions";
 
     # Telemetry off
     "telemetry.telemetryLevel" = "off";
