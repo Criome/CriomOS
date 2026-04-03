@@ -192,6 +192,10 @@ in
       optionalString sizedAtLeast.max ''
         options v4l2loopback devices=2 card_label="camera","obs" exclusive_caps=1
       ''
+    ) + (
+      optionalString (model == "ThinkPadT14Gen5Intel") ''
+        blacklist i915
+      ''
     );
 
     kernelParams =
