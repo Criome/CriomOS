@@ -45,8 +45,10 @@ lib.mkIf (sizedAtLeast.med && isCodeDev) {
       ];
 
       userSettings = {
-        # Darkman portal — auto dark/light with stylix base16 as dark theme
+        # Darkman portal — auto dark/light via dconf color-scheme
         "window.autoDetectColorScheme" = true;
+        "workbench.preferredDarkColorTheme" = "Stylix";
+        "workbench.preferredLightColorTheme" = "Default Light Modern";
 
         # jj as primary SCM — hide git, show VisualJJ in Source Control panel
         "git.enabled" = false;
