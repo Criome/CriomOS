@@ -194,6 +194,7 @@ let
       c = parseScheme scheme;
       oscSeq = mkOscSequence c;
       dconfMode = if mode == "dark" then "prefer-dark" else "prefer-light";
+      iconTheme = if mode == "dark" then "Papirus-Dark" else "Papirus-Light";
       emacsTheme = if mode == "dark" then "ignis-dark" else "ignis-light";
       fzfColors = mkFzfColors c;
       gammaTemp = if mode == "dark" then "2700" else "6500";
@@ -201,6 +202,7 @@ let
     pkgs.writeShellScript "apply-${mode}" ''
       # --- Portal + dconf (Firefox, Electron, Qt) ---
       ${pkgs.dconf}/bin/dconf write /org/gnome/desktop/interface/color-scheme "'${dconfMode}'"
+      ${pkgs.dconf}/bin/dconf write /org/gnome/desktop/interface/icon-theme "'${iconTheme}'"
 
       # --- GTK settings files (file manager, launcher, legacy GTK apps) ---
       mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
@@ -291,6 +293,14 @@ in
         (pkgs.writeShellScriptBin "theme-light" ''${pkgs.darkman}/bin/darkman set light'')
       ];
       file.".config/emacs-ignis-themes".source = emacsThemeDir;
+    };
+
+    gtk = {
+      enable = true;
+      iconTheme = {
+        package = pkgs.papirus-icon-theme;
+        name = "Papirus-Dark";
+      };
     };
 
     programs.zsh.initContent = lib.mkBefore terminalInitHook;

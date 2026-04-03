@@ -77,6 +77,8 @@ in
 
       spawn-at-startup = [
         { command = [ "waybar" ]; }
+        { command = [ "${pkgs.networkmanagerapplet}/bin/nm-applet" ]; }
+        { command = [ "${pkgs.blueman}/bin/blueman-applet" ]; }
       ];
 
       animations = { };

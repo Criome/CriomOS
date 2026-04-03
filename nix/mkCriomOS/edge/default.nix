@@ -12,6 +12,7 @@ let
     with pkgs;
     [
       adwaita-icon-theme
+      papirus-icon-theme
       nautilus
       libinput
       gnome-control-center
@@ -57,7 +58,7 @@ in
         GTK = {
           application_prefer_dark_theme = true;
           cursor_theme_name = "Adwaita";
-          icon_theme_name = "Adwaita";
+          icon_theme_name = "Papirus-Dark";
           theme_name = "Adwaita";
         };
       };
