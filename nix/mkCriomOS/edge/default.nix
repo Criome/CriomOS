@@ -108,8 +108,6 @@ in
         ids = [ "0001:0001" ];
         extraConfig = ''
           [main]
-          include(colemak)
-          capslock = leftcontrol
           leftalt = leftmeta
           leftmeta = leftalt
         '';

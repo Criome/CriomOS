@@ -27,6 +27,8 @@ in
         keyboard = {
           xkb = {
             layout = "us";
+            variant = "colemak";
+            options = "ctrl:nocaps";
           };
           repeat-delay = 200;
           repeat-rate = 50;
