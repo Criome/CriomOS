@@ -12,6 +12,10 @@ let
 in
 {
 
+  programs.niri.settings.environment = {
+    "XDG_CURRENT_DESKTOP" = "niri:GNOME";
+  };
+
   home.packages = with pkgs; [
     hyprlock
     grim
