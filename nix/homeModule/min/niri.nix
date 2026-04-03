@@ -1,4 +1,4 @@
-{ pkgs, config, inputs, ... }:
+{ pkgs, config, ... }:
 let
   terminal = "${pkgs.ghostty}/bin/ghostty";
   launcher = "wofi --show drun";
@@ -11,9 +11,6 @@ let
 
 in
 {
-  imports = [
-    inputs.niri-flake.homeModules.niri
-  ];
 
   home.packages = with pkgs; [
     hyprlock
