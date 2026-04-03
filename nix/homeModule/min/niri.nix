@@ -1,4 +1,4 @@
-{ pkgs, lib, config, inputs, ... }:
+{ pkgs, config, inputs, ... }:
 let
   terminal = "${pkgs.ghostty}/bin/ghostty";
   launcher = "wofi --show drun";
@@ -22,7 +22,7 @@ in
 
   programs.niri = {
     enable = true;
-    package = pkgs.niri-unstable;
+    package = inputs.niri-flake.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
     settings = {
       prefer-no-csd = true;
 
@@ -77,9 +77,7 @@ in
 
       animations = { };
 
-      binds = with config.lib.niri.actions; let
-        sh = spawn;
-      in {
+      binds = with config.lib.niri.actions; {
         # Launch
         "Mod+Shift+Return".action = spawn terminal;
         "Mod+O".action = spawn launcher;

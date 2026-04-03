@@ -49,10 +49,7 @@ in
 
     firejail.enable = sizedAtLeast.med;
 
-    niri = {
-      enable = sizedAtLeast.min;
-      package = pkgs.niri-unstable;
-    };
+    niri.enable = sizedAtLeast.min;
 
     regreet = {
       enable = sizedAtLeast.min;
