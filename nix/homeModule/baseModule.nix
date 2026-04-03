@@ -291,6 +291,7 @@ in
       packages = [
         (pkgs.writeShellScriptBin "theme-dark" ''${pkgs.darkman}/bin/darkman set dark'')
         (pkgs.writeShellScriptBin "theme-light" ''${pkgs.darkman}/bin/darkman set light'')
+        pkgs.papirus-icon-theme
       ];
       file.".config/emacs-ignis-themes".source = emacsThemeDir;
     };
