@@ -37,8 +37,10 @@ lib.mkIf (sizedAtLeast.med && isCodeDev) {
         # Darkman portal — auto dark/light with stylix base16 as dark theme
         "window.autoDetectColorScheme" = true;
 
-        # jj as primary SCM — hide git
+        # jj as primary SCM — hide git, show VisualJJ in Source Control panel
         "git.enabled" = false;
+        "git.autoRepositoryDetection" = false;
+        "visualjj.showSourceControlColocated" = true;
 
         # direnv — auto-reload on .envrc change
         "direnv.restart.automatic" = true;
