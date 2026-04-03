@@ -116,36 +116,51 @@ let
     @define-color base0C ${c.base0C}; @define-color base0D ${c.base0D};
     @define-color base0E ${c.base0E}; @define-color base0F ${c.base0F};
 
-    window#waybar, tooltip {
-        background: alpha(@base00, 0.95);
-        color: @base05;
-    }
     * {
         font-family: "IosevkaTerm Nerd Font";
-        font-size: 14px;
+        font-size: 13px;
+        min-height: 0;
     }
-    tooltip { border-color: @base0D; }
-    tooltip label { color: @base05; }
+    window#waybar {
+        background: transparent;
+        color: @base05;
+    }
+    tooltip {
+        background: alpha(@base00, 0.9);
+        border: 1px solid alpha(@base02, 0.5);
+        border-radius: 8px;
+        color: @base05;
+    }
+
+    .modules-left, .modules-center, .modules-right {
+        background: alpha(@base00, 0.85);
+        border-radius: 10px;
+        padding: 0 4px;
+        margin: 4px 4px;
+    }
 
     #wireplumber, #pulseaudio, #sndio,
     #upower, #battery,
     #network, #user, #clock, #backlight,
     #cpu, #disk, #idle_inhibitor, #temperature,
     #mpd, #language, #keyboard-state, #memory,
-    #window, #bluetooth { padding: 0 5px; }
-
-    .modules-left #workspaces button,
-    .modules-center #workspaces button,
-    .modules-right #workspaces button {
-        border-bottom: 3px solid transparent;
+    #window, #bluetooth, #tray,
+    #custom-launcher, #custom-notification {
+        padding: 0 6px;
+        color: @base04;
     }
-    .modules-left #workspaces button.focused,
-    .modules-left #workspaces button.active,
-    .modules-center #workspaces button.focused,
-    .modules-center #workspaces button.active,
-    .modules-right #workspaces button.focused,
-    .modules-right #workspaces button.active {
-        border-bottom: 3px solid @base05;
+    #clock { color: @base05; }
+
+    #workspaces button {
+        padding: 0 5px;
+        color: @base03;
+        border: none;
+        border-radius: 6px;
+    }
+    #workspaces button.focused,
+    #workspaces button.active {
+        color: @base05;
+        background: alpha(@base02, 0.5);
     }
   '';
 

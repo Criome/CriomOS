@@ -57,7 +57,7 @@ in
       };
 
       layout = {
-        gaps = 6;
+        gaps = 8;
         default-column-width.proportion = 0.5;
         preset-column-widths = [
           { proportion = 0.33333; }
@@ -68,12 +68,23 @@ in
         center-focused-column = "never";
 
         border = {
+          enable = false;
+        };
+        focus-ring = {
           enable = true;
-          width = 3;
-          active.color = colors.base0D;
-          inactive.color = colors.base01;
+          width = 2;
+          active.color = "${colors.base0D}90";
+          inactive.color = "transparent";
         };
       };
+
+      window-rule = [
+        {
+          geometry-corner-radius =
+            let r = 8.0; in { top-left = r; top-right = r; bottom-left = r; bottom-right = r; };
+          clip-to-geometry = true;
+        }
+      ];
 
       spawn-at-startup = [
         { command = [ "waybar" ]; }
@@ -81,7 +92,13 @@ in
         { command = [ "${pkgs.blueman}/bin/blueman-applet" ]; }
       ];
 
-      animations = { };
+      animations = {
+        window-open.easing = { curve = "ease-out-expo"; duration-ms = 200; };
+        window-close.easing = { curve = "ease-out-quad"; duration-ms = 150; };
+        workspace-switch.easing = { curve = "ease-out-expo"; duration-ms = 250; };
+        horizontal-view-movement.easing = { curve = "ease-out-expo"; duration-ms = 200; };
+        config-notification-open-close.easing = { curve = "ease-out-quad"; duration-ms = 200; };
+      };
 
       binds = {
         # Launch

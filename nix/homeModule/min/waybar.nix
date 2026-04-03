@@ -30,11 +30,11 @@ in
     settings.main = {
       position = "bottom";
       layer = "top";
-      height = 28;
+      height = 30;
       margin-top = 0;
-      margin-bottom = 0;
-      margin-left = 0;
-      margin-right = 0;
+      margin-bottom = 4;
+      margin-left = 8;
+      margin-right = 8;
       modules-left = [
         "custom/launcher"
         "niri/workspaces"
