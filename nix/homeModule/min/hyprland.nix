@@ -154,11 +154,11 @@ in
     bind = $MS, Tab, cyclenext, prev
     bind = $MS, Tab, bringactivetotop
 
-    # Workspace cycling (hyprnome) — horizontal like GNOME
-    bind = $MC, ${left},  exec, hyprnome --previous
-    bind = $MC, ${right}, exec, hyprnome
-    bind = $MC, ${up},    exec, hyprnome --previous --move
-    bind = $MC, ${down},  exec, hyprnome --move
+    # Workspace cycling (hyprnome)
+    bind = $MC, ${up},    exec, hyprnome --previous
+    bind = $MC, ${down},  exec, hyprnome
+    bind = $MC, ${left},  exec, hyprnome --previous --move
+    bind = $MC, ${right}, exec, hyprnome --move
 
     # Special workspace
     bind = $M,  F2, togglespecialworkspace
