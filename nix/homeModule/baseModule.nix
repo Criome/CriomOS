@@ -196,7 +196,7 @@ let
       dconfMode = if mode == "dark" then "prefer-dark" else "prefer-light";
       emacsTheme = if mode == "dark" then "ignis-dark" else "ignis-light";
       fzfColors = mkFzfColors c;
-      gammaTemp = if mode == "dark" then "3500" else "6500";
+      gammaTemp = if mode == "dark" then "2700" else "6500";
     in
     pkgs.writeShellScript "apply-${mode}" ''
       # --- Portal + dconf (Firefox, Electron, Qt) ---
