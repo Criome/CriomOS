@@ -185,7 +185,7 @@ in
   services = {
     swayidle = {
       enable = true;
-      systemdTarget = "hyprland-session.target";
+      systemdTarget = "graphical-session.target";
       timeouts = [
         {
           timeout = 300;

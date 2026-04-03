@@ -50,10 +50,11 @@ in
 
     hyprland = {
       enable = behavesAs.nextGen;
+      withUWSM = true;
     };
 
     regreet = {
-      enable = !(sizedAtLeast.min);
+      enable = sizedAtLeast.min;
       settings = {
         GTK = {
           application_prefer_dark_theme = true;
@@ -74,11 +75,6 @@ in
 
     dbus.packages = mkIf sizedAtLeast.min [ pkgs.gcr ];
 
-    displayManager.gdm = {
-      enable = sizedAtLeast.min;
-      autoSuspend = typeIs.edge;
-    };
-
     gvfs.enable = sizedAtLeast.min;
 
     gnome = {
@@ -96,12 +92,5 @@ in
 
     pulseaudio.enable = false;
 
-    xserver = {
-      enable = sizedAtLeast.min;
-      excludePackages = [ pkgs.xorg-server.out ];
-
-      # TODO - investigate difference between this and `programs.hyprland`
-      windowManager.hypr.enable = behavesAs.nextGen;
-    };
   };
 }

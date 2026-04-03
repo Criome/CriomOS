@@ -752,6 +752,17 @@ mkIf sizedAtLeast.min {
   xdg = {
     configFile = {
       "fontconfig/conf.d/10-CriomOS-fonts-paths.conf".text = mkFontConf;
+
+      "uwsm/env".text = ''
+        export SSH_AUTH_SOCK="''${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent.ssh"
+        export NIXOS_OZONE_WL=1
+        export QT_QPA_PLATFORM=wayland
+        export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+        export GDK_BACKEND=wayland
+        export SDL_VIDEODRIVER=wayland
+        export MOZ_ENABLE_WAYLAND=1
+        export _JAVA_AWT_WM_NONREPARENTING=1
+      '';
     };
 
     dataFile."mime/packages/aski.xml".text = ''
