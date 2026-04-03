@@ -17,6 +17,7 @@ in
     grim
     slurp
     wl-clipboard
+    gnome-control-center
   ];
 
   programs.niri = {
