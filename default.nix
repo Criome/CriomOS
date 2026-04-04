@@ -38,7 +38,6 @@ let
 
   homeModules = [
     inputs.stylix.homeModules.stylix
-    inputs.niri-flake.homeModules.config
     local.criomOSHomeModule
   ];
 
@@ -132,7 +131,7 @@ let
         userName: user:
         let
           inherit (world) pkdjz;
-          modules = homeModules;
+          modules = homeModules ++ [ inputs.niri-flake.homeModules.config ];
           extraSpecialArgs = {
             inherit
               criomos-lib

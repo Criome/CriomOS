@@ -11,6 +11,7 @@ let
   inherit (world) pkdjz;
 
   mkUserConfig = name: user: {
+    imports = [ inputs.niri-flake.homeModules.config ];
     _module.args = {
       inherit user;
     };
