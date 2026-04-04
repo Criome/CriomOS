@@ -90,7 +90,7 @@ let
   settingsJson = toJSON {
     # Theme — stylix generates base16 theme, darkman switches via portal
     "window.autoDetectColorScheme" = true;
-    "workbench.preferredDarkColorTheme" = "Stylix";
+    "workbench.preferredDarkColorTheme" = "Default Dark Modern";
     "workbench.preferredLightColorTheme" = "Default Light Modern";
 
     # jj as primary SCM — hide git, show VisualJJ in Source Control panel
