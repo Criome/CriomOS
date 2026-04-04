@@ -313,6 +313,8 @@ in
 
     home.activation.reapplyDarkman =
       lib.hm.dag.entryAfter [ "reloadSystemd" ] ''
+        ${pkgs.systemd}/bin/systemctl --user restart darkman.service 2>/dev/null || true
+        sleep 0.5
         mode=$(cat "''${XDG_STATE_HOME:-$HOME/.local/state}/darkman/current-mode" 2>/dev/null) || true
         if [ -n "$mode" ]; then
           ${pkgs.darkman}/bin/darkman set "$mode" 2>/dev/null || true
