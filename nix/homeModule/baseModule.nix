@@ -197,6 +197,7 @@ let
       c = parseScheme scheme;
       oscSeq = mkOscSequence c;
       dconfMode = if mode == "dark" then "prefer-dark" else "prefer-light";
+      gtkTheme = if mode == "dark" then "adw-gtk3-dark" else "adw-gtk3";
       iconTheme = if mode == "dark" then "Papirus-Dark" else "Papirus-Light";
       emacsTheme = if mode == "dark" then "ignis-dark" else "ignis-light";
       fzfColors = mkFzfColors c;
@@ -205,9 +206,8 @@ let
     pkgs.writeShellScript "apply-${mode}" ''
       # --- Portal + dconf (Firefox, Electron, Qt) ---
       ${pkgs.dconf}/bin/dconf write /org/gnome/desktop/interface/color-scheme "'${dconfMode}'"
+      ${pkgs.dconf}/bin/dconf write /org/gnome/desktop/interface/gtk-theme "'${gtkTheme}'"
       ${pkgs.dconf}/bin/dconf write /org/gnome/desktop/interface/icon-theme "'${iconTheme}'"
-
-      # GTK dark/light handled by dconf above; settings.ini owned by Stylix/HM
 
       # --- Ghostty config (darkman owns this file) ---
       mkdir -p "$HOME/.config/ghostty"
