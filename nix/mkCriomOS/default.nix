@@ -57,6 +57,7 @@ let
 
   niriModule = {
     imports = [ inputs.niri-flake.nixosModules.niri ];
+    niri-flake.cache.enable = false;
   };
 
   nixosModules =
