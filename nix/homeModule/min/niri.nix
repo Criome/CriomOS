@@ -87,6 +87,7 @@ in
 
       spawn-at-startup = [
         { command = [ "waybar" ]; }
+        { command = [ "${pkgs.nwg-dock}/bin/nwg-dock" "-d" "-p" "top" "-mb" "4" "-ml" "8" "-mr" "8" "-i" "36" "-nolauncher" ]; }
         { command = [ "${pkgs.networkmanagerapplet}/bin/nm-applet" "--indicator" ]; }
         { command = [ "${pkgs.blueman}/bin/blueman-applet" ]; }
       ];

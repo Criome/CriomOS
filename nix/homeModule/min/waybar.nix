@@ -57,10 +57,10 @@ in
             today = "<span color='${green}'><b>{}</b></span>";
           };
         };
-        format = "  {:%H:%M}";
+        format = "  {:%H:%M}";
         tooltip = "true";
         tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
-        format-alt = "  {:%d/%m}";
+        format-alt = "  {:%d/%m}";
       };
       "niri/workspaces" = {
         format = "{icon}";
@@ -78,27 +78,30 @@ in
         };
       };
       cpu = {
-        format = "<span foreground='${green}'> </span> {usage}%";
-        format-alt = "<span foreground='${green}'> </span> {avg_frequency} GHz";
-        interval = 2;
+        format = "<span foreground='${green}'> </span>";
+        tooltip = true;
+        tooltip-format = "{usage}% · {avg_frequency} GHz";
+        interval = 5;
         on-click-right = displaySystemInfo;
       };
       memory = {
-        format = "<span foreground='${cyan}'>󰟜 </span>{}%";
-        format-alt = "<span foreground='${cyan}'>󰟜 </span>{used} GiB"; # 
-        interval = 2;
+        format = "<span foreground='${cyan}'>󰟜 </span>";
+        tooltip = true;
+        tooltip-format = "{used} / {total} GiB ({percentage}%)";
+        interval = 5;
         on-click-right = displaySystemInfo;
       };
       disk = {
-        # path = "/";
-        format = "<span foreground='${orange}'>󰋊 </span>{percentage_used}%";
+        format = "<span foreground='${orange}'>󰋊 </span>";
+        tooltip = true;
+        tooltip-format = "{used} / {total} ({percentage_used}%)";
         interval = 60;
         on-click-right = displaySystemInfo;
       };
       network = {
-        format-wifi = "<span foreground='${magenta}'> </span> {signalStrength}%";
+        format-wifi = "<span foreground='${magenta}'> </span>";
         format-ethernet = "<span foreground='${magenta}'>󰀂 </span>";
-        tooltip-format = "Connected to {essid} {ifname} via {gwaddr}";
+        tooltip-format = "{essid} · {ifname} via {gwaddr} ({signalStrength}%)";
         format-linked = "{ifname} (No IP)";
         format-disconnected = "<span foreground='${magenta}'>󰖪 </span>";
       };
@@ -107,41 +110,42 @@ in
         spacing = 8;
       };
       pulseaudio = {
-        format = "{icon} {volume}%";
-        format-muted = "<span foreground='${blue}'> </span> {volume}%";
+        format = "<span foreground='${blue}'>{icon}</span>";
+        format-muted = "<span foreground='${blue}'> </span>";
         format-icons = {
-          default = [ "<span foreground='${blue}'> </span>" ];
+          default = [ " " ];
         };
+        tooltip = true;
+        tooltip-format = "{volume}%";
         scroll-step = 2;
         on-click = launchVolumeControl;
       };
       battery = {
-        format = "<span foreground='${yellow}'>{icon}</span> {capacity}%";
+        format = "<span foreground='${yellow}'>{icon}</span>";
         format-icons = [
-          " "
-          " "
-          " "
-          " "
-          " "
+          " "
+          " "
+          " "
+          " "
+          " "
         ];
-        format-charging = "<span foreground='${yellow}'> </span>{capacity}%";
-        format-full = "<span foreground='${yellow}'> </span>{capacity}%";
-        format-warning = "<span foreground='${yellow}'> </span>{capacity}%";
+        format-charging = "<span foreground='${yellow}'> </span>";
+        format-full = "<span foreground='${yellow}'> </span>";
+        format-warning = "<span foreground='${yellow}'> </span>";
         interval = 5;
         states = {
           warning = 20;
         };
-        format-time = "{H}h{M}m";
         tooltip = true;
-        tooltip-format = "{time}";
+        tooltip-format = "{capacity}% · {time}";
       };
       "niri/language" = {
-        format = "<span foreground='${yellow}'> </span> {}";
-        format-fr = "FR";
-        format-en = "US";
+        format = "<span foreground='${yellow}'> </span>";
+        tooltip = true;
+        tooltip-format = "{}";
       };
       "custom/launcher" = {
-        format = "";
+        format = "";
         on-click = launcher;
         tooltip = "true";
       };
@@ -149,14 +153,14 @@ in
         tooltip = false;
         format = "{icon} ";
         format-icons = {
-          notification = "<span foreground='red'><sup></sup></span>  <span foreground='${red}'></span>";
-          none = "  <span foreground='${red}'></span>";
-          dnd-notification = "<span foreground='red'><sup></sup></span>  <span foreground='${red}'></span>";
-          dnd-none = "  <span foreground='${red}'></span>";
-          inhibited-notification = "<span foreground='red'><sup></sup></span>  <span foreground='${red}'></span>";
-          inhibited-none = "  <span foreground='${red}'></span>";
-          dnd-inhibited-notification = "<span foreground='red'><sup></sup></span>  <span foreground='${red}'></span>";
-          dnd-inhibited-none = "  <span foreground='${red}'></span>";
+          notification = "<span foreground='red'><sup></sup></span>  <span foreground='${red}'></span>";
+          none = "  <span foreground='${red}'></span>";
+          dnd-notification = "<span foreground='red'><sup></sup></span>  <span foreground='${red}'></span>";
+          dnd-none = "  <span foreground='${red}'></span>";
+          inhibited-notification = "<span foreground='red'><sup></sup></span>  <span foreground='${red}'></span>";
+          inhibited-none = "  <span foreground='${red}'></span>";
+          dnd-inhibited-notification = "<span foreground='red'><sup></sup></span>  <span foreground='${red}'></span>";
+          dnd-inhibited-none = "  <span foreground='${red}'></span>";
         };
         return-type = "json";
         exec-if = "which swaync-client";

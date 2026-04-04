@@ -201,7 +201,6 @@ let
       iconTheme = if mode == "dark" then "Papirus-Dark" else "Papirus-Light";
       emacsTheme = if mode == "dark" then "ignis-dark" else "ignis-light";
       fzfColors = mkFzfColors c;
-      gammaTemp = if mode == "dark" then "2700" else "6500";
     in
     pkgs.writeShellScript "apply-${mode}" ''
       # --- Portal + dconf (Firefox, Electron, Qt) ---
@@ -254,8 +253,7 @@ GHOSTTY
       echo "export FZF_DEFAULT_OPTS=\"\$FZF_DEFAULT_OPTS ${fzfColors}\"" \
         > "''${XDG_STATE_HOME:-$HOME/.local/state}/darkman/fzf-theme.sh"
 
-      # --- Night shift via wl-gammarelay-rs ---
-      ${pkgs.systemd}/bin/busctl --user set-property rs.wl-gammarelay / rs.wl.gammarelay Temperature q ${gammaTemp} 2>/dev/null || true
+      # Night shift: decoupled from theme — handled by separate service
 
       # --- Persist mode ---
       echo "${mode}" > "''${XDG_STATE_HOME:-$HOME/.local/state}/darkman/current-mode"
