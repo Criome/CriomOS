@@ -337,7 +337,7 @@ in
         wofi.enable = false;
         waybar.enable = false;
         fzf.enable = false;
-        gtk.enable = true;
+        gtk.enable = false;
         gnome.enable = false;
       };
       image = pkgs.runCommand "wallpaper.png" {
