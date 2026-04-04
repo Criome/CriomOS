@@ -168,18 +168,6 @@ let
   lightWaybarCss = mkWaybarCss light;
 
   /*
-    Generate GTK settings.ini for dark/light.
-    Written to ~/.config/gtk-3.0/ and gtk-4.0/ by darkman.
-  */
-  mkGtkSettings = { isDark }: pkgs.writeText "gtk-settings.ini" ''
-    [Settings]
-    gtk-application-prefer-dark-theme=${if isDark then "1" else "0"}
-  '';
-
-  darkGtkSettings = mkGtkSettings { isDark = true; };
-  lightGtkSettings = mkGtkSettings { isDark = false; };
-
-  /*
     Generate fzf color string from base16 palette.
   */
   mkFzfColors = c:
@@ -204,7 +192,7 @@ let
     Writes real config files and reloads every app that doesn't
     follow the XDG portal natively.
   */
-  mkApplyScript = { mode, scheme, waybarCss, gtkSettings }:
+  mkApplyScript = { mode, scheme, waybarCss }:
     let
       c = parseScheme scheme;
       oscSeq = mkOscSequence c;
@@ -219,11 +207,7 @@ let
       ${pkgs.dconf}/bin/dconf write /org/gnome/desktop/interface/color-scheme "'${dconfMode}'"
       ${pkgs.dconf}/bin/dconf write /org/gnome/desktop/interface/icon-theme "'${iconTheme}'"
 
-      # --- GTK settings files (file manager, launcher, legacy GTK apps) ---
-      mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
-      cp -f ${gtkSettings} "$HOME/.config/gtk-3.0/settings.ini"
-      cp -f ${gtkSettings} "$HOME/.config/gtk-4.0/settings.ini"
-      chmod 644 "$HOME/.config/gtk-3.0/settings.ini" "$HOME/.config/gtk-4.0/settings.ini"
+      # GTK dark/light handled by dconf above; settings.ini owned by Stylix/HM
 
       # --- Ghostty config (darkman owns this file) ---
       mkdir -p "$HOME/.config/ghostty"
@@ -237,13 +221,11 @@ background = ${c.base00}
 foreground = ${c.base05}
 GHOSTTY
 
-      # --- Waybar: write CSS, restart ---
+      # --- Waybar: write CSS, signal reload ---
       mkdir -p "$HOME/.config/waybar"
       cp -f ${waybarCss} "$HOME/.config/waybar/style.css"
       chmod 644 "$HOME/.config/waybar/style.css"
-      ${pkgs.procps}/bin/pkill -9 waybar 2>/dev/null || true
-      sleep 0.3
-      ${pkgs.procps}/bin/pgrep -x waybar >/dev/null || { waybar & disown; }
+      ${pkgs.procps}/bin/pkill -SIGUSR2 waybar 2>/dev/null || true
 
       # --- Terminals: OSC sequences to all PTYs ---
       SEQ="${oscSeq}"
@@ -268,11 +250,11 @@ GHOSTTY
 
   applyDark = mkApplyScript {
     mode = "dark"; scheme = darkScheme;
-    waybarCss = darkWaybarCss; gtkSettings = darkGtkSettings;
+    waybarCss = darkWaybarCss;
   };
   applyLight = mkApplyScript {
     mode = "light"; scheme = lightScheme;
-    waybarCss = lightWaybarCss; gtkSettings = lightGtkSettings;
+    waybarCss = lightWaybarCss;
   };
 
   /*
@@ -339,14 +321,14 @@ in
       polarity = "dark";
       base16Scheme = darkScheme;
       targets = {
-        # Darkman manages these at runtime
+        # Darkman switches dark/light via dconf at runtime
         emacs.enable = false;
         ghostty.enable = false;
         vscode.enable = true;
         wezterm.enable = false;
         waybar.enable = false;
         fzf.enable = false;
-        gtk.enable = false;
+        gtk.enable = true;
         gnome.enable = false;
       };
       image = pkgs.runCommand "wallpaper.png" {
