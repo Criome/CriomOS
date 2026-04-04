@@ -70,7 +70,7 @@ let
       npmDepsHash = "sha256-Cc515svhzCyo7KWvKiL7TlrciotuUGi4RVbiJa+DXKs=";
       dontNpmBuild = true;
       buildPhase = ''
-        npx esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node
+        npx esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --external:web-tree-sitter --format=cjs --platform=node
       '';
       installPhase = ''
         extDir=$out/share/vscode/extensions/criome.vscode-aski

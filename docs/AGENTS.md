@@ -21,6 +21,14 @@
 - Actions: add, remove, rename, rewrite, extract, merge, split, move, replace, fix, extend, reduce.
 - Verdicts: error, evolution, dependency, gap, redundancy, violation, drift.
 
+## Context Hygiene
+
+**Never let Nix store paths enter the conversation context.** Store paths are content-addressed, change with every input change, and are useless as stable references. They waste context window space and provide no actionable information.
+
+- Capture store paths in shell variables: `result=$(nix build ... --print-out-paths)`
+- Chain build → deploy in a single command: `ssh root@localhost nix-env -p ... --set "$(nix build ... --print-out-paths)"`
+- Never print, log, or display store paths to the user or in tool output unless debugging a specific path issue.
+
 ## Build Commands
 
 **Always push before building.** Build from origin, not the dirty tree:
@@ -121,7 +129,7 @@ nix copy --to "ssh://root@<node>" "$path"
 ssh root@<node> su -l <user> -c "\"$path\"/activate"
 ```
 
-Never split build and activate into separate commands that expose store paths — use subshell expansion so the path stays in the shell, not in agent context.
+Never split build and activate into separate commands that expose store paths — use subshell expansion or shell variables so the path stays in the shell, not in agent context. Store paths in the conversation are noise.
 
 Alternatively, `fullOs` includes home-manager — `switch-to-configuration switch` activates both OS and home profiles in one step.
 
