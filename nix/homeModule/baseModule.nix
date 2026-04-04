@@ -303,6 +303,14 @@ in
 
     programs.zsh.initContent = lib.mkBefore terminalInitHook;
 
+    home.activation.reapplyDarkman =
+      lib.hm.dag.entryAfter [ "reloadSystemd" ] ''
+        mode=$(cat "''${XDG_STATE_HOME:-$HOME/.local/state}/darkman/current-mode" 2>/dev/null) || true
+        if [ -n "$mode" ]; then
+          ${pkgs.darkman}/bin/darkman set "$mode" 2>/dev/null || true
+        fi
+      '';
+
     services.darkman = {
       enable = true;
       settings = {
@@ -324,7 +332,7 @@ in
         # Darkman switches dark/light via dconf at runtime
         emacs.enable = false;
         ghostty.enable = false;
-        vscode.enable = true;
+        vscode.enable = false;
         wezterm.enable = false;
         waybar.enable = false;
         fzf.enable = false;
