@@ -59,7 +59,7 @@ let
   vscode-aski =
     let
       src = builtins.fetchGit {
-        url = "git@github.com:LiGoldragon/vscode-aski.git";
+        url = "https://github.com/LiGoldragon/vscode-aski.git";
         rev = "7dc0633d07187d3b30a68e0f891d0233ca4622de";
       };
     in
