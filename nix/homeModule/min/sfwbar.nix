@@ -13,6 +13,14 @@ lib.mkIf behavesAs.edge {
     enable = true;
     systemd.enable = false;
     settings = {
+      idle = {
+        enabled = true;
+        screenOffTimeout = 300;
+        lockTimeout = 600;
+        suspendTimeout = 1800;
+        fadeDuration = 5;
+      };
+      general.lockOnSuspend = true;
       bar.widgets = {
         left = [
           { id = "Launcher"; }
