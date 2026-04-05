@@ -183,7 +183,7 @@ in
         "XF86AudioLowerVolume".action = a.spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-";
 
         # Lock
-        "Mod+L".action = a.spawn "loginctl" "lock-session";
+        "Mod+L".action = a.spawn "noctalia-shell" "ipc" "call" "lockScreen" "lock";
 
         # Hotkey overlay
         "Mod+Shift+S".action = a.show-hotkey-overlay;
