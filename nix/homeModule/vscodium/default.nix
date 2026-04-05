@@ -6,7 +6,7 @@
 }:
 let
   inherit (builtins) toJSON;
-  inherit (user.methods) isCodeDev sizedAtLeast;
+  inherit (user.methods) sizedAtLeast;
 
   visualjj = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
     mktplcRef = {
@@ -131,7 +131,7 @@ let
   };
 
 in
-lib.mkIf (sizedAtLeast.med && isCodeDev) {
+lib.mkIf sizedAtLeast.med {
 
   programs.vscode = {
     enable = true;
