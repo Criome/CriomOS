@@ -131,7 +131,10 @@ let
         userName: user:
         let
           inherit (world) pkdjz;
-          modules = homeModules ++ [ inputs.niri-flake.homeModules.config ];
+          modules = homeModules ++ [
+            inputs.niri-flake.homeModules.config
+            inputs.noctalia.homeModules.default
+          ];
           extraSpecialArgs = {
             inherit
               criomos-lib

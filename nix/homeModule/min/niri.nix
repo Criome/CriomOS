@@ -1,11 +1,6 @@
 { pkgs, config, ... }:
 let
   terminal = "${pkgs.ghostty}/bin/ghostty";
-  launcher = "${pkgs.nwg-drawer}/bin/nwg-drawer";
-  lock = "${pkgs.hyprlock}/bin/hyprlock";
-
-  strip = color: builtins.substring 1 6 color;
-  colors = config.lib.stylix.colors.withHashtag;
 
   a = config.lib.niri.actions;
 
@@ -16,7 +11,6 @@ in
   };
 
   home.packages = with pkgs; [
-    hyprlock
     grim
     slurp
     wl-clipboard
@@ -72,8 +66,8 @@ in
         focus-ring = {
           enable = true;
           width = 3;
-          active.color = "${colors.base0D}";
-          inactive.color = "${colors.base02}";
+          active.color = "${config.lib.stylix.colors.withHashtag.base0D}";
+          inactive.color = "${config.lib.stylix.colors.withHashtag.base02}";
         };
       };
 
@@ -86,7 +80,7 @@ in
       ];
 
       spawn-at-startup = [
-        { command = [ "${pkgs.sfwbar}/bin/sfwbar" ]; }
+        { command = [ "noctalia-shell" ]; }
         { command = [ "${pkgs.networkmanagerapplet}/bin/nm-applet" "--indicator" ]; }
         { command = [ "${pkgs.blueman}/bin/blueman-applet" ]; }
       ];
@@ -102,7 +96,6 @@ in
       binds = {
         # Launch
         "Mod+Shift+Return".action = a.spawn terminal;
-        "Mod+O".action = a.spawn launcher;
 
         # Window
         "Mod+Q".action = a.close-window;
@@ -181,7 +174,7 @@ in
         "XF86AudioLowerVolume".action = a.spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-";
 
         # Lock
-        "Mod+L".action = a.spawn lock;
+        "Mod+L".action = a.spawn "loginctl" "lock-session";
 
         # Hotkey overlay
         "Mod+Shift+S".action = a.show-hotkey-overlay;
@@ -192,59 +185,4 @@ in
       };
     };
   };
-
-  # --- hypridle ---
-  xdg.configFile."hypr/hypridle.conf".text = ''
-    general {
-      lock_cmd = pidof hyprlock || ${lock}
-      before_sleep_cmd = loginctl lock-session
-      after_sleep_cmd = niri msg action power-on-monitors
-    }
-
-    listener {
-      timeout = 600
-      on-timeout = niri msg action power-off-monitors
-      on-resume = niri msg action power-on-monitors
-    }
-
-    listener {
-      timeout = 3600
-      on-timeout = loginctl lock-session
-    }
-  '';
-
-  # --- hyprlock ---
-  xdg.configFile."hypr/hyprlock.conf".text = ''
-    general {
-      hide_cursor = true
-    }
-
-    background {
-      color = rgb(${strip colors.base00})
-    }
-
-    input-field {
-      size = 250, 50
-      outline_thickness = 3
-      outer_color = rgb(${strip colors.base0D})
-      inner_color = rgb(${strip colors.base01})
-      font_color = rgb(${strip colors.base05})
-      fade_on_empty = true
-      placeholder_text = <i>password</i>
-      halign = center
-      valign = center
-    }
-
-    label {
-      text = $TIME
-      color = rgb(${strip colors.base05})
-      font_size = 64
-      font_family = IosevkaTerm Nerd Font
-      halign = center
-      valign = top
-      position = 0, -100
-    }
-  '';
-
-  services.hypridle.enable = true;
 }

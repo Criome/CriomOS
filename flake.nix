@@ -56,6 +56,11 @@
     # Desktop agents
     claude-for-linux.url = "github:Criome/claude-for-linux/update-v1.1.7714";
 
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # System
     kibord.url = "github:LiGoldragon/kibord/testing";
     skrips.url = "github:criome/skrips/testing";
