@@ -98,7 +98,7 @@ in
         # Launch
         "Mod+Shift+Return".action = a.spawn terminal;
         "Mod+O" = { action = a.toggle-overview; repeat = false; };
-        "Mod+Space".action = a.spawn "noctalia-shell" "ipc" "call" "launcher" "toggle";
+        "Mod+D".action = a.spawn "noctalia-shell" "ipc" "call" "launcher" "toggle";
 
         # Window
         "Mod+Q".action = a.close-window;
@@ -135,6 +135,10 @@ in
         "Mod+Ctrl+E".action = a.focus-workspace-down;
         "Mod+Ctrl+Shift+U".action = a.move-column-to-workspace-up;
         "Mod+Ctrl+Shift+E".action = a.move-column-to-workspace-down;
+        "Mod+Page_Up".action = a.focus-workspace-up;
+        "Mod+Page_Down".action = a.focus-workspace-down;
+        "Mod+Shift+Page_Up".action = a.move-column-to-workspace-up;
+        "Mod+Shift+Page_Down".action = a.move-column-to-workspace-down;
 
         # Tab/focus cycling
         "Mod+Tab".action = a.focus-workspace-previous;
