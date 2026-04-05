@@ -7,7 +7,7 @@
 let
   inherit (horizon.node.methods) behavesAs;
   terminal = "${pkgs.ghostty}/bin/ghostty";
-  launcher = "${pkgs.wofi}/bin/wofi --show drun";
+  launcher = "${pkgs.nwg-drawer}/bin/nwg-drawer";
   volumeControl = "pwvucontrol";
 
   sfwbarConfig = pkgs.writeText "sfwbar.config" ''
