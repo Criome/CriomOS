@@ -38,6 +38,7 @@ let
 
   homeModules = [
     inputs.stylix.homeModules.stylix
+    inputs.noctalia.homeModules.default
     local.criomOSHomeModule
   ];
 
@@ -133,7 +134,6 @@ let
           inherit (world) pkdjz;
           modules = homeModules ++ [
             inputs.niri-flake.homeModules.config
-            inputs.noctalia.homeModules.default
           ];
           extraSpecialArgs = {
             inherit
