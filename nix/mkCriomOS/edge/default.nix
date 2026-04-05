@@ -90,6 +90,7 @@ in
     blueman.enable = sizedAtLeast.min;
 
     power-profiles-daemon.enable = false;
+    upower.enable = sizedAtLeast.min;
 
     dbus.packages = mkIf sizedAtLeast.min [ pkgs.gcr ];
 
