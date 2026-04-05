@@ -2,6 +2,7 @@
   pkgs,
   lib,
   user,
+  inputs,
   ...
 }:
 let
@@ -56,16 +57,18 @@ let
     '';
   };
 
+  askiWasm = inputs.aski.packages.${pkgs.system}.tree-sitter-aski-wasm;
+
   vscode-aski =
     let
       src = builtins.fetchGit {
         url = "https://github.com/LiGoldragon/vscode-aski.git";
-        rev = "7dc0633d07187d3b30a68e0f891d0233ca4622de";
+        rev = "7e7cfd5fe4bc1b2ff4e5da12b55b6e6e94b46cc3";
       };
     in
     pkgs.buildNpmPackage {
       pname = "vscode-extension-criome-vscode-aski";
-      version = "0.2.0";
+      version = "0.3.0";
       inherit src;
       npmDepsHash = "sha256-0JjCGpgLQM79CUhV6//fEcJJr79BmtqPIq9a2mtWDiQ=";
       dontNpmBuild = true;
@@ -74,8 +77,11 @@ let
       '';
       installPhase = ''
         extDir=$out/share/vscode/extensions/criome.vscode-aski
-        mkdir -p $extDir
-        cp -r out grammars queries package.json language-configuration.json $extDir/
+        mkdir -p $extDir $extDir/grammars
+        cp -r out package.json language-configuration.json $extDir/
+        # WASM + queries from aski flake (pure Nix build)
+        cp ${askiWasm}/tree-sitter-aski.wasm $extDir/grammars/
+        cp -r ${askiWasm}/queries $extDir/
         # web-tree-sitter WASM needed at runtime
         mkdir -p $extDir/node_modules/web-tree-sitter
         cp -rL node_modules/web-tree-sitter/. $extDir/node_modules/web-tree-sitter/
