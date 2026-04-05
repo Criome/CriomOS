@@ -81,6 +81,7 @@ in
       ];
 
       spawn-at-startup = [
+        { command = [ "mako" ]; }
         { command = [ "noctalia-shell" ]; }
         { command = [ "${pkgs.networkmanagerapplet}/bin/nm-applet" "--indicator" ]; }
         { command = [ "${pkgs.blueman}/bin/blueman-applet" ]; }
