@@ -22,7 +22,7 @@ lib.mkIf behavesAs.edge {
         right = [
           { id = "Tray"; }
           { id = "NotificationHistory"; }
-          { id = "Battery"; displayMode = "graphic-full"; }
+          { id = "Battery"; displayMode = "graphic"; }
           { id = "Volume"; }
           { id = "Brightness"; }
           { id = "ControlCenter"; }
