@@ -186,7 +186,25 @@ When a node is unresponsive, boot the asklepios USB, then:
 
 5. **Never run `activate` or `switch-to-configuration switch` inside a chroot** — it will break the live USB environment. Only use `nixos-install` or `switch-to-configuration boot`.
 
+### Hot-reloading a user's compositor session
+
+After `switch-to-configuration switch` with updated home-manager configs:
+
+1. **Reload niri config** (does NOT kill the session):
+   ```
+   ssh root@<node> su - <user> -c 'WAYLAND_DISPLAY=wayland-1 XDG_RUNTIME_DIR=/run/user/<uid> niri msg reload-config'
+   ```
+
+2. **Restart noctalia-shell** (kill quickshell, relaunch):
+   ```
+   ssh root@<node> 'kill $(pgrep -u <user> quickshell)'
+   ssh root@<node> su - <user> -c 'WAYLAND_DISPLAY=wayland-1 XDG_RUNTIME_DIR=/run/user/<uid> noctalia-shell &'
+   ```
+
+**NEVER send SIGHUP to niri** — it terminates the compositor and destroys the entire user session.
+
 ### Dangerous operations — DO NOT DO
+- **Never** send `kill -HUP` or `SIGHUP` to niri — it kills the compositor, not reloads it. Use `niri msg reload-config`.
 - **Never** restart `hostapd` or reload the wifi module on a router node you're connected through — it tears down `br-lan`, dropping ALL bridge members (USB ethernet, wifi) and killing Yggdrasil. Use the WAN IP (`192.168.1.20` for prometheus) as a fallback path before touching network services.
 - **Never** run a system's `activate` script inside a chroot of a mounted install — it overwrites `/etc` on the live system.
 - **Never** deploy a major nixpkgs upgrade to a headless machine without testing on a machine with a screen first.
