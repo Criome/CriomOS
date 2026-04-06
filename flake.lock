@@ -1054,11 +1054,11 @@
         "sema-src": "sema-src"
       },
       "locked": {
-        "lastModified": 1775490634,
-        "narHash": "sha256-/EO0dCe0nHt5Jw1NizwmADd874cOvYxZbNywyWLQSZ0=",
+        "lastModified": 1775502581,
+        "narHash": "sha256-pRrUiCxhR7hUnFvugBgV6B6kiJUojC6P7JkexwhcQCg=",
         "owner": "LiGoldragon",
         "repo": "Mentci",
-        "rev": "788b64a3f49f262baf6f33db374692f000515334",
+        "rev": "32b204bd56779785aca91237e3e2794974c58d43",
         "type": "github"
       },
       "original": {
@@ -1573,11 +1573,11 @@
     "samskara-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1775130519,
-        "narHash": "sha256-rp6kRePhKZJTYB+YKgRqg4S3pbbm7R+/X8XcMGnXp4s=",
+        "lastModified": 1775500286,
+        "narHash": "sha256-+SIGcwBUsAwnWERj/gZovfBbjN0Jq73mPmcUKjhm7hg=",
         "owner": "LiGoldragon",
         "repo": "samskara",
-        "rev": "0bc2751ae7d1ceab6131418b4c3c77084e51419c",
+        "rev": "b69540cacd9c055e2ae84da2b6fb86037d46f08b",
         "type": "github"
       },
       "original": {
