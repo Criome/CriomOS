@@ -33,6 +33,7 @@ lib.mkIf behavesAs.edge {
           { id = "Battery"; displayMode = "graphic"; }
           { id = "Volume"; }
           { id = "Brightness"; }
+          { id = "Clock"; }
           { id = "ControlCenter"; }
         ];
       };
