@@ -254,8 +254,14 @@ in
         dbusserver = true;
         portal = true;
       };
-      darkModeScripts.switch = ''${applyDark}'';
-      lightModeScripts.switch = ''${applyLight}'';
+      darkModeScripts.switch = ''
+        ${applyDark}
+        systemctl --user start nightshift-on || true
+      '';
+      lightModeScripts.switch = ''
+        ${applyLight}
+        systemctl --user start nightshift-off || true
+      '';
     };
 
     stylix = {

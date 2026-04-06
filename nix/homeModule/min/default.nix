@@ -343,11 +343,32 @@ let
   busctlBin = "${pkgs.systemd}/bin/busctl";
   gammaRelayBus = "rs.wl-gammarelay / rs.wl.gammarelay";
 
+  nightTemp = 2700;
+  dayTemp = 6500;
+  transitionMinutes = 90;
+  transitionSteps = 15;
+
   nightshift = pkgs.writeShellScriptBin "nightshift" ''
+    set_temp() { ${busctlBin} --user set-property ${gammaRelayBus} Temperature q "$1"; }
+    get_temp() { ${busctlBin} --user get-property ${gammaRelayBus} Temperature 2>/dev/null | awk '{print $2}'; }
+
+    transition() {
+      from=$1 to=$2
+      steps=${toString transitionSteps}
+      interval=$(( ${toString transitionMinutes} * 60 / steps ))
+      current=$from
+      for i in $(seq 1 $steps); do
+        current=$(( from + (to - from) * i / steps ))
+        set_temp "$current"
+        [ "$i" -lt "$steps" ] && sleep "$interval"
+      done
+    }
+
     case "''${1:-on}" in
-      on)  ${busctlBin} --user set-property ${gammaRelayBus} Temperature q "''${2:-3500}" ;;
-      off) ${busctlBin} --user set-property ${gammaRelayBus} Temperature q 6500 ;;
-      *)   ${busctlBin} --user set-property ${gammaRelayBus} Temperature q "$1" ;;
+      on)       transition "$(get_temp)" ${toString nightTemp} ;;
+      off)      transition "$(get_temp)" ${toString dayTemp} ;;
+      instant)  set_temp "''${2:-${toString nightTemp}}" ;;
+      *)        set_temp "$1" ;;
     esac
   '';
 
@@ -718,39 +739,21 @@ mkIf sizedAtLeast.min {
       };
 
       nightshift-on = {
-        Unit.Description = "Set warm color temperature at night";
+        Unit.Description = "Gradual warm color temperature transition";
         Service = {
           Type = "oneshot";
-          ExecStart = "${pkgs.bash}/bin/bash -c '${busctlBin} --user set-property ${gammaRelayBus} Temperature q 3500'";
+          ExecStart = "${nightshift}/bin/nightshift on";
+          RemainAfterExit = false;
         };
       };
 
       nightshift-off = {
-        Unit.Description = "Set neutral color temperature during day";
+        Unit.Description = "Gradual neutral color temperature transition";
         Service = {
           Type = "oneshot";
-          ExecStart = "${pkgs.bash}/bin/bash -c '${busctlBin} --user set-property ${gammaRelayBus} Temperature q 6500'";
+          ExecStart = "${nightshift}/bin/nightshift off";
+          RemainAfterExit = false;
         };
-      };
-    };
-
-    user.timers = {
-      nightshift-on = {
-        Unit.Description = "Warm color temperature at 20:00";
-        Timer = {
-          OnCalendar = "*-*-* 20:00:00";
-          Persistent = true;
-        };
-        Install.WantedBy = [ "timers.target" ];
-      };
-
-      nightshift-off = {
-        Unit.Description = "Neutral color temperature at 07:00";
-        Timer = {
-          OnCalendar = "*-*-* 07:00:00";
-          Persistent = true;
-        };
-        Install.WantedBy = [ "timers.target" ];
       };
     };
   };
