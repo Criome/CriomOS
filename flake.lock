@@ -50,11 +50,11 @@
     "annas-archive-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1774359622,
-        "narHash": "sha256-uqn1cxrq+t48as2ovc+a2WHbBp7Lq7NHi9kbg2WYpQ8=",
+        "lastModified": 1775490165,
+        "narHash": "sha256-jYqK3UjtWOuOj9KwehM3e5d9jmd2n17g3owccjwWigc=",
         "owner": "LiGoldragon",
         "repo": "annas-archive",
-        "rev": "b5f7ebd226872550cfb49dd0c659921e08c50edc",
+        "rev": "9faaf2f66a0970fb112a1c32d9b22c3d0b4cdbdc",
         "type": "github"
       },
       "original": {
@@ -1054,11 +1054,11 @@
         "sema-src": "sema-src"
       },
       "locked": {
-        "lastModified": 1775488971,
-        "narHash": "sha256-JRDNtDETGYwCQOoN3vOOQ5/F8W7BCewou9f8IREghVw=",
+        "lastModified": 1775490634,
+        "narHash": "sha256-/EO0dCe0nHt5Jw1NizwmADd874cOvYxZbNywyWLQSZ0=",
         "owner": "LiGoldragon",
         "repo": "Mentci",
-        "rev": "8ac9cb5f95dc44b04f4adc659e8995dc2e86db10",
+        "rev": "788b64a3f49f262baf6f33db374692f000515334",
         "type": "github"
       },
       "original": {
