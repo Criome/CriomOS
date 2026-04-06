@@ -64,8 +64,8 @@
     # System
     kibord.url = "github:LiGoldragon/kibord/testing";
     skrips.url = "github:criome/skrips/testing";
-    mentci-v1 = {
-      url = "github:LiGoldragon/Mentci-v1";
+    mentci = {
+      url = "github:LiGoldragon/Mentci";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

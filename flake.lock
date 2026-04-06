@@ -510,7 +510,7 @@
     "fenix": {
       "inputs": {
         "nixpkgs": [
-          "mentci-v1",
+          "mentci",
           "nixpkgs"
         ],
         "rust-analyzer-src": "rust-analyzer-src"
@@ -1028,7 +1028,7 @@
         "type": "github"
       }
     },
-    "mentci-v1": {
+    "mentci": {
       "inputs": {
         "annas-archive-src": "annas-archive-src",
         "claude-chill-src": "claude-chill-src",
@@ -1051,16 +1051,16 @@
         "samskara-src": "samskara-src"
       },
       "locked": {
-        "lastModified": 1775296791,
-        "narHash": "sha256-Uy/K1NrygaA1LcLDVRqV9XdzsSMx8rkT91ecEye3TYo=",
+        "lastModified": 1774293609,
+        "narHash": "sha256-pzvDlV4W36/zlEEABJJCW08wUXTRCd0o2Xg3sy4NbL8=",
         "owner": "LiGoldragon",
-        "repo": "Mentci-v1",
-        "rev": "284425112ee3919470ef1ac66f42d4580564872e",
+        "repo": "Mentci",
+        "rev": "7df8b910f72bf29cb45548af244854d94fec777e",
         "type": "github"
       },
       "original": {
         "owner": "LiGoldragon",
-        "repo": "Mentci-v1",
+        "repo": "Mentci",
         "type": "github"
       }
     },
@@ -1425,7 +1425,7 @@
         "llm-agents": "llm-agents",
         "maisiliym": "maisiliym",
         "md-roam": "md-roam",
-        "mentci-v1": "mentci-v1",
+        "mentci": "mentci",
         "mfgtools": "mfgtools",
         "mkZolaWebsite": "mkZolaWebsite",
         "ndi": "ndi",

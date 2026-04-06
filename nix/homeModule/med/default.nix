@@ -134,7 +134,7 @@ lib.mkIf sizedAtLeast.med {
         lazygit
         #== rust
         spotify-player
-        inputs.mentci-v1.packages.${pkgs.stdenv.hostPlatform.system}.mentci-codium
+        inputs.mentci.packages.${pkgs.stdenv.hostPlatform.system}.mentci-codium
       ]
       ++ graphicalPackages
       ++ optionals isCodeDev (codingPackages ++ lispDevPackages);
@@ -181,7 +181,7 @@ lib.mkIf sizedAtLeast.med {
   xdg.desktopEntries.mentci-codium = {
     name = "Mentci Codium";
     comment = "VSCodium with Mentci devshell environment";
-    exec = "${inputs.mentci-v1.packages.${pkgs.stdenv.hostPlatform.system}.mentci-codium}/bin/mentci-codium";
+    exec = "${inputs.mentci.packages.${pkgs.stdenv.hostPlatform.system}.mentci-codium}/bin/mentci-codium";
     icon = "vscodium";
     terminal = false;
     categories = [ "Development" "IDE" "TextEditor" ];
