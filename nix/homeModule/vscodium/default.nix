@@ -161,6 +161,8 @@ lib.mkIf sizedAtLeast.med {
 
   xdg.mimeApps.defaultApplications = {
     "text/plain" = "codium.desktop";
+    "text/markdown" = "codium.desktop";
+    "text/x-markdown" = "codium.desktop";
   };
 
   home.activation.seedVscodiumSettings =
