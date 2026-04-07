@@ -637,6 +637,7 @@ mkIf sizedAtLeast.min {
 
       sessionVariables = {
         RSYNC_OLD_ARGS = 1;
+        QT_QPA_PLATFORM = "wayland";
       };
 
       shellAliases = {
