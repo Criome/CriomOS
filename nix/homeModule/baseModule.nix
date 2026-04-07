@@ -256,11 +256,11 @@ in
       };
       darkModeScripts.switch = ''
         ${applyDark}
-        systemctl --user start nightshift-on || true
+        systemctl --user --no-block start nightshift-on || true
       '';
       lightModeScripts.switch = ''
         ${applyLight}
-        systemctl --user start nightshift-off || true
+        systemctl --user --no-block start nightshift-off || true
       '';
     };
 
