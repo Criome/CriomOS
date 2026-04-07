@@ -71,11 +71,10 @@ in
     xdgOpenUsePortal = true;
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
-      xdg-desktop-portal-gnome
     ];
     config = {
       niri = {
-        default = [ "gnome" "gtk" ];
+        default = [ "gtk" ];
         "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
         "org.freedesktop.impl.portal.Settings" = [ "darkman" "gtk" ];
       };
