@@ -135,9 +135,11 @@ let
           modules = homeModules ++ [
             inputs.niri-flake.homeModules.config
           ];
+          constants = import ./nix/mkCriomOS/constants.nix;
           extraSpecialArgs = {
             inherit
               criomos-lib
+              constants
               pkdjz
               world
               horizon

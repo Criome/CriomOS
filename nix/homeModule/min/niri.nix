@@ -1,6 +1,5 @@
-{ pkgs, config, user, ... }:
+{ pkgs, config, user, constants, ... }:
 let
-  constants = import ../../../nix/mkCriomOS/constants.nix;
   terminal = "${pkgs.ghostty}/bin/ghostty";
   inherit (user.methods) useFastRepeat;
 

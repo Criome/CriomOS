@@ -3,6 +3,7 @@
   world,
   homeModules,
   criomos-lib,
+  constants,
   inputs,
   ...
 }:
@@ -27,6 +28,7 @@ in
         world
         horizon
         criomos-lib
+        constants
         inputs
         ;
     };
