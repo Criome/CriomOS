@@ -997,6 +997,22 @@
         "type": "github"
       }
     },
+    "media-pipeline-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1772914245,
+        "narHash": "sha256-zgnbTtfSrEca3/OfEFokOMKrMjv3/ueRiWa//DfNj7A=",
+        "owner": "guinacio",
+        "repo": "claude-image-gen",
+        "rev": "5923473960c325f39f8fe2903ff304373dbf094d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "guinacio",
+        "repo": "claude-image-gen",
+        "type": "github"
+      }
+    },
     "mentci": {
       "inputs": {
         "arbor-src": "arbor-src",
@@ -1008,6 +1024,7 @@
         "fenix": "fenix",
         "flake-utils": "flake-utils_5",
         "lojix-src": "lojix-src",
+        "media-pipeline-src": "media-pipeline-src",
         "nexus-src": "nexus-src",
         "nixpkgs": [
           "nixpkgs"
@@ -1020,11 +1037,11 @@
         "substack-mcp-src": "substack-mcp-src"
       },
       "locked": {
-        "lastModified": 1775618651,
-        "narHash": "sha256-h9RQ9da/7PD3oEheHPZ0JsVXvy2G44mfVTVntK5Px68=",
+        "lastModified": 1775652094,
+        "narHash": "sha256-A7q7XRb17xqWmoo43gSL3VsoJqsJonBNHdiPD9FPb6E=",
         "owner": "LiGoldragon",
         "repo": "Mentci",
-        "rev": "82a5ce9297b44dce9b97c58480e60049a75475be",
+        "rev": "474a8721dd1fc3aef460f159fa8627b03b9d1887",
         "type": "github"
       },
       "original": {
