@@ -20,7 +20,7 @@ let
     optionals
     optionalAttrs
     ;
-  inherit (user.methods) isCodeDev sizedAtLeast useColemak;
+  inherit (user.methods) sizedAtLeast useColemak;
   inherit (horizon) node;
   inherit (pkgs) parinfer-rust writeText;
   inherit (pkdjz) vimPloginz;
@@ -191,9 +191,8 @@ let
     };
   };
 
-  langServers = optionalAttrs isCodeDev (
-    (optionalAttrs sizedAtLeast.med medLangServers) // (optionalAttrs sizedAtLeast.max maxLangServers)
-  );
+  langServers =
+    (optionalAttrs sizedAtLeast.med medLangServers) // (optionalAttrs sizedAtLeast.max maxLangServers);
 
   medKod =
     ''
@@ -290,7 +289,7 @@ let
     + minKod
     + themeKod
     + (readFile ./expressline.lua)
-    + (optionalString (isCodeDev && sizedAtLeast.med) (
+    + (optionalString sizedAtLeast.med (
       medLuaKod + optionalString sizedAtLeast.max maxLuaKod
     ));
 
@@ -319,7 +318,7 @@ in
   home = {
     packages =
       minPackages
-      ++ (optionals (isCodeDev && sizedAtLeast.med) (
+      ++ (optionals sizedAtLeast.med (
         medPackages ++ (optionals sizedAtLeast.max maxPackages)
       ));
 

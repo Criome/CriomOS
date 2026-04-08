@@ -28,7 +28,6 @@ let
     gitSigningKey
     matrixID
     sizedAtLeast
-    isCodeDev
     isMultimediaDev
     ;
   inherit (user) githubId name methods;
@@ -303,7 +302,7 @@ let
     ]
     ++ bleedingEdgeGraphicalPackages # (Todo configure)
     ++ modernGraphicalPackages # (Todo configure)
-    ++ (optionals isCodeDev unixDeveloperPackages)
+    ++ unixDeveloperPackages
     ++ (optionals isMultimediaDev (
       with pkgs;
       [
@@ -438,7 +437,7 @@ mkIf sizedAtLeast.min {
     };
 
     pueue = {
-      enable = isCodeDev;
+      enable = true;
       settings = {
         shared = { };
         client = {
@@ -464,8 +463,8 @@ mkIf sizedAtLeast.min {
     };
 
     direnv = {
-      enable = isCodeDev;
-      nix-direnv.enable = isCodeDev;
+      enable = true;
+      nix-direnv.enable = true;
     };
 
     ghostty = {
@@ -556,11 +555,11 @@ mkIf sizedAtLeast.min {
     };
 
     joshuto = {
-      enable = isCodeDev;
+      enable = true;
     };
 
     jujutsu = {
-      enable = isCodeDev;
+      enable = true;
       settings = {
         ui = {
           diff-instructions = false;
@@ -584,7 +583,7 @@ mkIf sizedAtLeast.min {
     };
 
     lapce = {
-      enable = isCodeDev;
+      enable = true;
       plugins = [ ];
       settings = {
         core = {
@@ -606,7 +605,7 @@ mkIf sizedAtLeast.min {
 
     # TODO broken
     zed-editor = {
-      enable = isCodeDev;
+      enable = true;
       package = pkgs.zed-editor;
       extraPackages = with pkgs; [ ];
       userKeymaps = optionalAttrs useColemak colemakZedKeys;

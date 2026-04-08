@@ -7,7 +7,7 @@
 }:
 let
   inherit (lib) optionals;
-  inherit (user.methods) isCodeDev isMultimediaDev sizedAtLeast;
+  inherit (user.methods) isMultimediaDev sizedAtLeast;
 
   codingPackages = with pkgs; [
     pandoc
@@ -43,7 +43,7 @@ lib.mkIf sizedAtLeast.max {
         gitkraken
       ]
       ++ windowsEmulationsPackages
-      ++ (optionals isCodeDev codingPackages)
+      ++ codingPackages
       ++ (optionals isMultimediaDev semaDevPackages);
   };
 

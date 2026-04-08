@@ -16,7 +16,6 @@ let
   inherit (user.methods)
     sizedAtLeast
     useColemak
-    isCodeDev
     isMultimediaDev
     ;
   inherit (user) size;
