@@ -5,6 +5,7 @@
   lib,
   world,
   pkdjz,
+  inputs,
   ...
 }:
 let
@@ -111,7 +112,7 @@ in
       htop
       pciutils
       usbutils
-      claude-code
+      inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
     ]);
 
     interactiveShellInit = optionalString useColemak "stty -ixon";

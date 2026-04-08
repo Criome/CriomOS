@@ -11,7 +11,6 @@ let
   inherit (criomos-lib) mkJsonMerge;
 
   system = pkgs.stdenv.hostPlatform.system;
-  ovsx = inputs.nix-vscode-extensions.extensions.${system}.open-vsx;
 
   visualjj = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
     mktplcRef = {
@@ -35,9 +34,26 @@ let
     '';
   };
 
-  claude-code = pkgs.vscode-extensions.anthropic.claude-code.overrideAttrs (old: {
-    postInstall = (old.postInstall or "") + ''
+  claudeCli = inputs.llm-agents.packages.${system}.claude-code;
+
+  claude-code = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
+    mktplcRef = {
+      name = "claude-code";
+      publisher = "anthropic";
+      version = claudeCli.version;
+    };
+    vsix = pkgs.fetchurl {
+      name = "claude-code-${claudeCli.version}-linux-x64.vsix";
+      url = "https://open-vsx.org/api/anthropic/claude-code/linux-x64/${claudeCli.version}/file/anthropic.claude-code-${claudeCli.version}@linux-x64.vsix";
+      hash = "sha256-VMzNZylGwMoyFQKHFFI9hZ2CJ2AcH2CYAOsLa2WmMI0=";
+    };
+    postInstall = ''
       extDir="$out/share/vscode/extensions/anthropic.claude-code"
+
+      # Replace bundled native binary with llm-agents build (same version)
+      rm -f "$extDir/resources/native-binary/claude"
+      ln -s ${claudeCli}/bin/claude "$extDir/resources/native-binary/claude"
+
       # Fix hardcoded dark theme in diff view
       if [ -f "$extDir/webview/index.js" ]; then
         substituteInPlace "$extDir/webview/index.js" \
@@ -45,7 +61,9 @@ let
           'theme:document.body.classList.contains("vscode-light")?"vs":"vs-dark"' || true
       fi
     '';
-  });
+  };
+
+  ovsx = inputs.nix-vscode-extensions.extensions.${system}.open-vsx;
 
   askiWasm = inputs.aski.packages.${pkgs.system}.tree-sitter-aski-wasm;
 
