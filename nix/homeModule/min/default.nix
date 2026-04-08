@@ -351,22 +351,52 @@ let
     set_temp() { ${busctlBin} --user set-property ${gammaRelayBus} Temperature q "$1"; }
     get_temp() { ${busctlBin} --user get-property ${gammaRelayBus} Temperature 2>/dev/null | awk '{print $2}'; }
 
-    transition() {
-      from=$1 to=$2
-      steps=${toString transitionSteps}
-      interval=$(( ${toString transitionMinutes} * 60 / steps ))
-      current=$from
+    NIGHT=${toString nightTemp}
+    DAY=${toString dayTemp}
+    MINUTES=${toString transitionMinutes}
+    STEPS=${toString transitionSteps}
+
+    # Apply correct temperature for current mode — instant on first call,
+    # then gradual if already at screen during transition.
+    apply() {
+      target=$1
+      current=$(get_temp)
+      diff=$((current - target))
+      [ $diff -lt 0 ] && diff=$((-diff))
+
+      # If far from target (>500K off), jump immediately (login, wake, resume)
+      if [ $diff -gt 500 ]; then
+        set_temp "$target"
+        return
+      fi
+
+      # Already close — do a short gradual transition (5 minutes)
+      steps=10
+      interval=30
+      from=$current
       for i in $(seq 1 $steps); do
-        current=$(( from + (to - from) * i / steps ))
-        set_temp "$current"
+        elapsed=$(( $(date +%s) - start_time ))
+        temp=$(( from + (target - from) * i / steps ))
+        set_temp "$temp"
         [ "$i" -lt "$steps" ] && sleep "$interval"
       done
+      set_temp "$target"
     }
 
-    case "''${1:-on}" in
-      on)       transition "$(get_temp)" ${toString nightTemp} ;;
-      off)      transition "$(get_temp)" ${toString dayTemp} ;;
-      instant)  set_temp "''${2:-${toString nightTemp}}" ;;
+    start_time=$(date +%s)
+
+    case "''${1:-sync}" in
+      sync)
+        mode=$(${pkgs.darkman}/bin/darkman get 2>/dev/null || echo "light")
+        if [ "$mode" = "dark" ]; then
+          apply $NIGHT
+        else
+          apply $DAY
+        fi
+        ;;
+      on)       apply $NIGHT ;;
+      off)      apply $DAY ;;
+      instant)  set_temp "''${2:-$NIGHT}" ;;
       *)        set_temp "$1" ;;
     esac
   '';
@@ -746,9 +776,23 @@ mkIf sizedAtLeast.min {
         Install.WantedBy = [ "graphical-session.target" ];
       };
 
+      nightshift-sync = {
+        Unit = {
+          Description = "Sync color temperature to current dark/light mode";
+          Requires = [ "wl-gammarelay-rs.service" ];
+          After = [ "wl-gammarelay-rs.service" ];
+        };
+        Service = {
+          Type = "oneshot";
+          ExecStartPre = "${pkgs.coreutils}/bin/sleep 1";
+          ExecStart = "${nightshift}/bin/nightshift sync";
+        };
+        Install.WantedBy = [ "graphical-session.target" ];
+      };
+
       nightshift-on = {
         Unit = {
-          Description = "Gradual warm color temperature transition";
+          Description = "Warm color temperature transition";
           Requires = [ "wl-gammarelay-rs.service" ];
           After = [ "wl-gammarelay-rs.service" ];
           Conflicts = [ "nightshift-off.service" ];
@@ -762,7 +806,7 @@ mkIf sizedAtLeast.min {
 
       nightshift-off = {
         Unit = {
-          Description = "Gradual neutral color temperature transition";
+          Description = "Neutral color temperature transition";
           Requires = [ "wl-gammarelay-rs.service" ];
           After = [ "wl-gammarelay-rs.service" ];
           Conflicts = [ "nightshift-on.service" ];
