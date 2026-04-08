@@ -5,14 +5,17 @@
   pkdjz,
   world,
   inputs,
+  criomos-lib,
   ...
 }:
 let
   inherit (builtins) readFile toJSON;
   inherit (lib) optionalString optionals;
   inherit (pkdjz) kynvyrt;
+  inherit (criomos-lib) mkJsonMerge;
   inherit (user) githubId;
   inherit (user.methods) isCodeDev useColemak sizedAtLeast;
+  system = pkgs.stdenv.hostPlatform.system;
   inherit (pkgs) mksh;
 
   tokenaizdWrangler = pkgs.writeScriptBin "wrangler" ''
@@ -134,7 +137,7 @@ lib.mkIf sizedAtLeast.med {
         lazygit
         #== rust
         spotify-player
-        inputs.mentci.packages.${pkgs.stdenv.hostPlatform.system}.mentci-codium
+        inputs.mentci.packages.${system}.mentci-codium
       ]
       ++ graphicalPackages
       ++ optionals isCodeDev (codingPackages ++ lispDevPackages);
@@ -181,9 +184,15 @@ lib.mkIf sizedAtLeast.med {
   xdg.desktopEntries.mentci-codium = {
     name = "Mentci Codium";
     comment = "VSCodium with Mentci devshell environment";
-    exec = "${inputs.mentci.packages.${pkgs.stdenv.hostPlatform.system}.mentci-codium}/bin/mentci-codium";
+    exec = "${inputs.mentci.packages.${system}.mentci-codium}/bin/mentci-codium";
     icon = "vscodium";
     terminal = false;
     categories = [ "Development" "IDE" "TextEditor" ];
+  };
+
+  home.activation.mergeMentciMcp = mkJsonMerge {
+    inherit lib pkgs;
+    file = "$HOME/.claude.json";
+    nixSettings = { mcpServers = inputs.mentci.mcpSettings.${system}.default; };
   };
 }
