@@ -241,7 +241,7 @@ in
 
   programs = { };
 
-  console.useXkbConfig = useColemak;
+  console.useXkbConfig = true;
 
   environment = {
     systemPackages =
