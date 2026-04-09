@@ -782,7 +782,7 @@ mkIf sizedAtLeast.min {
           After = [ "wl-gammarelay-rs.service" ];
         };
         Service = {
-          Type = "oneshot";
+          Type = "simple";
           ExecStartPre = "${pkgs.coreutils}/bin/sleep 1";
           ExecStart = "${nightshift}/bin/nightshift sync";
         };
