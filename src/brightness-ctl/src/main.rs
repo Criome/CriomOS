@@ -14,14 +14,6 @@ struct Backlight {
 
 struct GammaBrightness(f64);
 
-struct EffectiveBrightness {
-    hardware_pct: f64,
-    gamma: f64,
-}
-
-struct Arc {
-    degrees: f64,
-}
 
 enum Direction {
     Up,
@@ -115,9 +107,6 @@ impl Backlight {
         self.brightness <= self.min_hw()
     }
 
-    fn hardware_pct(&self) -> f64 {
-        (self.brightness as f64 / self.max as f64) * 100.0
-    }
 }
 
 // --- GammaBrightness ---
@@ -181,62 +170,6 @@ impl GammaBrightness {
     }
 }
 
-// --- EffectiveBrightness ---
-
-impl EffectiveBrightness {
-    fn from_state(backlight: &Backlight, gamma: &GammaBrightness) -> Self {
-        Self {
-            hardware_pct: backlight.hardware_pct(),
-            gamma: gamma.0,
-        }
-    }
-
-    fn to_arc(&self) -> Arc {
-        Arc {
-            degrees: self.hardware_pct * self.gamma * 3.6,
-        }
-    }
-
-    fn progress_bar(&self) -> u8 {
-        let pct = self.hardware_pct * self.gamma;
-        (pct.clamp(0.0, 100.0)) as u8
-    }
-
-    fn notify(&self) -> Result<(), Error> {
-        let arc = self.to_arc();
-        let sw_tag = if self.gamma < 1.0 - f64::EPSILON { " (sw)" } else { "" };
-        let label = format!("{arc}{sw_tag}");
-        let bar = self.progress_bar().to_string();
-
-        run_as_user("notify-send", &[
-            "-h", "string:x-canonical-private-synchronous:brightness",
-            "-h", &format!("int:value:{bar}"),
-            "-t", "1500",
-            "Brightness",
-            &label,
-        ])?;
-        Ok(())
-    }
-}
-
-// --- Arc ---
-
-impl fmt::Display for Arc {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let d = self.degrees;
-        if d >= 1.0 {
-            write!(f, "{:.0}°", d)
-        } else {
-            let arcmin = d * 60.0;
-            if arcmin >= 1.0 {
-                write!(f, "{:.0}′", arcmin)
-            } else {
-                let arcsec = d * 3600.0;
-                write!(f, "{:.0}″", arcsec.max(1.0))
-            }
-        }
-    }
-}
 
 // --- Direction ---
 
@@ -340,8 +273,6 @@ fn run(direction_arg: &str) -> Result<(), Error> {
     match GammaBrightness::from_dbus() {
         Ok(mut gamma) => {
             direction.apply(&mut backlight, &mut gamma)?;
-            let effective = EffectiveBrightness::from_state(&backlight, &gamma);
-            let _ = effective.notify();
         }
         Err(_) => {
             // No graphical session — hardware-only brightness

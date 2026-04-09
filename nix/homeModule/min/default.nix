@@ -479,9 +479,8 @@ mkIf sizedAtLeast.min {
       };
     };
 
-    swaync = {
-      enable = sizedAtLeast.min;
-    };
+    # swaync disabled — noctalia handles notifications natively
+    swaync.enable = false;
   };
 
   programs = {
