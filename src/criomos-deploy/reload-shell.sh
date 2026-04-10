@@ -2,40 +2,38 @@
 set -euo pipefail
 
 usage() {
-  echo "Usage: criomos-reload-shell <user> [<node>]"
+  echo "Usage: criomos-reload-shell <cluster> <node> <user>"
+  echo "       criomos-reload-shell <user>"
   echo ""
   echo "Restart noctalia-shell in a user's Wayland session."
-  echo "If <node> is omitted, runs locally."
+  echo "With one arg, runs locally for that user."
   echo ""
   echo "Examples:"
-  echo "  criomos-reload-shell bird zeus"
+  echo "  criomos-reload-shell maisiliym zeus bird"
   echo "  criomos-reload-shell li"
   exit 1
 }
 
 [ $# -lt 1 ] && usage
 
-USER="$1"
-NODE="${2:-}"
-CLUSTER="maisiliym"
+if [ $# -ge 3 ]; then
+  CLUSTER="$1"
+  NODE="$2"
+  TARGET_USER="$3"
+  HOST="${NODE}.${CLUSTER}.criome"
+  run() { ssh root@"${HOST}" "$@"; }
+elif [ $# -eq 1 ]; then
+  TARGET_USER="$1"
+  run() { eval "$@"; }
+else
+  usage
+fi
 
-run() {
-  if [ -n "$NODE" ]; then
-    ssh root@"${NODE}.${CLUSTER}.criome" "$@"
-  else
-    eval "$@"
-  fi
-}
-
-# Find the user's Wayland socket and runtime dir
-UID_NUM=$(run "id -u ${USER}")
+UID_NUM=$(run "id -u ${TARGET_USER}")
 RUNTIME="/run/user/${UID_NUM}"
 
-# Kill old quickshell
-run "kill \$(pgrep -u ${USER} quickshell) 2>/dev/null" || true
+run "kill \$(pgrep -u ${TARGET_USER} quickshell) 2>/dev/null" || true
 sleep 1
+run "su - ${TARGET_USER} -c 'WAYLAND_DISPLAY=wayland-1 XDG_RUNTIME_DIR=${RUNTIME} noctalia-shell &'"
 
-# Relaunch noctalia-shell in the user's session
-run "su - ${USER} -c 'WAYLAND_DISPLAY=wayland-1 XDG_RUNTIME_DIR=${RUNTIME} noctalia-shell &'"
-
-echo "Reloaded ${USER}'s shell${NODE:+ on ${NODE}}"
+echo "Reloaded ${TARGET_USER}'s shell"

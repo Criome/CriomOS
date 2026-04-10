@@ -2,7 +2,7 @@
 set -euo pipefail
 
 usage() {
-  echo "Usage: criomos-deploy <node> [--boot] [--commit <hash>]"
+  echo "Usage: criomos-deploy <cluster> <node> [--boot] [--commit <hash>]"
   echo ""
   echo "Build fullOs on <node>, set system profile, and activate."
   echo ""
@@ -10,14 +10,15 @@ usage() {
   echo "  --commit   Build specific commit (default: current main)"
   echo ""
   echo "Examples:"
-  echo "  criomos-deploy zeus"
-  echo "  criomos-deploy zeus --boot"
-  echo "  criomos-deploy prometheus --commit abc123"
+  echo "  criomos-deploy maisiliym zeus"
+  echo "  criomos-deploy maisiliym zeus --boot"
+  echo "  criomos-deploy maisiliym prometheus --commit abc123"
   exit 1
 }
 
-[ $# -lt 1 ] && usage
+[ $# -lt 2 ] && usage
 
+CLUSTER="$1"; shift
 NODE="$1"; shift
 MODE="switch"
 COMMIT=""
@@ -30,7 +31,6 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-CLUSTER="maisiliym"
 REPO="github:criome/CriomOS"
 
 if [ -z "$COMMIT" ]; then
@@ -39,11 +39,12 @@ fi
 
 REF="${REPO}/${COMMIT}"
 ATTR="${REF}#crioZones.${CLUSTER}.${NODE}.fullOs"
+HOST="${NODE}.${CLUSTER}.criome"
 
-echo "Building ${NODE} from ${COMMIT:0:12}..."
-ssh root@"${NODE}.${CLUSTER}.criome" \
+echo "Deploying ${CLUSTER}/${NODE} from ${COMMIT:0:12} (${MODE})..."
+ssh root@"${HOST}" \
   "nix build ${ATTR} --no-write-lock-file -o /tmp/criomos-deploy \
    && nix-env -p /nix/var/nix/profiles/system --set \$(readlink /tmp/criomos-deploy) \
    && \$(readlink /tmp/criomos-deploy)/bin/switch-to-configuration ${MODE}"
 
-echo "Done: ${NODE} ${MODE}"
+echo "Done: ${CLUSTER}/${NODE} ${MODE}"
