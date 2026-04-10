@@ -1,0 +1,8 @@
+{
+  "nil": {
+    "command": "nil",
+    "extensionToLanguage": {
+      ".nix": "nix"
+    }
+  }
+}

@@ -85,9 +85,9 @@ in
       };
     };
 
-    criomos-deploy = pkgs.callPackage ../criomos-deploy.nix { };
-
-    systemPackages = with pkgs; [
+    systemPackages =
+    let criomos-deploy = pkgs.callPackage ../criomos-deploy.nix { };
+    in with pkgs; [
       openssh
       ntfs3g
       fuse
