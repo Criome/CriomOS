@@ -230,6 +230,16 @@ in
   # Headless nodes: set EPP to "power" for aggressive idle downclocking.
   # The sysfs file only exists on CPUs with EPP support (AMD amd-pstate,
   # Intel intel_pstate HWP), so the rule is a no-op on unsupported hardware.
+  systemd.services.lock-before-sleep = mkIf behavesAs.edge {
+    description = "Lock all sessions before sleep";
+    before = [ "sleep.target" ];
+    wantedBy = [ "sleep.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "/run/current-system/sw/bin/loginctl lock-sessions";
+    };
+  };
+
   systemd.tmpfiles.rules =
     optionals behavesAs.center [
       "w /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference - - - - power"

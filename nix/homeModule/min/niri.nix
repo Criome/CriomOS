@@ -19,18 +19,6 @@ in
     gnome-control-center
   ];
 
-  systemd.user.services.lock-before-sleep = {
-    Unit = {
-      Description = "Lock screen before sleep";
-      Before = [ "sleep.target" ];
-    };
-    Service = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.noctalia-shell}/bin/noctalia-shell ipc call lockScreen lock";
-    };
-    Install.WantedBy = [ "sleep.target" ];
-  };
-
   programs.niri = {
     settings = {
       prefer-no-csd = true;
