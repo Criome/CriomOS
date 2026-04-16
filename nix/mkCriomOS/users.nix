@@ -44,6 +44,7 @@ let
           "systemd-journal"
           "dialout"
           "plugdev"
+          "power"
           "storage"
           "libvirtd"
         ]);

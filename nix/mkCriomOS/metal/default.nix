@@ -32,6 +32,31 @@ let
 
   brightnessCtl = pkgs.callPackage ../../brightness-ctl.nix { };
 
+  batteryCtl = pkgs.writeShellScriptBin "battery-ctl" ''
+    usage() { echo "usage: battery-ctl care | full | status"; exit 1; }
+    bat=/sys/class/power_supply/BAT0
+    [ -d "$bat" ] || { echo "no battery found"; exit 1; }
+    case "''${1:-status}" in
+      care)
+        echo 75 > "$bat/charge_control_start_threshold"
+        echo 80 > "$bat/charge_control_end_threshold"
+        echo "battery care: 75–80%"
+        ;;
+      full)
+        echo 90 > "$bat/charge_control_start_threshold"
+        echo 95 > "$bat/charge_control_end_threshold"
+        echo "full charge: 90–95%"
+        ;;
+      status)
+        echo "start: $(cat "$bat/charge_control_start_threshold")%"
+        echo "stop:  $(cat "$bat/charge_control_end_threshold")%"
+        echo "level: $(cat "$bat/capacity")%"
+        echo "state: $(cat "$bat/status")"
+        ;;
+      *) usage ;;
+    esac
+  '';
+
   # TODO
   hasTouchpad = true;
 
@@ -248,9 +273,19 @@ in
 
   };
 
-  # Headless nodes: set EPP to "power" for aggressive idle downclocking.
-  # The sysfs file only exists on CPUs with EPP support (AMD amd-pstate,
-  # Intel intel_pstate HWP), so the rule is a no-op on unsupported hardware.
+  # Battery charge thresholds — default to care mode (75–80%).
+  # Runs at boot and after resume; ThinkPad EC persists values across reboots
+  # but re-applying after suspend is belt-and-suspenders.
+  systemd.services.battery-charge-default = mkIf modelIsThinkpad {
+    description = "Set battery charge thresholds to care mode";
+    after = [ "multi-user.target" "suspend.target" "hibernate.target" ];
+    wantedBy = [ "multi-user.target" "suspend.target" "hibernate.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${batteryCtl}/bin/battery-ctl care";
+    };
+  };
+
   systemd.services.lock-before-sleep = mkIf behavesAs.edge {
     description = "Lock all sessions before sleep";
     before = [ "sleep.target" ];
@@ -281,6 +316,9 @@ in
     };
   };
 
+  # Headless nodes: set EPP to "power" for aggressive idle downclocking.
+  # The sysfs file only exists on CPUs with EPP support (AMD amd-pstate,
+  # Intel intel_pstate HWP), so the rule is a no-op on unsupported hardware.
   systemd.tmpfiles.rules =
     optionals behavesAs.center [
       "w /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference - - - - power"
@@ -309,11 +347,13 @@ in
       ++ optionals chipIsIntel intelUtils
       ++ optionals sizedAtLeast.max [ v4l-utils ]
       ++ optionals enableWaydroid waydroidPackages
+      ++ optional modelIsThinkpad batteryCtl
       ;
 
   };
 
   users.groups.plugdev = { };
+  users.groups.power = mkIf modelIsThinkpad { };
 
   services = {
     # TODO
@@ -346,6 +386,8 @@ in
     throttled.enable = needsIntelThrottlingFix;
 
     udev.extraRules = ''
+      # Battery charge threshold — grant group write so unprivileged users can toggle
+      SUBSYSTEM=="power_supply", KERNEL=="BAT*", RUN+="${pkgs.bash}/bin/bash -c '${pkgs.coreutils}/bin/chgrp power /sys%p/charge_control_start_threshold /sys%p/charge_control_end_threshold 2>/dev/null; ${pkgs.coreutils}/bin/chmod g+w /sys%p/charge_control_start_threshold /sys%p/charge_control_end_threshold 2>/dev/null'"
       # USBasp - USB programmer for Atmel AVR controllers
       SUBSYSTEM=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05dc", GROUP="plugdev"
       # Pro-micro kp-boot-bootloader - Ergodone keyboard
