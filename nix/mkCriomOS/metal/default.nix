@@ -290,18 +290,6 @@ in
       "w /sys/devices/pci0000:00/0000:00:14.0/power/wakeup - - - - disabled"
     ];
 
-  systemd.user.services.geoclue-agent = mkIf (sizedAtLeast.min && behavesAs.edge) {
-    description = "Geoclue Demo Agent";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.geoclue2}/libexec/geoclue-2.0/demos/agent";
-      Restart = "on-failure";
-      RestartSec = 5;
-    };
-  };
-
   powerManagement =
     let
       pmBase = {
