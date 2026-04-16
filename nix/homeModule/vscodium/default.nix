@@ -68,16 +68,10 @@ let
   askiWasm = inputs.aski.packages.${pkgs.system}.tree-sitter-aski-wasm;
 
   vscode-aski =
-    let
-      src = builtins.fetchGit {
-        url = "https://github.com/LiGoldragon/vscode-aski.git";
-        rev = "6535b6ec22e8d73ebb970021a7f6b879ce23267e";
-      };
-    in
     pkgs.buildNpmPackage {
       pname = "vscode-extension-criome-vscode-aski";
       version = "0.3.0";
-      inherit src;
+      src = inputs.vscode-aski;
       npmDepsHash = "sha256-0JjCGpgLQM79CUhV6//fEcJJr79BmtqPIq9a2mtWDiQ=";
       dontNpmBuild = true;
       buildPhase = ''

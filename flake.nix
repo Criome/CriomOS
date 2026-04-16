@@ -131,6 +131,10 @@
       url = "github:Criome/aski";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    vscode-aski = {
+      url = "github:LiGoldragon/vscode-aski";
+      flake = false;
+    };
     codex-cli = {
       url = "github:sadjow/codex-cli-nix";
       inputs.nixpkgs.follows = "nixpkgs";

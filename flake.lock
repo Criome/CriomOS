@@ -1489,6 +1489,7 @@
         "tree-sitter-capnp": "tree-sitter-capnp",
         "tree-sitter-cozo": "tree-sitter-cozo",
         "ultra-scroll": "ultra-scroll",
+        "vscode-aski": "vscode-aski",
         "xah-fly-keys": "xah-fly-keys"
       }
     },
@@ -2099,6 +2100,22 @@
       "original": {
         "owner": "qmk",
         "repo": "v-usb",
+        "type": "github"
+      }
+    },
+    "vscode-aski": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1776342008,
+        "narHash": "sha256-jexe83IjuJuAhgtAm01HhYP6oYJ4cJvY6cSwilNnfWQ=",
+        "owner": "LiGoldragon",
+        "repo": "vscode-aski",
+        "rev": "185ec3432810e8fc5d1451c755c72df04d286b30",
+        "type": "github"
+      },
+      "original": {
+        "owner": "LiGoldragon",
+        "repo": "vscode-aski",
         "type": "github"
       }
     },
