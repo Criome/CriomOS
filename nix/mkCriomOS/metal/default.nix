@@ -38,13 +38,13 @@ let
     [ -d "$bat" ] || { echo "no battery found"; exit 1; }
     case "''${1:-status}" in
       care)
-        echo 75 > "$bat/charge_control_start_threshold"
         echo 80 > "$bat/charge_control_end_threshold"
+        echo 75 > "$bat/charge_control_start_threshold"
         echo "battery care: 75–80%"
         ;;
       full)
-        echo 90 > "$bat/charge_control_start_threshold"
         echo 95 > "$bat/charge_control_end_threshold"
+        echo 90 > "$bat/charge_control_start_threshold"
         echo "full charge: 90–95%"
         ;;
       status)
