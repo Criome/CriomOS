@@ -75,11 +75,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776339109,
-        "narHash": "sha256-R/OGv5CEgObirurXoktGlD6YK1z7WZuP2R8yxk+hqsE=",
+        "lastModified": 1776340213,
+        "narHash": "sha256-NXODbPnvzGKRkxb/humI/MmD4PUxnx57MAXRatxL5iY=",
         "owner": "Criome",
         "repo": "aski",
-        "rev": "eed11a8312b5ef686b8f31e40d46b4623ab67783",
+        "rev": "4f7c89651a6675c263349dd7189329d75660aa2f",
         "type": "github"
       },
       "original": {
