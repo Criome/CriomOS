@@ -68,7 +68,7 @@ nix build github:Criome/CriomOS#crioZones.maisiliym.<node>.os \
   --no-link --print-out-paths --refresh
 ```
 
-**`--refresh` is required** after pushing — nix caches flake refs and won't pick up new commits without it. Alternative: use the explicit commit hash in the URL.
+**`--refresh` is required** after pushing — nix caches flake refs and won't pick up new commits without it. Prefer `--refresh` over pinning a commit hash in the URL — hashes pollute context and add no value when deploying latest.
 
 **Local Maisiliym override** (not for production):
 ```
@@ -96,6 +96,8 @@ criomos-deploy <cluster> <node> --commit abc123  # deploy a specific commit
 ```
 
 It builds `fullOs` on the target node via SSH, sets the system profile, and activates. The commit defaults to whatever `main` points at in jj.
+
+**When deploying latest, use `main` — not a rev hash.** The deploy script resolves `main` automatically. Pasting commit hashes into the conversation pollutes context with noise. Only use `--commit <hash>` when deploying a specific older revision.
 
 To reload a user's compositor shell after deployment:
 ```
