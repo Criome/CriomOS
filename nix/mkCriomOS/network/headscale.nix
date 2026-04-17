@@ -108,9 +108,6 @@ in
     systemd.services.headscale = {
       requires = [ "headscale-selfsigned-cert.service" ];
       after = [ "headscale-selfsigned-cert.service" ];
-      serviceConfig = {
-        RestartSec = 5;
-      };
     };
 
     networking.firewall.allowedTCPPorts = [ headscalePort ];
