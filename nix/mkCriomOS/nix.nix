@@ -36,8 +36,6 @@ let
   inherit (constants.fileSystem.nix) preCriad;
   inherit (constants.network.nix) serve;
 
-  jsonHorizonFail = exportJSON "horizon.json" horizon;
-
   optionalNixpkgsRef = optionalAttrs (hob.nixpkgs ? ref) { inherit (hob.nixpkgs) ref; };
 
   flakeEntriesOverrides = {
@@ -104,11 +102,6 @@ let
 
 in
 {
-  environment.etc."horizon.json" = {
-    source = jsonHorizonFail;
-    mode = "0600";
-  };
-
   networking = {
     firewall = {
       allowedTCPPorts =

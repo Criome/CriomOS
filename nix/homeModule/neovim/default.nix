@@ -298,7 +298,7 @@ let
   minPackages = with pkgs; [ ];
 
   medPackages = with pkgs; [
-    pkdjz.crate2nix
+    crate2nix
     llvmPackages_latest.clang
     universal-ctags
     go

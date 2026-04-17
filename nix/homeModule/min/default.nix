@@ -99,8 +99,6 @@ let
     </fontconfig>
   '';
 
-  bleedingEdgeGraphicalPackages = [ ];
-
   modernGraphicalPackages = with pkgs; [
     handlr-regex
     mpv
@@ -300,7 +298,6 @@ let
       broot
       eva # tui calculator
     ]
-    ++ bleedingEdgeGraphicalPackages # (Todo configure)
     ++ modernGraphicalPackages # (Todo configure)
     ++ unixDeveloperPackages
     ++ (optionals isMultimediaDev (
@@ -447,13 +444,6 @@ mkIf sizedAtLeast.min {
           timeout = 10;
         };
       };
-    };
-
-    hyprsunset = {
-      enable = false;
-    };
-    gammastep = {
-      enable = false;
     };
 
     gpg-agent = {

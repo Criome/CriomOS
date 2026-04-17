@@ -55,14 +55,15 @@ let
     programs.claude-desktop.enable = true;
   };
 
-  nixosModules =
-    baseModules
-    ++ (optional (behavesAs.edge && !behavesAs.iso) edgeModule)
+  featureModules =
+    (optional (behavesAs.edge && !behavesAs.iso) edgeModule)
     ++ (optional (behavesAs.router && !behavesAs.iso) ./router)
     ++ (optional (behavesAs.bareMetal && !behavesAs.iso) metalModule)
     ++ (optional behavesAs.largeAI llmModule)
     ++ (optional (sizedAtLeast.min && !behavesAs.iso) claudeDesktopModule)
     ++ (optionals _withUsers usersModules);
+
+  nixosModules = baseModules ++ featureModules;
 
   nixosArgs = {
     inherit
@@ -78,15 +79,10 @@ let
       ;
   };
 
-  # VM uses the same modules but without the disk/ISO-specific module
+  # VM uses the same feature modules but without the disk/ISO-specific module
   vmModules =
     [ usersModule nixModule normalizeModule complexModule networkModule ]
-    ++ (optional (behavesAs.edge && !behavesAs.iso) edgeModule)
-    ++ (optional (behavesAs.router && !behavesAs.iso) ./router)
-    ++ (optional (behavesAs.bareMetal && !behavesAs.iso) metalModule)
-    ++ (optional behavesAs.largeAI llmModule)
-    ++ (optional (sizedAtLeast.min && !behavesAs.iso) claudeDesktopModule)
-    ++ (optionals _withUsers usersModules);
+    ++ featureModules;
 
   evaluation = evalNixos {
     useIsoModule = behavesAs.iso;
