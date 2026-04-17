@@ -14,6 +14,7 @@ let
       adwaita-icon-theme
       papirus-icon-theme
       nautilus
+      ffmpegthumbnailer
       libinput
       gnome-control-center
       niri
