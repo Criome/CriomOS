@@ -152,6 +152,7 @@ lib.mkIf sizedAtLeast.med {
         claude-code
         ovsx.google.geminicodeassist
         ovsx.openai.chatgpt
+        ovsx.cdervis.vscode-pi
         vscode-aski
         pkgs.vscode-extensions.mkhl.direnv
         pkgs.vscode-extensions.jnoortheen.nix-ide
