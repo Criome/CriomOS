@@ -1518,11 +1518,11 @@
         "pi-src": "pi-src"
       },
       "locked": {
-        "lastModified": 1776699138,
-        "narHash": "sha256-ekHwIb2RTPn1/2jPcsg/CKnte1lXD07us8I43xhRNHk=",
+        "lastModified": 1776700620,
+        "narHash": "sha256-0iXfCkfox4Ppg3f6iqnUj986tJYjTv1IupSyd33eDhU=",
         "owner": "LiGoldragon",
         "repo": "pi-mentci",
-        "rev": "71f1fc1ebf23b14ee356af77e527249b0ccd2676",
+        "rev": "bf777a5bc732e775ab0fa1402972e5c793db5363",
         "type": "github"
       },
       "original": {
