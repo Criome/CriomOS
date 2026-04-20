@@ -129,7 +129,7 @@ in
         on-click = "${pkgs.writeShellScript "power-menu" ''
           choice=$(printf 'Lock\nSuspend\nLogout\nReboot\nShutdown' | ${pkgs.wofi}/bin/wofi --show dmenu --prompt Session --cache-file /dev/null)
           case "$choice" in
-            Lock) loginctl lock-session;;
+            Lock) systemctl --user start criomos-lock-session.service;;
             Suspend) systemctl suspend;;
             Logout) niri msg action quit;;
             Reboot) systemctl reboot;;

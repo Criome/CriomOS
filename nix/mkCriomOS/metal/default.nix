@@ -69,6 +69,30 @@ let
     esac
   '';
 
+  lockActiveSessions = pkgs.writeShellScript "lock-active-sessions" ''
+    set -eu
+
+    ${pkgs.systemd}/bin/loginctl lock-sessions || true
+
+    for runtime in /run/user/[0-9]*; do
+      [ -d "$runtime" ] || continue
+
+      uid="''${runtime##*/}"
+      [ "$uid" -ge 1000 ] || continue
+      [ -S "$runtime/bus" ] || continue
+
+      user="$(${pkgs.gawk}/bin/awk -F: -v uid="$uid" '$3 == uid { print $1; exit }' /etc/passwd)"
+      [ -n "$user" ] || continue
+
+      ${pkgs.util-linux}/bin/runuser -u "$user" -- \
+        env XDG_RUNTIME_DIR="$runtime" \
+            DBUS_SESSION_BUS_ADDRESS="unix:path=$runtime/bus" \
+            WAYLAND_DISPLAY=wayland-1 \
+            ${pkgs.systemd}/bin/systemctl --user start criomos-lock-session.service \
+        || true
+    done
+  '';
+
   # TODO
   hasTouchpad = true;
 
@@ -304,7 +328,7 @@ in
     wantedBy = [ "sleep.target" ];
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "/run/current-system/sw/bin/loginctl lock-sessions";
+      ExecStart = "${lockActiveSessions}";
     };
   };
 
@@ -426,7 +450,11 @@ in
 
     logind.settings.Login = {
       HandleLidSwitch = if behavesAs.center then "ignore" else "suspend";
-      HandleLidSwitchExternalPower = if behavesAs.lowPower then "suspend" else "ignore";
+      HandleLidSwitchExternalPower =
+        if behavesAs.center then "ignore"
+        else if behavesAs.lowPower then "suspend"
+        else "lock";
+      HandleLidSwitchDocked = if behavesAs.edge then "lock" else "ignore";
     };
 
     thinkfan = mkIf modelIsThinkpad {

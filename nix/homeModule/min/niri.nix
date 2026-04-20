@@ -1,9 +1,47 @@
-{ pkgs, config, user, constants, ... }:
+{ pkgs, lib, config, user, constants, horizon, ... }:
 let
   terminal = "${pkgs.ghostty}/bin/ghostty";
   inherit (user.methods) useFastRepeat;
+  inherit (horizon.node.methods) behavesAs;
 
   a = config.lib.niri.actions;
+
+  lockSession = pkgs.writeShellScript "criomos-lock-session" ''
+    set -eu
+
+    ${pkgs.noctalia-shell}/bin/noctalia-shell ipc call lockScreen lock || exit 0
+    ${pkgs.coreutils}/bin/sleep 3
+    ${pkgs.niri}/bin/niri msg action power-off-monitors || true
+  '';
+
+  lockListener = pkgs.writeShellScript "criomos-lock-listener" ''
+    set -eu
+
+    session_path=
+    while [ -z "$session_path" ]; do
+      session_id="''${XDG_SESSION_ID:-}"
+      if [ -z "$session_id" ]; then
+        session_id="$(${pkgs.systemd}/bin/loginctl show-user "$USER" -p Display --value 2>/dev/null || true)"
+      fi
+
+      if [ -n "$session_id" ]; then
+        session_path="$(${pkgs.systemd}/bin/loginctl show-session "$session_id" -p Path --value 2>/dev/null || true)"
+      fi
+
+      if [ -z "$session_path" ]; then
+        ${pkgs.coreutils}/bin/sleep 2
+      fi
+    done
+
+    ${pkgs.glib}/bin/gdbus monitor --system --dest org.freedesktop.login1 --object-path "$session_path" \
+      | while IFS= read -r line; do
+          case "$line" in
+            *".Lock"*)
+              ${pkgs.systemd}/bin/systemctl --user start criomos-lock-session.service || true
+              ;;
+          esac
+        done
+  '';
 
 in
 {
@@ -18,6 +56,32 @@ in
     wl-clipboard
     gnome-control-center
   ];
+
+  systemd.user.services = lib.mkIf behavesAs.edge {
+    criomos-lock-session = {
+      Unit = {
+        Description = "Lock the niri session";
+        After = [ "graphical-session.target" ];
+      };
+      Service = {
+        Type = "oneshot";
+        ExecStart = "${lockSession}";
+      };
+    };
+
+    criomos-lock-listener = {
+      Unit = {
+        Description = "Forward logind lock requests to Noctalia";
+        After = [ "default.target" ];
+      };
+      Install.WantedBy = [ "default.target" ];
+      Service = {
+        ExecStart = "${lockListener}";
+        Restart = "on-failure";
+        RestartSec = 2;
+      };
+    };
+  };
 
   programs.niri = {
     settings = {
@@ -185,7 +249,7 @@ in
         "XF86AudioLowerVolume".action = a.spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-";
 
         # Lock
-        "Mod+L".action = a.spawn "sh" "-c" "noctalia-shell ipc call lockScreen lock && sleep 3 && niri msg action power-off-monitors";
+        "Mod+L".action = a.spawn "systemctl" "--user" "start" "criomos-lock-session.service";
 
         # Hotkey overlay
         "Mod+Shift+S".action = a.show-hotkey-overlay;
