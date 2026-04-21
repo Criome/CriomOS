@@ -88,7 +88,7 @@ let
         env XDG_RUNTIME_DIR="$runtime" \
             DBUS_SESSION_BUS_ADDRESS="unix:path=$runtime/bus" \
             WAYLAND_DISPLAY=wayland-1 \
-            ${pkgs.systemd}/bin/systemctl --user start criomos-lock-session.service \
+            ${pkgs.systemd}/bin/systemctl --user start --wait criomos-lock-session.service \
         || true
     done
   '';

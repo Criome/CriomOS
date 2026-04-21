@@ -9,7 +9,24 @@ let
   lockSession = pkgs.writeShellScript "criomos-lock-session" ''
     set -eu
 
-    ${pkgs.noctalia-shell}/bin/noctalia-shell ipc call lockScreen lock || exit 0
+    # Quickshell matches IPC instances by QML path; ${pkgs.noctalia-shell}'s
+    # baked-in path diverges from the running instance after an HM rebuild,
+    # so resolve the live binary and config path from the running process.
+    pid="$(${pkgs.procps}/bin/pgrep -u "$UID" -f '/bin/quickshell$' | ${pkgs.coreutils}/bin/head -n1 || true)"
+    if [ -z "$pid" ]; then
+      echo "criomos-lock-session: no running quickshell instance" >&2
+      exit 1
+    fi
+
+    qs_bin="$(${pkgs.coreutils}/bin/readlink "/proc/$pid/exe")"
+    qs_path="$(${pkgs.gawk}/bin/awk 'BEGIN{RS="\0"} /^QS_CONFIG_PATH=/{sub(/^QS_CONFIG_PATH=/,""); print; exit}' "/proc/$pid/environ")"
+    if [ -z "$qs_bin" ] || [ -z "$qs_path" ]; then
+      echo "criomos-lock-session: missing exe or QS_CONFIG_PATH for pid $pid" >&2
+      exit 1
+    fi
+
+    "$qs_bin" -p "$qs_path" ipc call lockScreen lock
+
     ${pkgs.coreutils}/bin/sleep 3
     ${pkgs.niri}/bin/niri msg action power-off-monitors || true
   '';
