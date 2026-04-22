@@ -27,6 +27,15 @@ let
   # bd refuses to init in any dir under ~/.beads/ ("cannot initialize bd
   # inside a .beads directory"). Park the seed workspace under XDG state.
   globalInitWorkspace = "${config.xdg.stateHome}/beads-global-init";
+  # Wrapper: cd into the seed workspace first so `bd --global` has a shared-
+  # server-mode workspace to resolve against. Needed because bd --global
+  # refuses to run from embedded-mode projects due to project-id reconciliation
+  # against the server (cmd/bd/main.go:660-694 FindDatabasePath).
+  bdGlobalWrapper = pkgs.writeShellScriptBin "bd-global" ''
+    cd "${globalInitWorkspace}"
+    exec ${beadsPkg}/bin/bd --global "$@"
+  '';
+
   seedScript = pkgs.writeShellScript "beads-global-seed" ''
     set -eu
 
@@ -61,6 +70,7 @@ lib.mkIf (isCodeDev && sizedAtLeast.med) {
   home.packages = [
     beadsPkg
     doltPkg
+    bdGlobalWrapper
   ];
 
   # Env vars consumed by bd to find the shared server.
