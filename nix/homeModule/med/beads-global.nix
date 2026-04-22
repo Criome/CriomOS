@@ -85,6 +85,18 @@ lib.mkIf (isCodeDev && sizedAtLeast.med) {
     BEADS_DOLT_PASSWORD = "";
   };
 
+  # home.sessionVariables only reaches shells (via hm-session-vars.sh).
+  # GUI apps (Codium, and anything it spawns — Claude Code) inherit env from
+  # the systemd user session, not from a shell. environment.d(5) bridges that:
+  # systemd user session imports these at login.
+  xdg.configFile."environment.d/10-beads-global.conf".text = ''
+    BEADS_DOLT_SHARED_SERVER=1
+    BEADS_DOLT_SERVER_HOST=127.0.0.1
+    BEADS_DOLT_SERVER_PORT=${toString port}
+    BEADS_DOLT_SERVER_USER=root
+    BEADS_DOLT_PASSWORD=
+  '';
+
   systemd.user.services.beads-global = {
     Unit = {
       Description = "beads shared dolt sql-server (backs bd --global / shared-server mode)";
