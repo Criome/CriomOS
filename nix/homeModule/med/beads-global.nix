@@ -24,7 +24,9 @@ let
   # One-shot seed script: idempotently ensures the beads_global workspace
   # + database exist on the shared server. Runs after beads-global.service
   # is up. See beads v1.0.2 cmd/bd/init.go:578-610, 1269-1275, 1717-1761.
-  globalInitWorkspace = "${config.home.homeDirectory}/.beads/global-init";
+  # bd refuses to init in any dir under ~/.beads/ ("cannot initialize bd
+  # inside a .beads directory"). Park the seed workspace under XDG state.
+  globalInitWorkspace = "${config.xdg.stateHome}/beads-global-init";
   seedScript = pkgs.writeShellScript "beads-global-seed" ''
     set -eu
 
