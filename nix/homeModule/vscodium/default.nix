@@ -108,8 +108,12 @@ let
     "git.autoRepositoryDetection" = true;
     "visualjj.showSourceControlColocated" = true;
 
-    # direnv — auto-reload on .envrc change
-    "direnv.restart.automatic" = true;
+    # direnv — do NOT auto-restart the extension host.
+    # With `true`, mkhl.direnv restarts the host on every direnv state change
+    # (terminal cwd transitions across repos with/without .envrc, flake.lock
+    # edits, watch_file hits), which kills all in-flight Claude Code agents.
+    # Run "direnv: Reset and Reload Environment" manually when needed.
+    "direnv.restart.automatic" = false;
 
     # Nix
     "nix.enableLanguageServer" = true;
