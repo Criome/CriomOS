@@ -1099,11 +1099,11 @@
         "substack-cli": "substack-cli"
       },
       "locked": {
-        "lastModified": 1777018934,
-        "narHash": "sha256-g+XzU4PUCNwx1N4AQ9dLCjKezat0KWvxiaRB4kV7qls=",
+        "lastModified": 1777313893,
+        "narHash": "sha256-5VQW5G8/RBCHk37DLERHuNisWWvaYtd7HPjhkzCjwKg=",
         "owner": "LiGoldragon",
         "repo": "mentci-tools",
-        "rev": "986cb2f76e7861d824691a59313b4ad258f6614a",
+        "rev": "80661974720113f6cfbb8338f3dd1eb661a167e8",
         "type": "github"
       },
       "original": {
@@ -1771,11 +1771,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776975280,
-        "narHash": "sha256-IoYZUhU6EWMPJmuuqPB6SVknhx+bhz4C3jitTV6De2A=",
+        "lastModified": 1777300695,
+        "narHash": "sha256-bJeuF2UTB/HWWUOv2VlyOqd+jhc7C3bnsA6g1AkMsqM=",
         "owner": "LiGoldragon",
         "repo": "substack-cli",
-        "rev": "1d89734d54327688b64dba6c1be8b2076988f9f7",
+        "rev": "93908ddfa7c6f3ef1477fd65b7ab8d7fa7c14444",
         "type": "github"
       },
       "original": {
