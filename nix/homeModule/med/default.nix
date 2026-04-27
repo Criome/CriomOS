@@ -137,7 +137,8 @@ lib.mkIf sizedAtLeast.med {
         lazygit
         #== rust
         spotify-player
-        inputs.mentci.packages.${system}.mentci-codium
+        # mentci-codium dropped 2026-04-27 — package no longer exists
+        # in the post-rewrite mentci flake (only nixfmt-tree-2.4.1 left).
       ]
       ++ graphicalPackages
       ++ codingPackages ++ lispDevPackages;
@@ -181,14 +182,8 @@ lib.mkIf sizedAtLeast.med {
     };
   };
 
-  xdg.desktopEntries.mentci-codium = {
-    name = "Mentci Codium";
-    comment = "VSCodium with Mentci devshell environment";
-    exec = "${inputs.mentci.packages.${system}.mentci-codium}/bin/mentci-codium";
-    icon = "vscodium";
-    terminal = false;
-    categories = [ "Development" "IDE" "TextEditor" ];
-  };
+  # mentci-codium .desktop entry dropped 2026-04-27 alongside the
+  # package itself (gone from the post-rewrite mentci flake).
 
   home.activation.mergeMentciMcp = mkJsonMerge {
     inherit lib pkgs;
