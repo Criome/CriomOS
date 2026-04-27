@@ -24,11 +24,12 @@ let
   inherit (horizon.cluster.methods) trustedBuildPreCriomes;
   inherit (horizon) node;
   inherit (horizon.node.methods)
+    builderConfigs
     cacheURLs
     dispatchersSshPreCriomes
-    exNodesSshPreCriomes
     sizedAtLeast
     isBuilder
+    isDispatcher
     isNixCache
     hasNixPreCriad
     ;
@@ -122,8 +123,7 @@ in
       trusted-users = [
         "root"
         "@nixdev"
-      ]
-      ++ optional isBuilder "nixBuilder";
+      ];
 
       allowed-users = [
         "@users"
@@ -140,10 +140,44 @@ in
       trusted-binary-caches = cacheURLs;
 
       auto-optimise-store = true;
+
+      # Builder fetches dep closures from cache.nixos.org itself
+      # rather than streaming through the dispatcher.
+      builders-use-substitutes = isDispatcher;
     };
 
-    sshServe.enable = true;
-    sshServe.keys = exNodesSshPreCriomes;
+    # Build receiver — gated on isBuilder. nix.sshServe creates a
+    # restricted `nix-ssh` user (no shell, no PTY, only allowed
+    # command is `nix-daemon --stdio`). The three flags below were
+    # missing from the previous archive config — without them, build
+    # dispatch silently fails:
+    #   write = true     → lets clients upload .drv inputs
+    #   trusted = true   → adds nix-ssh to trusted-users so the
+    #                      daemon will actually *build* on its behalf
+    #                      (not just substitute)
+    #   protocol = ssh-ng → newer/efficient protocol (vs legacy ssh)
+    # `keys` is filtered to dispatchers only (was exNodesSshPreCriomes,
+    # which over-authorised every ex-node).
+    sshServe = {
+      enable = isBuilder;
+      protocol = "ssh-ng";
+      write = true;
+      trusted = true;
+      keys = dispatchersSshPreCriomes;
+    };
+
+    # Build dispatcher — gated on isDispatcher. buildMachines is
+    # mapped from horizon's builderConfigs, with publicHostKey
+    # populated from each builder's SSH host pubkey (added to
+    # mkBuilder for this fix). Without publicHostKey the root
+    # no-TTY daemon cannot answer the host-trust prompt.
+    distributedBuilds = isDispatcher;
+    buildMachines = map (b: {
+      inherit (b) hostName sshUser sshKey supportedFeatures system systems maxJobs;
+      protocol = "ssh-ng";
+      speedFactor = 10;
+      publicHostKey = b.publicHostKey;
+    }) (optionals isDispatcher builderConfigs);
 
     # Lowest priorities
     daemonCPUSchedPolicy = "idle";
@@ -155,40 +189,37 @@ in
       keep-derivations = ${boolToString sizedAtLeast.med}
       keep-outputs = ${boolToString sizedAtLeast.max}
 
-      # !include <path>:  include without an error for missing file. 
+      # !include <path>:  include without an error for missing file.
       !include nixTokens
     '';
-
-    # TODO - broken
-    # distributedBuilds = isDispatcher;
-    # buildMachines = optionals isDispatcher builderConfigs;
-
   };
 
+  # known_hosts entries for every builder this dispatcher will
+  # connect to. Without these, root nix-daemon (no TTY) fails the
+  # first-connection trust prompt and the build silently hangs.
+  programs.ssh.knownHosts = lib.listToAttrs (map (b: {
+    name = b.hostName;
+    value.publicKey = b.publicHostKeyLine;
+  }) (optionals isDispatcher builderConfigs));
+
+  # nix-ssh user/group are managed by nix.sshServe — the old
+  # nixBuilder user pattern is dropped. nix-serve user kept for
+  # the binary-cache role (separate concern).
   users = {
     groups = {
       nixdev = { };
     }
-    // (optionalAttrs isBuilder { nixBuilder = { }; })
     // (optionalAttrs isNixCache {
       nix-serve = {
         gid = 199;
       };
     });
 
-    users =
-      (optionalAttrs isNixCache {
-        nix-serve = {
-          uid = 199;
-          group = "nix-serve";
-        };
-      })
-      // (optionalAttrs isBuilder {
-        nixBuilder = {
-          isNormalUser = true;
-          useDefaultShell = true;
-          openssh.authorizedKeys.keys = dispatchersSshPreCriomes;
-        };
-      });
+    users = optionalAttrs isNixCache {
+      nix-serve = {
+        uid = 199;
+        group = "nix-serve";
+      };
+    };
   };
 }

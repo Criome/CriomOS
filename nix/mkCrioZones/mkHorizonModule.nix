@@ -238,15 +238,34 @@ let
         n:
         let
           node = exNodes.${n};
+          rawSshPubKey = inputNodes.${n}.preCriomes.ssh;
         in
         {
           hostName = node.criomeDomainName;
-          sshUser = "nixBuilder";
+          # `nix-ssh` is the user `nix.sshServe.enable = true` creates
+          # on the builder. Match it on the dispatcher side so
+          # `sshServe.keys` and `buildMachines.<n>.sshUser` line up.
+          sshUser = "nix-ssh";
+          # Daemon SSH identity — host-key-as-user-key trick. The
+          # host key already exists declaratively (sshd auto-generates
+          # at first boot, mode 600 root). Avoids provisioning
+          # `/root/.ssh/id_*` which NixOS doesn't do.
           sshKey = "/etc/ssh/ssh_host_ed25519_key";
-          supportedFeatures = lib.optional (!node.typeIs.edge) "big-parallel";
+          # `kvm` added so `nixos-test` VM boots can dispatch here too.
+          supportedFeatures = lib.optionals (!node.typeIs.edge) [ "big-parallel" "kvm" ];
           system = node.system;
           systems = lib.optional (node.system == "x86_64-linux") "i686-linux";
           maxJobs = node.nbOfBuildCores;
+          # Builder's SSH host pubkey, base64 form (no `ssh-ed25519 `
+          # prefix). Maps to nix.buildMachines.<n>.publicHostKey, which
+          # the dispatcher uses to verify the builder's identity at
+          # SSH-connect time. Without it, root nix-daemon (no TTY)
+          # cannot answer the trust prompt and the build silently
+          # hangs — one of the reasons the buildMachines block was
+          # commented as "TODO - broken".
+          publicHostKey = rawSshPubKey;
+          # Same key in line form, for programs.ssh.knownHosts.
+          publicHostKeyLine = node.ssh;
         };
 
       mkAdminUserPreCriomes =
