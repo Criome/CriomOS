@@ -162,7 +162,7 @@ let
 
         system = archToSystemMap.${machine.arch};
 
-        nbOfBuildCores = 1; # TODO
+        nbOfBuildCores = inputNode.nbOfBuildCores or 1;
 
         typeIs = listToAttrs (map mkTypeIsFromTypeName nodeSpecies);
       };
