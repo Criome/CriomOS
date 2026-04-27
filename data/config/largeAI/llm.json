@@ -143,22 +143,6 @@
       "sizeGB": 17
     },
     {
-      "modelId": "qwen3.5-27b",
-      "descriptor": "Qwen3.5 27B Q4_K_M (Feb 2026 — dense reasoning)",
-      "source": {
-        "kind": "fetchurl",
-        "url": "https://huggingface.co/unsloth/Qwen3.5-27B-GGUF/resolve/3221f178a6b842d04f1fb42f1c413534adcc0a6a/Qwen3.5-27B-Q4_K_M.gguf",
-        "sha256": "sha256-hLX38RIVbWODagGmncPxGmumOxCiO4ynp++vUtWi2AY=",
-        "filename": "Qwen3.5-27B-Q4_K_M.gguf"
-      },
-      "reasoning": true,
-      "contextWindow": 131072,
-      "maxTokens": 4096,
-      "ctxSize": 131072,
-      "loadOnStartup": false,
-      "sizeGB": 17
-    },
-    {
       "modelId": "qwen3-8b",
       "descriptor": "Qwen3 8B Q4_K_M (Apr 2025 — fast reasoning)",
       "source": {
@@ -173,6 +157,25 @@
       "ctxSize": 32768,
       "loadOnStartup": false,
       "sizeGB": 5
+    }
+  ],
+  "disabledModels": [
+    {
+      "_disabledReason": "Temporarily skipped 2026-04-27: ouranos's /nix/store has a stale system-units.drv that references the gpn4v2mw...Qwen3.5-27B-Q4_K_M.gguf.drv path which got GC'd, causing prom eval to fail on ouranos. Re-enable once that nix-store issue is resolved (likely needs nix-store --repair or full re-instantiation).",
+      "modelId": "qwen3.5-27b",
+      "descriptor": "Qwen3.5 27B Q4_K_M (Feb 2026 — dense reasoning)",
+      "source": {
+        "kind": "fetchurl",
+        "url": "https://huggingface.co/unsloth/Qwen3.5-27B-GGUF/resolve/3221f178a6b842d04f1fb42f1c413534adcc0a6a/Qwen3.5-27B-Q4_K_M.gguf",
+        "sha256": "sha256-hLX38RIVbWODagGmncPxGmumOxCiO4ynp++vUtWi2AY=",
+        "filename": "Qwen3.5-27B-Q4_K_M.gguf"
+      },
+      "reasoning": true,
+      "contextWindow": 131072,
+      "maxTokens": 4096,
+      "ctxSize": 131072,
+      "loadOnStartup": false,
+      "sizeGB": 17
     }
   ]
 }
