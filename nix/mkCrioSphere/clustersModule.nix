@@ -83,6 +83,11 @@ let
         type = machineSpecies;
       };
 
+      nbOfBuildCores = mkOption {
+        type = lib.types.int;
+        default = 1;
+      };
+
       io = mkOption {
         type = submodule { options = IoOptions; };
         default = { };
